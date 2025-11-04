@@ -13,6 +13,9 @@ import Main from "./component/Main";
 
 import Movie from "./component/movie/Main";
 
+//---------------------------------------------------- dg
+import Login from "./component/member/Login";
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -26,6 +29,7 @@ function App() {
         <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/movie" element={<Movie />} />
+            <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </div>
