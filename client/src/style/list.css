@@ -1,0 +1,4 @@
+.lists {margin-bottom: 30px;}
+.lists .list {position: relative; border-radius: 5px; padding: 0 5px; text-align: center;}
+.lists .list a {display: inline-block; border-radius: 10px; overflow: hidden;}
+.lists .list a img {display: inline-block; width: 100%; height: 100%;}
