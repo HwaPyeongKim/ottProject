@@ -45,7 +45,7 @@ function Main() {
 
   return (
     <div>
-      <h3>상영중인 영화</h3>
+      <h3>상영중인 영화1</h3>
       <Slider {...settings} className="lists">
         {
           nowPlaying.map((item, idx)=>{
