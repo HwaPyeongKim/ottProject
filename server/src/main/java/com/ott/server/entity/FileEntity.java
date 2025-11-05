@@ -8,7 +8,8 @@ import java.sql.Timestamp;
 
 @Entity
 @Data
-public class File {
+@Table(name = "file")
+public class FileEntity {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

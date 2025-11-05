@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.sql.Timestamp;
 
 @Entity
 @Data
+@DynamicInsert
 public class Member {
 
     @Id
@@ -28,6 +30,7 @@ public class Member {
     private String address1;
     private String address2;
     @ColumnDefault("'LOCAL'")
+    @Column(name = "provider")
     private String provider;
     private String profileimg;
     private String profilemsg;
@@ -35,8 +38,10 @@ public class Member {
     @CreationTimestamp
     private Timestamp indate;
     @ColumnDefault("'N'")
+    @Column(name = "deleteyn")
     private String deleteyn;
     @ColumnDefault("'1'")
+    @Column(name = "role")
     private int role;
 
 }

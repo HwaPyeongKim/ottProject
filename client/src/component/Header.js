@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faBars, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 import "../style/common.css";
+import logo from "../images/20251105_121058396.png"
 
 function Header() {
   const loginUser = useSelector(state=>state.user);
@@ -28,7 +29,7 @@ function Header() {
   return (
     <header>
       <div className="logo">
-        <img src="" alt="logo" />
+        <img src={logo} alt="logo" style={{width:'160px', height:'90px'}}/>
       </div>
       <ul className="gnb">
         <li><a href="/">홈</a></li>
