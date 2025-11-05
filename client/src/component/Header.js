@@ -26,7 +26,7 @@ function Header() {
   return (
     <header>
       <div className="logo">
-        <img src="" alt="logo" />
+        <img src="http://localhost:8070/public/logo.png" alt="logo" />
       </div>
       <ul className="gnb">
         <li><a href="/">홈</a></li>

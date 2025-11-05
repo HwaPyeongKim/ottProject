@@ -13,6 +13,9 @@ import Main from "./component/Main";
 
 import Movie from "./component/movie/Main";
 
+import Board from "./component/board/Board";
+import ModalTest from "./component/board/ModalTest";
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -26,6 +29,8 @@ function App() {
         <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/movie" element={<Movie />} />
+            <Route path="/community" element={<Board />} />
+            <Route path="/test" element={<ModalTest />} />
         </Routes>
       </div>
     </div>
