@@ -11,6 +11,8 @@ import Header from "./component/Header";
 
 import Main from "./component/Main";
 
+import Detail from "./component/Detail";
+
 import Movie from "./component/movie/Main";
 
 import "slick-carousel/slick/slick.css";
@@ -20,12 +22,13 @@ function App() {
 
   return (
     <div>
-      <div class="container">
+      <div className="container">
         <Header />
 
         <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/movie" element={<Movie />} />
+            <Route path="/detail/:type/:id" element={<Detail />} />
         </Routes>
       </div>
     </div>
