@@ -10,6 +10,17 @@ function Main() {
   const [nowPlaying, setNowPlaying] = useState([]);
   const [coming, setComing] = useState([]);
 
+  const mainSettings = {
+    dots: true,               // 밑에 점 표시 여부
+    infinite: true,           // 무한 루프
+    speed: 500,               // 슬라이드 전환 속도 (ms)
+    slidesToShow: 1,          // 한 번에 보여줄 슬라이드 개수
+    slidesToScroll: 1,        // 한 번에 넘어갈 슬라이드 개수
+    autoplay: true,           // 자동 슬라이드
+    autoplaySpeed: 5000,      // 자동 전환 간격
+    arrows: true 
+  }
+
   const settings = {
     dots: true,               // 밑에 점 표시 여부
     // infinite: true,           // 무한 루프
@@ -45,7 +56,25 @@ function Main() {
 
   return (
     <div>
-      <h3>상영중인 영화1</h3>
+      <Slider {...mainSettings} className="lists popular">
+        {
+          popular.map((item, idx)=>{
+            return (
+              <div className="list">
+                <a href={`/detail/${item.id}`} key={idx}>
+                  <div>
+                    <h4>{item.title}</h4>
+                    <p>{item.overview}</p>
+                  </div>
+                  <img src={`https://image.tmdb.org/t/p/w342${item.poster_path}`} />
+                </a>
+              </div>
+            )
+          })
+        }
+      </Slider>
+
+      <h3>상영중인 영화</h3>
       <Slider {...settings} className="lists">
         {
           nowPlaying.map((item, idx)=>{
