@@ -49,7 +49,7 @@ cloud:
       bucket: kdg-file
     credentials:
       access-key:
-      secret-key: 
+      secret-key:
     region:
       static: ap-northeast-2
       auto: false
