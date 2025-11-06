@@ -17,6 +17,8 @@ function Header() {
   const pathParts = url.split("/").filter(Boolean);
   const firstPath = pathParts[2];
 
+  const navigate = useNavigate()
+
   useEffect(
     ()=>{
 
@@ -39,7 +41,7 @@ function Header() {
         <input type="text" placeholder="영화 또는 TV 프로그램 검색" />
       </div>
       <div className="userinfo">
-        <FontAwesomeIcon icon={faUser} />
+        <FontAwesomeIcon icon={faUser} onClick={ ()=>{ navigate('/login') }}/>
       </div>
       <div className="menu">
         <button>

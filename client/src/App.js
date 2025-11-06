@@ -16,6 +16,12 @@ import Movie from "./component/movie/Main";
 import Board from "./component/board/Board";
 import ModalTest from "./component/board/ModalTest";
 
+//---------------------------------------------------- dg
+import Login from "./component/member/Login";
+import Join from "./component/member/Join";
+//---------------------------------------------------- dg
+
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -29,8 +35,15 @@ function App() {
         <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/movie" element={<Movie />} />
+
             <Route path="/community" element={<Board />} />
             <Route path="/test" element={<ModalTest />} />
+
+            {/* dg */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/join" element={<Join />} />
+            {/* dg */}
+
         </Routes>
       </div>
     </div>
