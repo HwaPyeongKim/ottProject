@@ -13,7 +13,8 @@ import Main from "./component/Main";
 
 import Movie from "./component/movie/Main";
 
-import Board from "./component/board/Board";
+import BoardMain from "./component/board/BoardMain";
+import WriteForm from "./component/board/WriteForm";
 import ModalTest from "./component/board/ModalTest";
 
 import "slick-carousel/slick/slick.css";
@@ -23,13 +24,14 @@ function App() {
 
   return (
     <div>
-      <div class="container">
+      <div className="container">
         <Header />
 
         <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/movie" element={<Movie />} />
-            <Route path="/community" element={<Board />} />
+            <Route path="/community" element={<BoardMain />} />
+            <Route path="/writeForm" element={<WriteForm />} />
             <Route path="/test" element={<ModalTest />} />
         </Routes>
       </div>

@@ -19,7 +19,7 @@ public class List {
     @Column( columnDefinition="DATETIME default now()" )
     @CreationTimestamp
     private Timestamp indate;
-    @ColumnDefault("N")
+    @ColumnDefault("'N'")
     private String security;
 
 }
