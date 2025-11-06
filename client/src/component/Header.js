@@ -8,7 +8,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faBars, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 import "../style/common.css";
-import logo from "../images/20251105_121058396.png"
+import logo from "../images/84584584584.png"
+//20251105_121058396
+
+//--------------------------------------- dg
+import Mypage from './member/Mypage'
 
 function Header() {
   const loginUser = useSelector(state=>state.user);
@@ -18,7 +22,22 @@ function Header() {
   const pathParts = url.split("/").filter(Boolean);
   const firstPath = pathParts[2];
 
+  const [imgSrc, setImgSrc] = useState('')
   const navigate = useNavigate()
+
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    console.log('로그인유저 : ' + loginUser.midx)
+    if (!loginUser.profileimg) return;
+    axios.get(`/api/file/url/${loginUser.profileimg}`)
+    .then((result) => {
+        console.log('이미지 : ' + result.data.image)
+        setImgSrc(result.data.image); // 미리보기 이미지 URL
+    })
+    .catch((err) => console.error(err));
+    }, [loginUser.profileimg]
+  );
 
   useEffect(
     ()=>{
@@ -42,7 +61,16 @@ function Header() {
         <input type="text" placeholder="영화 또는 TV 프로그램 검색" />
       </div>
       <div className="userinfo">
-        <FontAwesomeIcon icon={faUser} onClick={ ()=>{ navigate('/login') }}/>
+        {
+          (loginUser && loginUser.midx)?(
+            <>
+            <img src={imgSrc} style={{width:'50px', height:'50px', cursor:'pointer'}} onClick={ ()=>{ setOpen(true) }}/>
+            {/* 모달 표시 */}
+            {open && <Mypage onClose={() => setOpen(false)} />}
+            </>
+          ):
+          (<FontAwesomeIcon icon={faUser} onClick={ ()=>{ setOpen(true) }}/>)
+        }
       </div>
       <div className="menu">
         <button>

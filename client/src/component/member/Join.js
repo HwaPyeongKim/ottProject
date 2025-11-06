@@ -33,10 +33,9 @@ function Join() {
         formData.append('image', e.target.files[0])
         axios.post( '/api/member/upload', formData)
         .then((result)=>{
-            console.log('이미지: ' + result.data)
             setImgSrc(result.data.image);
             setImgStyle({display:"block", width:"200px"});
-            setProfileimg(result.data.filename)
+            setProfileimg(result.data.fidx)
         }).catch((err)=>{console.error(err)})
     }
 

@@ -1,15 +1,28 @@
 package com.ott.server.controller;
 
+import com.google.gson.Gson;
+import com.ott.server.dto.KakaoProfile;
+import com.ott.server.dto.OAuthToken;
 import com.ott.server.entity.FileEntity;
 import com.ott.server.entity.Member;
+import com.ott.server.security.util.CustomJWTException;
+import com.ott.server.security.util.JWTUtil;
 import com.ott.server.service.MemberService;
 import com.ott.server.service.S3UploadService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/member")
@@ -24,7 +37,6 @@ public class MemberController {
     @PostMapping("/upload")
     public HashMap<String, Object> fileUpload(  @RequestParam("image") MultipartFile file ) {
         HashMap<String , Object> result = new HashMap<>();
-        System.out.println("111111111111111");
         try{
             int fidx = sus.saveFile(file);
             FileEntity fileEntity = sus.getFile(fidx);
@@ -66,12 +78,153 @@ public class MemberController {
     @PostMapping("/join")
     public HashMap<String, Object> join(@RequestBody Member member){
         HashMap<String, Object> result = new HashMap<>();
-        member.setDeleteyn("N");
-        member.setProvider("LOCAL"); // LOCAL: 일반 , KAKAO: 카카오
+//        member.setDeleteyn("N");
+//        member.setProvider("LOCAL"); // LOCAL: 일반 , KAKAO: 카카오
         member.setRole(1); // 1: 일반 , 2: 관리자
         ms.insertMember(member);
         result.put("msg", "ok");
         return result;
     }
+
+    @Value("${kakao.client_id}")
+    private String client_id;
+    @Value("${kakao.redirect_uri}")
+    private String redirect_uri;
+
+    @GetMapping("/kakaostart")
+    public @ResponseBody String kakaostart() {
+        String a = "<script type='text/javascript'>"
+                + "location.href='https://kauth.kakao.com/oauth/authorize?"
+                + "client_id=" + client_id + "&"
+                + "redirect_uri=" + redirect_uri + "&"
+                + "response_type=code';" + "</script>";
+        return a;
+    }
+
+    @RequestMapping("/kakaoLogin")
+    public void kakaoLogin(HttpServletRequest request, HttpServletResponse response ) throws IOException, MalformedURLException {
+        String code = request.getParameter("code");
+        String endpoint = "https://kauth.kakao.com/oauth/token";
+        URL url = new URL(endpoint);
+        String bodyData = "grant_type=authorization_code&";
+        bodyData += "client_id=" + client_id + "&";
+        bodyData += "redirect_uri=" + redirect_uri + "&";
+        bodyData += "code=" + code;
+
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        conn.setDoOutput(true);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
+        bw.write(bodyData);
+        bw.flush();
+        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        String input = "";
+        StringBuilder sb = new StringBuilder();
+        while ((input = br.readLine()) != null) {
+            sb.append(input);
+        }
+        Gson gson = new Gson();
+        OAuthToken oAuthToken = gson.fromJson(sb.toString(), OAuthToken.class);
+        String endpoint2 = "https://kapi.kakao.com/v2/user/me";
+        URL url2 = new URL(endpoint2);
+
+        HttpsURLConnection conn2 = (HttpsURLConnection) url2.openConnection();
+        conn2.setRequestProperty("Authorization", "Bearer " + oAuthToken.getAccess_token());
+        conn2.setDoOutput(true);
+        BufferedReader br2 = new BufferedReader(new InputStreamReader(conn2.getInputStream(), "UTF-8"));
+        String input2 = "";
+        StringBuilder sb2 = new StringBuilder();
+        while ((input2 = br2.readLine()) != null) {
+            sb2.append(input2);
+            System.out.println(input2);
+        }
+        Gson gson2 = new Gson();
+        KakaoProfile kakaoProfile = gson2.fromJson(sb2.toString(), KakaoProfile.class);
+        KakaoProfile.KakaoAccount ac = kakaoProfile.getAccount();
+        KakaoProfile.KakaoAccount.Profile pf = ac.getProfile();
+        System.out.println("id : " + kakaoProfile.getId());
+        System.out.println("KakaoAccount-Email : " + ac.getEmail());
+        System.out.println("Profile-Nickname : " + pf.getNickname());
+
+        Member member = ms.getMember( kakaoProfile.getId() );
+        if( member == null ){
+            member = new Member();
+            member.setSnsid( kakaoProfile.getId() );
+            //member.setEmail( ac.getEmail() );
+            member.setNickname( pf.getNickname() );
+            member.setProfileimg( pf.getProfile_image_url());
+            member.setPwd( "KAKAO" );
+            member.setProvider( "KAKAO" );
+            ms.insertMember(member);
+        }
+        response.sendRedirect("http://localhost:3000/kakaoIdLogin/"+member.getSnsid());
+
+    }
+
+    @GetMapping("/refresh/{refreshToken}")
+    public HashMap<String, Object> refresh(
+            @PathVariable("refreshToken") String refreshToken,
+            @RequestHeader("Authorization") String authHeader
+    ) throws CustomJWTException {
+        HashMap<String, Object> result = new HashMap<>();
+        if( refreshToken == null ) throw new CustomJWTException("NULL_REFRESH");
+        if( authHeader == null || authHeader.length() < 7 )
+            throw new CustomJWTException("INVALID_HEADER");
+
+        // 추출한 내용의 7번째 글자부터 끝까지 추출
+        String accessToken = authHeader.substring(7);
+
+        // 유효시간이 지났는지 검사
+        Boolean expAt = checkExpiredToken( accessToken );
+
+        if( expAt){ // 유효기간이 지나지않았을때
+            System.out.println("토큰 유효기간 아직 안지났습니다. 계속 사용합니다");
+            result.put("accessToken", accessToken);
+            result.put("refreshToken", refreshToken);
+
+        }else{   // 유효기간이 지났을때
+            System.out.println("토큰 유효기간이 지나서 경신합니다");
+
+            // accessToken 기간 만료시  refresh 토큰으로 재 검증하여 사용자 정보 추출
+            Map<String, Object> claims = JWTUtil.validateToken(refreshToken);
+
+            // 새로운 accessToken 으로 교체
+            String newAccessToken = JWTUtil.generateToken(claims, 1);
+
+            // 리프레시토큰의 exp 를 꺼내서 현재 시간과 비교
+            Integer exp = (Integer)claims.get("exp"); // refreshToken 의 유효시간 추출
+            java.util.Date expDate = new java.util.Date( (long)exp * (1000 ));// 유요시간을 밀리초로 변환
+            long gap = expDate.getTime() - System.currentTimeMillis(); // 현재 시간과의 차이 계산
+            long leftMin = gap / (1000 * 60); //분단위 변환
+            String newRefreshToken = "";
+            // 기존 refreshToken의 유효기간이 한시간도 안남았다면 교체 , 아직 쓸만하다면 그데로 사용
+            if( leftMin < 60 )   newRefreshToken = JWTUtil.generateToken(claims, 60*24);
+            else newRefreshToken = refreshToken;
+            result.put("accessToken", newAccessToken);
+            result.put("refreshToken", newRefreshToken);
+        }
+        return result;
+    }
+
+    private Boolean checkExpiredToken(String accessToken) {
+        try {
+            JWTUtil.validateToken(accessToken);
+        } catch (CustomJWTException e) {
+            if( e.getMessage().equals("Expired") ){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @PostMapping("/updateMember")
+    public HashMap<String, Object> updateMember(@RequestBody Member member) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.updateMember(member);
+        result.put("msg", "ok");
+        return result;
+    }
+
 
 }

@@ -12,19 +12,13 @@ import java.sql.Timestamp;
 @Data
 @DynamicInsert
 public class Member {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int midx;
-    @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
     private String nickname;
-    @Column(nullable = false)
     private String email;
-    @Column(nullable = false)
     private String pwd;
-    @Column(nullable = false)
     private String phone;
     private String zipnum;
     private String address1;
@@ -40,8 +34,8 @@ public class Member {
     @ColumnDefault("'N'")
     @Column(name = "deleteyn")
     private String deleteyn;
-    @ColumnDefault("'1'")
-    @Column(name = "role")
+    @Column(name = "role", columnDefinition = "int default 1")
     private int role;
+    private String snsid;
 
 }

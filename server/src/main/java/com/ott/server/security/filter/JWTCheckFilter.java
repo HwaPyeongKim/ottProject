@@ -39,10 +39,11 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String address2 = (String) claims.get("address2");
             String profileimg = (String) claims.get("profileimg");
             String profilemsg = (String) claims.get("profilemsg");
+            String snsid = (String) claims.get("snsid");
             List<String> list = new ArrayList<>();
             list.add("USER");
 
-            MemberDTO memberDTO = new MemberDTO( email, pwd, midx, name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg, list  );
+            MemberDTO memberDTO = new MemberDTO( email, pwd, midx, name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg, snsid, list  );
 
             UsernamePasswordAuthenticationToken authenticationToken
                     = new UsernamePasswordAuthenticationToken(memberDTO, pwd , memberDTO.getAuthorities());
@@ -70,7 +71,12 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if(path.startsWith("/member/emailcheck")){return true;}
         if(path.startsWith("/member/nicknamecheck")){return true;}
         if(path.startsWith("/member/join")){return true;}
+        if(path.startsWith("/member/login")){return true;}
+        if(path.startsWith("/member/refresh")){return true;}
         if(path.startsWith("/member/upload")){return true;}
+        if(path.startsWith("/member/kakaostart")){return true;}
+        if(path.startsWith("/member/kakaoLogin")){return true;}
+        if(path.startsWith("/file/url")){return true;}
         if(path.startsWith("/favicon.ico")){return true;}
 
         return false;

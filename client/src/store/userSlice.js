@@ -19,6 +19,7 @@ const initialState={
     indate:"",
     deleteyn:"",
     role:"",
+    snsid:"",
     accessToken:"",
     refreshToken:"",
 }
@@ -42,6 +43,7 @@ const getLoginUser=()=>{
         member.indate = decodeURIComponent( member.indate );
         member.deleteyn = decodeURIComponent( member.deleteyn );
         member.role = decodeURIComponent( member.role );
+        member.snsid = decodeURIComponent( member.snsid );
         member.accessToken = decodeURIComponent( member.accessToken );
         member.refreshToken = decodeURIComponent( member.refreshToken );
     }
@@ -56,7 +58,7 @@ export const userSlice = createSlice(
             loginAction : (state, action)=>{
                 state.midx = action.payload.midx;
                 state.name = action.payload.name;
-                state.nickname =action.payload.nickname;
+                state.nickname = action.payload.nickname;
                 state.email = action.payload.email;
                 state.pwd = action.payload.pwd;
                 state.phone = action.payload.phone;
@@ -69,6 +71,7 @@ export const userSlice = createSlice(
                 state.indate = action.payload.indate;
                 state.deleteyn = action.payload.deleteyn;
                 state.role = action.payload.role;
+                state.snsid = action.payload.snsid;
                 state.accessToken = action.payload.accessToken;
                 state.refreshToken = action.payload.refreshToken;
             },
@@ -88,6 +91,7 @@ export const userSlice = createSlice(
                 state.indate = "";
                 state.deleteyn = "";
                 state.role = "";
+                state.snsid = "";
                 state.accessToken = "";
                 state.refreshToken = "";
             }
