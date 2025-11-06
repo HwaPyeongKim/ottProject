@@ -48,8 +48,8 @@ cloud:
     s3:
       bucket: kdg-file
     credentials:
-      access-key: AKIAWYVILJLH6MY3MIHM
-      secret-key: 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
+      access-key:
+      secret-key: 
     region:
       static: ap-northeast-2
       auto: false
