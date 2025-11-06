@@ -7,6 +7,11 @@ p, span, li {color: #fff; line-height: 1.2em;}
 
 .slick-dots li button:before {color: #fff !important;}
 
+.swiper-button-prev, .swiper-button-next {position: absolute; top: 50%; height: 100%; transform: translateY(-50%); z-index: 10; transform-origin: center center; opacity: 0;}
+.swiper-button-prev:hover, .swiper-button-next:hover {opacity: 1;}
+.swiper-button-next {right: 0;}
+.swiper-button-disabled {display: none;}
+
 .container {width: 95%; max-width:1640px; margin: 0 auto;}
 
 header {display: flex; justify-content: space-between; padding: 15px 0;}
@@ -22,25 +27,3 @@ header .menu {flex: 1; color: #fff; text-align: right; line-height: 40px;}
 header .menu button {border: 0; background: transparent; color: #fff; line-height: 40px;}
 
 h3 {color: #d9e8ed; font-size: 1.5em; margin-bottom: 20px;}
-
-.content_wrapper {display: flex; justify-content: space-between;}
-.content_info .bottom {display: flex; justify-content: space-between;}
-.content_info .left {flex: 3;}
-.content_info .right {flex: 1;}
-.content_info .left > div {margin-bottom: 30px;}
-.content_info .top {position: relative; height: 250px; overflow: hidden; padding: 40px 100px;}
-.content_info .top h2 {font-size: 1.8em;}
-.content_info .top h2 span {color: #d9e8ed; font-size: 1.5rem;}
-.content_info .top p {margin-top: 15px;}
-.content_info .top div {margin-top: 15px;}
-.content_info .top div span {display: inline-block; margin-right: 10px;}
-.content_info .top div ul {display: flex; margin-top: 15px;}
-.content_info .top div ul li {margin-right: 10px;}
-.content_info .providers {}
-.content_info .providers > div {background: #0c131e; padding-top: 20px;}
-.content_info .providers > div h4 {padding: 0 20px; font-size: 1.1em;}
-.content_info .providers > div ul {margin-top: 20px;}
-.content_info .providers > div ul li {padding: 20px;}
-.content_info .providers > div ul li:nth-child(2n-1) {background: #111924;}
-.content_info .providers .noProviders {padding: 100px; color: #fff; font-weight: bold; text-align: center;}
-.content_info .synopsis p {background: #0c131e; padding: 20px;}

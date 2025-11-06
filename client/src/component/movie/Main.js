@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Slider from "react-slick";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
-
 
 function Main() {
   const baseUrl = "https://api.themoviedb.org/3";
