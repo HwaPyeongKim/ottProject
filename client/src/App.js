@@ -6,17 +6,19 @@ import axios from "axios";
 import "./style/reset.css";
 import "./style/common.css";
 import "./style/list.css";
+import 'swiper/css';
 
 import Header from "./component/Header";
 
 import Main from "./component/Main";
 
+import Detail from "./component/Detail";
+
 import Movie from "./component/movie/Main";
 
-//---------------------------------------------------- dg
-import Login from "./component/member/Login";
-import Join from "./component/member/Join";
-//---------------------------------------------------- dg
+import BoardMain from "./component/board/BoardMain";
+import WriteForm from "./component/board/WriteForm";
+import ModalTest from "./component/board/ModalTest";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -31,10 +33,10 @@ function App() {
         <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/movie" element={<Movie />} />
-            {/* dg */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/join" element={<Join />} />
-            {/* dg */}
+            <Route path="/community" element={<BoardMain />} />
+            <Route path="/writeForm" element={<WriteForm />} />
+            <Route path="/detail/:type/:id" element={<Detail />} />
+            <Route path="/test" element={<ModalTest />} />
         </Routes>
       </div>
     </div>

@@ -1,0 +1,160 @@
+/* 전체 컨테이너 및 제목 스타일 */
+.comment-section-container {
+  max-width: 680px;
+  margin: 20px auto;
+  padding: 0 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #1a1a1a;
+}
+
+.comment-section-container h2{
+    color: white;
+}
+
+.section-title {
+  /* text-align: center; */
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 800; /* 더 굵게 */
+}
+
+/* 탭 버튼 스타일 */
+.tab-buttons {
+  text-align: center;
+  margin-bottom: 20px;
+  /* 가운데 정렬을 위한 Flex */
+  display: flex;
+  justify-content: space-between;
+}
+
+.tab-button {
+  padding: 8px 20px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background-color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: all 0.2s; /* 부드러운 전환 효과 */
+}
+
+.tab-button.active {
+  background-color: rgb(122, 108, 108);
+  color: white;
+  border-color: black;
+}
+
+/* 개별 댓글 아이템 스타일 */
+.comment-item {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  background-color: white;
+}
+
+/* 댓글 헤더 (유저 정보) */
+.comment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  
+}
+
+.profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.timestamp {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* 댓글 본문 (리뷰 이미지/텍스트) */
+.review-content {
+  display: flex;  
+  padding: 10px;
+}
+
+.review-image {
+  /* 사진과 유사한 비율 (약 1:1.5) */
+  width: 80px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.review-text {
+  flex-grow: 1;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin: 0;
+  overflow: hidden; /* 텍스트 넘침 방지 */
+}
+
+.review-text strong {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+
+/* 댓글 액션 (좋아요, 댓글 수, 버튼) */
+.comment-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.likes-replies {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.likes-replies span:first-child {
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-right: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.action-buttons .icon-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  margin-left: 10px;
+  cursor: pointer;
+  padding: 5px;
+  color: #4a4a4a;
+  transition: color 0.1s;
+}
+
+.action-buttons .icon-button:hover {
+  color: #000;
+}

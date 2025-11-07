@@ -1,0 +1,175 @@
+/* CommentModal.css */
+
+/* 모달 콘텐츠 전체 컨테이너 */
+.comment-modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 15px;
+}
+
+/* 1. 모달 헤더 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  /* border-radius: 10px 10px 0 0; */
+  /* background-color: white; */
+  flex-shrink: 0; /* 내용 스크롤 시 고정 */  
+}
+
+.modal-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 0; 
+  transform: translateX(12px); /* 닫기 버튼 공간만큼 중앙 이동 */
+  color: #000;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #333;
+}
+.close-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* 2. 댓글 목록 컨테이너 */
+.modal-comments-list {
+  flex-grow: 1; /* 남은 공간 모두 차지 */
+  overflow-y: auto; /* 이 영역만 스크롤 가능 */
+  padding: 35px 45px;
+}
+
+/* 개별 댓글 아이템 */
+.modal-comment-item {
+  display: flex;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.modal-profile-image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.modal-comment-info {
+  flex-grow: 1;
+}
+
+.modal-comment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.modal-username {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-right: 8px;
+}
+
+.modal-timestamp {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.modal-comment-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin: 0 0 5px 0;
+  white-space: pre-wrap; /* 줄바꿈 유지 */
+}
+
+.modal-comment-actions {
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.modal-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 5px;
+  font-size: 0.9rem;
+  color: #888;
+}
+.modal-icon-button:hover {
+    color: #000;
+}
+
+.modal-likes {
+    font-weight: bold;
+}
+
+.modal-more-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1.2rem;
+  color: #888;
+}
+
+/* 3. 댓글 입력창 (하단 고정) */
+.modal-comment-input-area {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border-top: 1px solid #eee;
+  flex-shrink: 0; /* 내용 스크롤 시 고정 */
+  background-color: white;
+}
+
+.modal-input-profile-image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.modal-comment-input {
+  flex-grow: 1;
+  border: none;
+  padding: 20px 0 30px;
+  font-size: 1rem;
+  color: #333;
+}
+.modal-comment-input::placeholder {
+    color: #aaa;
+}
+.modal-comment-input:focus {
+    outline: none;
+}
+
+.modal-submit-button {
+  background: none;
+  border: none;
+  color: #aaa; /* 비활성화 색상 */
+  font-weight: bold;
+  font-size: 0.9rem;
+  padding-left: 10px;
+  cursor: default; /* 클릭 불가 */
+}
+
+.modal-submit-button:not([disabled]) {
+    color: #007bff; /* 활성화 색상 */
+    cursor: pointer;
+}
