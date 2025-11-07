@@ -17,6 +17,10 @@ public class BoardService {
     private final BoardRepository br;
 
     public List<Board> getBoardList() {
-        return br.findAllWithMember();
+        return br.findAllByOrderByWritedateDesc();
+    }
+
+    public Object insertBoard(Board board) {
+        return br.save(board);
     }
 }

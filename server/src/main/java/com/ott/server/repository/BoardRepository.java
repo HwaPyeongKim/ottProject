@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface BoardRepository extends JpaRepository<Board, Integer> {
 
-    @Query("SELECT b FROM Board b JOIN FETCH b.member")
-    List<Board> findAllWithMember();
+    @Query("SELECT b FROM Board b LEFT JOIN FETCH b.member ORDER BY b.writedate DESC ")
+    List<Board> findAllByOrderByWritedateDesc();
 }

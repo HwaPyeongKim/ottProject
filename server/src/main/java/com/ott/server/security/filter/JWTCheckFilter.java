@@ -78,6 +78,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if(path.startsWith("/member/kakaoLogin")){return true;}
         if(path.startsWith("/file/url")){return true;}
         if(path.startsWith("/favicon.ico")){return true;}
+        if(path.startsWith("/board/getBoardList")){return true;}
 
         return false;
     }
