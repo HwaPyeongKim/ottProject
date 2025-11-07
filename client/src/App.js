@@ -12,6 +12,8 @@ import Header from "./component/Header";
 import Main from "./component/Main";
 
 import Movie from "./component/movie/Main";
+import Company from "./component/customer/Company";
+import Qna from "./component/customer/Qna";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -26,6 +28,8 @@ function App() {
         <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/movie" element={<Movie />} />
+            <Route path="/company" element={<Company />} />
+            <Route path="/qna" element={<Qna />} />
         </Routes>
       </div>
     </div>
