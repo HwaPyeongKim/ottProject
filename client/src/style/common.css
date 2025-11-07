@@ -1,9 +1,16 @@
 body {background: #060d17;}
 a {text-decoration: none; color: inherit;}
 button, input[type=submit], input[type=button] {cursor: pointer;}
-h1, h2, h3, h4, h5, h6 {font-weight: bold;}
+h1, h2, h3, h4, h5, h6 {font-weight: bold; color: #fff;}
 
-p, span {line-height: 1.2em;}
+p, span, li {color: #fff; line-height: 1.2em;}
+
+.slick-dots li button:before {color: #fff !important;}
+
+.swiper-button-prev, .swiper-button-next {position: absolute; top: 50%; height: 100%; transform: translateY(-50%); z-index: 10; transform-origin: center center; opacity: 0;}
+.swiper-button-prev:hover, .swiper-button-next:hover {opacity: 1;}
+.swiper-button-next {right: 0;}
+.swiper-button-disabled {display: none;}
 
 .container {width: 95%; max-width:1640px; margin: 0 auto;}
 
@@ -20,5 +27,3 @@ header .menu {flex: 1; color: #fff; text-align: right; line-height: 40px;}
 header .menu button {border: 0; background: transparent; color: #fff; line-height: 40px;}
 
 h3 {color: #d9e8ed; font-size: 1.5em; margin-bottom: 20px;}
-
-.slick-dots li button:before {color: #fff !important;}

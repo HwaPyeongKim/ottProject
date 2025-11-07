@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Cookies } from "react-cookie";
 import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faBars, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 import "../style/common.css";

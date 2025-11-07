@@ -1,0 +1,43 @@
+.content_wrapper {display: flex; justify-content: space-between;}
+.content_info .bottom {display: flex; justify-content: space-between; margin-top: 30px;}
+.content_info .left {flex: 3; margin-right: 20px;}
+.content_info .right {flex: 1;}
+.content_info .left > div {margin-bottom: 30px;}
+.content_info .top {position: relative; height: 250px; overflow: hidden; padding: 40px 100px;}
+.content_info .top h2 {font-size: 1.8em;}
+.content_info .top h2 span {color: #d9e8ed; font-size: 1.5rem;}
+.content_info .top p {margin-top: 15px;}
+.content_info .top div {margin-top: 15px;}
+.content_info .top div span {display: inline-block; margin-right: 10px;}
+.content_info .top div ul {display: flex; margin-top: 15px;}
+.content_info .top div ul li {margin-right: 10px;}
+.content_info .providers {}
+.content_info .providers > div {background: #0c131e; padding-top: 20px;}
+.content_info .providers > div h4 {padding: 0 20px; font-size: 1.1em;}
+.content_info .providers > div ul {margin-top: 20px;}
+.content_info .providers > div ul li {padding: 20px;}
+.content_info .providers > div ul li:nth-child(2n-1) {background: #111924;}
+.content_info .providers .noProviders {padding: 100px; color: #fff; font-weight: bold; text-align: center;}
+.content_info .synopsis p {background: #0c131e; padding: 20px;}
+.content_info .video > div, .content_info .cast > div, .content_info .recommendations > div {max-width: 1215px;}
+.content_info .cast .profile {padding: 20px 0; background: #0c131e; text-align: center;}
+.content_info .cast .profile .image_wrapper {display: inline-block; border-radius: 10px; overflow: hidden;}
+.content_info .cast .profile p {margin-top: 15px;}
+
+.content_info .right .movieInfo {}
+.content_info .right .movieInfo ul {}
+.content_info .right .movieInfo ul li {padding: 20px 0; border-bottom: 1px solid #111924;}
+.content_info .right .movieInfo ul li:first-child {padding-top: 0;}
+.content_info .right .movieInfo ul li div {display: flex; justify-content: space-between; margin-top: 20px;}
+.content_info .right .movieInfo ul li div button {width: 45%; padding: 15px; background: #222c38; color: #fff; font-size: 1.2em; border: 0; border-radius: 10px;}
+.content_info .right .movieInfo ul li h4 {margin-bottom: 20px; font-size: 1.1em;}
+
+.lists {margin-bottom: 30px;}
+.lists .list {padding: 0; text-align: center;}
+.lists .list div.cover {position: relative; display: inline-block; border-radius: 10px; overflow: hidden;}
+.lists .list div.cover a {position: absolute; top: 0; left : 0; display: none; width: 100%; height: 100%; background: rgba(0,0,0,0.6);}
+.lists .list div.cover:hover a {display: flex; justify-content: space-between; flex-direction: column;}
+.lists .list div.cover a div {display: flex; justify-content: space-around;}
+.lists .list div.cover a div button {border: 0; background: transparent; color: #fff; font-size: 1.2em;}
+.lists .list div.cover a ul {padding: 20px 5px;}
+.lists .list div.cover a ul li {color: #fff; margin-top: 5px;}
