@@ -28,8 +28,17 @@ function Join() {
 
     const navigate = useNavigate()
 
-    function idCheck(){}
-    function fileUpload(e){}
+    function fileUpload(e){
+        const formData = new FormData()
+        formData.append('image', e.target.files[0])
+        axios.post( '/api/member/upload', formData)
+        .then((result)=>{
+            setImgSrc(result.data.image);
+            setImgStyle({display:"block", width:"200px"});
+            setProfileimg(result.data.fidx)
+        }).catch((err)=>{console.error(err)})
+    }
+
     function toggle(){
         setIsOpen( !isOpen )
     }
@@ -143,11 +152,11 @@ function Join() {
             </div>
             <div>
                 <label style={{color:'white'}}>PROFILE IMG PREVIEW</label>
-                {/* <div><img src={imgSrc} style={imgStyle} /></div> */}
+                <div><img src={imgSrc} style={imgStyle} /></div>
             </div>
             <div>
                 <button onClick={()=>{onSubmit()}}>JOIN</button>
-                <button>BACK</button>
+                <button onClick={()=>{ navigate('/')}}>BACK</button>
             </div>
         </div>
     )

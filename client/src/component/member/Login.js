@@ -3,7 +3,7 @@ import axios from 'axios'
 import {Cookies} from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
-//import { loginAction } from '../../store/userSlice';
+import { loginAction } from '../../store/userSlice';
 
 function Login() {
 
@@ -19,7 +19,14 @@ function Login() {
 
         axios.post('/api/member/login', null, {params:{ username:userid, password:pwd }})
         .then((result)=>{   
-
+            if(result.data.error == 'ERROR_LOGIN'){
+                return alert('이메일과 패스워드를 확인하세요')
+            }else{
+                alert(result.data.nickname +'님이 로그인하셨습니다')
+                cookies.set('user', JSON.stringify( result.data ) , {path:'/', })
+                dispatch( loginAction( result.data ) )
+                navigate('/')
+            }
         }).catch((err)=>{console.error(err)})
     }
 

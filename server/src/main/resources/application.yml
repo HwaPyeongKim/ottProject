@@ -24,8 +24,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: test@gmail.com
-    password:
+    username: aucu2005@gmail.com
+    password: ilel htbm ioye yjte
     properties:
       mail:
         smtp:
@@ -39,17 +39,16 @@ spring:
         max-request-size: 10MB
 
 kakao:
-  client_id:
-  redirect_uri:
+  client_id: 52c265fce2ca8dde2b8caebed750d33d
+  redirect_uri: http://localhost:8070/member/kakaoLogin
 
 
 cloud:
   aws:
     s3:
-      bucket:
+      bucket: kdg-file
     credentials:
       access-key:
-      secret-key:
     region:
       static: ap-northeast-2
       auto: false
