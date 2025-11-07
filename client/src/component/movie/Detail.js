@@ -55,7 +55,7 @@ function Detail() {
     "AR": "아르헨티나",
     "TR": "터키",
     "TH": "태국",
-    "SG": "싱가포르"
+    "SG": "싱가포르1"
   };
 
   const YouTubeVideo = ({videoKey}) => (
