@@ -6,10 +6,13 @@ import axios from "axios";
 import "./style/reset.css";
 import "./style/common.css";
 import "./style/list.css";
+import 'swiper/css';
 
 import Header from "./component/Header";
 
 import Main from "./component/Main";
+
+import Detail from "./component/Detail";
 
 import Movie from "./component/movie/Main";
 
@@ -32,6 +35,7 @@ function App() {
             <Route path="/movie" element={<Movie />} />
             <Route path="/community" element={<BoardMain />} />
             <Route path="/writeForm" element={<WriteForm />} />
+            <Route path="/detail/:type/:id" element={<Detail />} />
             <Route path="/test" element={<ModalTest />} />
         </Routes>
       </div>
