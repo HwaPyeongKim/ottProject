@@ -14,13 +14,13 @@ p, span, li {color: #fff; line-height: 1.2em;}
 
 .container {width: 95%; max-width:1640px; margin: 0 auto;}
 
-header {display: flex; justify-content: space-between; padding: 15px 0;}
+header {display: flex; justify-content: space-between; align-items: center; padding: 15px 0;}
 header .logo {flex: 1;}
 header .logo img {cursor: pointer;}
 header .gnb {flex: 4; display: flex;}
 header .gnb li {flex: 1; color: #999c9f; text-align: center; line-height: 40px;}
 header .gnb li.on {color: #d9e8ed; font-weight: bold;}
-header .search {flex: 10; display: flex; color: #fff; line-height: 40px;}
+header .search {flex: 10; display: flex; color: #fff; height: 40px;}
 header .search input {width: 100%; margin-left: 5px; padding:0 10px; background: #10161d; border: 0; border-radius: 5px; color: #fff; font-size: 1.1em; line-height: 40px;}
 header .userinfo {flex: 1; color: #fff; text-align: center; line-height: 40px;}
 header .menu {flex: 1; color: #fff; text-align: right; line-height: 40px;}

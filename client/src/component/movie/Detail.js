@@ -7,13 +7,12 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faThumbsUp, faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
-import "../style/detail.css";
+import "../../style/detail.css";
 
 
 function Detail() {
-  const baseUrl = "https://api.themoviedb.org/3";
+  const baseUrl = "https://api.themoviedb.org/3/movie";
 
-  const {type} = useParams();
   const {id} = useParams();
   const [item, setItem] = useState({});
 
@@ -58,6 +57,12 @@ function Detail() {
     "SG": "싱가포르"
   };
 
+  function getOttUrl(link, title) {
+    if (!link) return null;
+    const query = encodeURIComponent(title);
+    return `${link}${query}`;
+  }
+
   const YouTubeVideo = ({videoKey}) => (
     <iframe
       height="180"
@@ -69,20 +74,20 @@ function Detail() {
     />
   );
 
-  async function findItem (type, id) {
+  async function findItem (id) {
     try {
-      const result = await axios.get(`${baseUrl}/${type}/${id}?language=ko-KR&region=KR&api_key=${process.env.REACT_APP_KEY}`);
+      const result = await axios.get(`${baseUrl}/${id}?language=ko-KR&region=KR&api_key=${process.env.REACT_APP_KEY}`);
       if (result.data.adult === true) {
         
       }
       // OTT 정보
       result.data.providers = [];
-      const providers = await axios.get(`${baseUrl}/${type}/${id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
+      const providers = await axios.get(`${baseUrl}/${id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
       if (providers.data.results && providers.data.results["KR"]) {
         result.data.providers = providers.data.results["KR"];
       }
       // 출연진 및 제작진
-      const credits = await axios.get(`${baseUrl}/${type}/${id}/credits?api_key=${process.env.REACT_APP_KEY}`);
+      const credits = await axios.get(`${baseUrl}/${id}/credits?api_key=${process.env.REACT_APP_KEY}`);
       result.data.director = {};
       result.data.cast = [];
       // 주연배우
@@ -107,7 +112,7 @@ function Detail() {
 
       // 예고편 및 관련 비디오 정보
       result.data.videos = [];
-      const videos = await axios.get(`${baseUrl}/${type}/${id}/videos?api_key=${process.env.REACT_APP_KEY}`);
+      const videos = await axios.get(`${baseUrl}/${id}/videos?api_key=${process.env.REACT_APP_KEY}`);
       for (let i=0; i<videos.data.results.length; i++) {
         let data = videos.data.results[i];
         if (data.site === "YouTube") {
@@ -117,7 +122,7 @@ function Detail() {
 
       //연령 등급
       result.data.release_dates = {};
-      const release_dates = await axios.get(`${baseUrl}/${type}/${id}/release_dates?api_key=${process.env.REACT_APP_KEY}`);
+      const release_dates = await axios.get(`${baseUrl}/${id}/release_dates?api_key=${process.env.REACT_APP_KEY}`);
       for (let i=0; i<release_dates.data.results.length; i++) {
         let data = release_dates.data.results[i];
         if (data.iso_3166_1 === "KR") {
@@ -130,7 +135,7 @@ function Detail() {
       }
 
       result.data.recommendations = [];
-      const recommendations = await axios.get(`${baseUrl}/${type}/${id}/recommendations?language=ko-KR&region=KR&api_key=${process.env.REACT_APP_KEY}`);
+      const recommendations = await axios.get(`${baseUrl}/${id}/recommendations?language=ko-KR&region=KR&api_key=${process.env.REACT_APP_KEY}`);
       if (recommendations.data && recommendations.data.results.length > 0) {
         result.data.recommendations = recommendations.data.results;
       }
@@ -152,11 +157,9 @@ function Detail() {
 
   useEffect(
     ()=>{
-      findItem(type, id);
+      findItem(id);
     },[]
   )
-
-
 
   return (
     <section className="content_info">
@@ -185,7 +188,7 @@ function Detail() {
           <div className="providers">
             <h3>지금 시청하기</h3>
             {
-              item.providers && item.providers.length > 0 ? (
+              item.providers ? (
                 (() => {
                   const types = [
                     { key: "buy", label: "구매" },
@@ -193,18 +196,20 @@ function Detail() {
                     { key: "flatrate", label: "구독" },
                   ];
 
-                  const logos = [
-                    {key: 8, label: "netflix"},
-                    {key: 1796, label: "netflixbasicwithads"},
-                    {key: 356, label: "wavve"},
-                    {key: 97, label: "watcha"},
-                    {key: 337, label: "disneyplus"},
-                    {key: 2, label: "appletvplus"},
-                    {key: 9, label: "amazonprimevideo"},
-                    {key: 10, label: "amazonprimevideo"},
-                    {key: 3, label: "play"},
-                    {key: 1883, label: "tving"},
-                    {key: 283, label: "crunchyroll"}
+                  const ottInfos = [
+                    {key: 8, label: "netflix", link: "https://www.netflix.com/search?q="},
+                    {key: 1796, label: "netflixbasicwithads", link: "https://www.netflix.com/search?q="},
+                    {key: 356, label: "wavve", link: "https://www.wavve.com/search?searchWord="},
+                    {key: 97, label: "watcha", link: "https://watcha.com/search?query="},
+                    {key: 337, label: "disneyplus", link: "https://www.disneyplus.com/ko-kr/search?q="}, // 디즈니는 검색이 안됨
+                    {key: 2, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
+                    {key: 350, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
+                    {key: 9, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+                    {key: 10, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+                    {key: 119, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+                    {key: 3, label: "play", link: "https://play.google.com/store/search?q="}, // 구글플레이는 우리나라에서 안된다는데 다시 확인 필요
+                    {key: 1883, label: "tving", link: "https://www.tving.com/search?query="},
+                    {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
                   ]
 
                   const available = types.filter(
@@ -212,7 +217,7 @@ function Detail() {
                   );
 
                   if (available.length === 0) {
-                    return <div>시청할 수 있는 OTT가 없습니다.</div>;
+                    return <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>;
                   }
 
                   return available.map((type) => (
@@ -220,18 +225,20 @@ function Detail() {
                       <h4>{type.label}</h4>
                       <ul>
                         {item.providers[type.key].map((provider, idx) => {
-                          const logo = logos.find((l) => l.key === provider.provider_id);
+                          const ottInfo = ottInfos.find((l) => l.key === provider.provider_id);
+                          const url = getOttUrl(ottInfo.link, item.title);
 
                           return (
                             <li key={`${type.key}-${idx}`}>
-                              {logo ? (
+                              {ottInfo ? (
                                 <img
-                                  src={`http://localhost:8070/images/${logo.label}.jpeg`}
+                                  src={require(`../../images/${ottInfo.label}.jpeg`)}
                                   alt={`${provider.provider_name} 로고`}
                                 />
                               ) : (
                                 <span>{provider.provider_name}</span>
                               )}
+                              <a href={url} target="_blank">지금 시청하기</a>
                             </li>
                           );
                         })}
@@ -240,7 +247,7 @@ function Detail() {
                   ));
                 })()
               ) : (
-                <div className="noProviders">시청할 수 있는 OTT가 없습니다.</div>
+                <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>
               )
             }
           </div>
@@ -276,7 +283,7 @@ function Detail() {
                   </Swiper>
                 </>
               ) : (
-                <div>관련 영상이 없습니다.</div>
+                <div className="noFind">관련 영상이 없습니다.</div>
               )}
             </div>
           </div>
@@ -316,7 +323,7 @@ function Detail() {
                     </Swiper>
                   </>
                 ) : (
-                  <p>출연진 정보를 조회할 수 없습니다.</p>
+                  <div className="noFind">출연진 정보를 조회할 수 없습니다.</div>
                 )
               }
             </div>
@@ -345,7 +352,7 @@ function Detail() {
                       <SwiperSlide className="list" key={idx}>
                         <div className="cover">
                           <img src={`https://image.tmdb.org/t/p/w185${recommendation.poster_path}`} alt={`${recommendation.title} 포스터`} />
-                          <a href={`/detail/movie/${recommendation.id}`}>
+                          <a href={`/movieDetail/${recommendation.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
                               <button><FontAwesomeIcon icon={faThumbsUp} /></button>
@@ -359,7 +366,7 @@ function Detail() {
                   </Swiper>
                 </>
               ) : (
-                <div>유사한 영상이 없습니다.</div>
+                <div className="noFind">유사한 영상이 없습니다.</div>
               )}
             </div>
           </div>

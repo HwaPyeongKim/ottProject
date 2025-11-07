@@ -15,6 +15,7 @@ import logo from "../images/84584584584.png"
 import Mypage from './member/Mypage'
 
 function Header() {
+  const navigate = useNavigate();
   const loginUser = useSelector(state=>state.user);
 
   const url = window.location.href;
@@ -22,8 +23,8 @@ function Header() {
   const pathParts = url.split("/").filter(Boolean);
   const firstPath = pathParts[2];
 
-  const [imgSrc, setImgSrc] = useState('')
-  const navigate = useNavigate()
+  const [imgSrc, setImgSrc] = useState("");
+  const [keyword, setKeyword] = useState("");
 
   const [open, setOpen] = useState(false);
 
@@ -45,6 +46,12 @@ function Header() {
     },[]
   )
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && keyword.trim() !== "") {
+      navigate(`/search/${encodeURIComponent(keyword)}`);
+    }
+  };
+
   return (
     <header>
       <div className="logo">
@@ -58,7 +65,7 @@ function Header() {
       </ul>
       <div className="search">
         {/* <FontAwesomeIcon icon={faMagnifyingGlass} /> */}
-        <input type="text" placeholder="영화 또는 TV 프로그램 검색" />
+        <input type="text" value={keyword} placeholder="영화 또는 TV 프로그램 검색" onChange={(e) => setKeyword(e.currentTarget.value)} onKeyDown={handleKeyDown} />
       </div>
       <div className="userinfo">
         {

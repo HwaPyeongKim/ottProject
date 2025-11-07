@@ -12,9 +12,10 @@ import Header from "./component/Header";
 
 import Main from "./component/Main";
 
-import Detail from "./component/Detail";
+import Search from "./component/Search";
 
 import Movie from "./component/movie/Main";
+import MovieDetail from "./component/movie/Detail";
 
 import BoardMain from "./component/board/BoardMain";
 import WriteForm from "./component/board/WriteForm";
@@ -32,10 +33,11 @@ function App() {
 
         <Routes>
             <Route path="/" element={<Main />} />
+            <Route path="/search/:keyword" element={<Search />} />
             <Route path="/movie" element={<Movie />} />
             <Route path="/community" element={<BoardMain />} />
             <Route path="/writeForm" element={<WriteForm />} />
-            <Route path="/detail/:type/:id" element={<Detail />} />
+            <Route path="/movieDetail/:id" element={<MovieDetail />} />
             <Route path="/test" element={<ModalTest />} />
         </Routes>
       </div>
