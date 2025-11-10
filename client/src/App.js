@@ -46,7 +46,7 @@ function App() {
             <Route path="/" element={<Main />} />
             <Route path="/search/:keyword" element={<Search />} />
             <Route path="/movie" element={<Movie />} />
-            <Route path="/movieDetail/:id" element={<MovieDetail />} />
+            <Route path="/movie/Detail/:id" element={<MovieDetail />} />
 
             <Route path="/community" element={<BoardMain />} />
             <Route path="/writeForm" element={<WriteForm />} />
