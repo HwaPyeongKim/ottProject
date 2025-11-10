@@ -2,18 +2,16 @@ import React, { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 
 import CommentModalContent from './CommentModalContent';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 Modal.setAppElement('#root');
 
-function Board(props) {
-
-    useEffect(
-        ()=> {
-            console.log("Board props:", props);
-            console.log("board data:", props.board);
-        }, []
-    )
-    const [isOpen, setIsOpen] = useState(false);
+function Board(props) {    
+    const [isOpen, setIsOpen] = useState(false);    
+    const closeModal = () => setIsOpen(false);
+    const loginUser = useSelector(state => state.user);
+    const [likeList, setLikeList] = useState([]);
 
     const customStyles = {
         overlay: { backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", zIndex: 1000 },
@@ -50,8 +48,25 @@ function Board(props) {
         return `${Math.floor(days / 365)}년 전`;
     }
 
-    const closeModal = () => setIsOpen(false);
+    useEffect(
+        ()=>{
+            console.log("Board props:", props);
+            console.log("board data:", props.board);          
 
+            axios.get(`/api/post/getLikeList`, {params:{postid:props.board.id}})
+            .then((result)=>{
+                setLikeList([...result.data.likeList]);
+            }).catch((err)=>{console.error(err)})
+            
+        },[props.board]
+    )
+
+    async function onLike(){
+        let result = await axios.post('/api/post/addlike', { postid: props.board.id, userid: loginUser.id })
+
+        result = await axios.get('/api/post/getLikeList', {params:{postid:props.board.id}})
+        setLikeList( [ ...result.data.likeList ] );
+    }
 
     return (
         <div className="comment-section-container"> 
@@ -75,12 +90,19 @@ function Board(props) {
                         </div>
                     </div>
                     <div className="likes-replies">
-                        <span>좋아요 23</span>
+                        <span>좋아요 {likeList.length}</span>
                         <span>댓글 0</span>
                     </div>
                 </div>
                 <div className="comment-actions">                    
                     <div className="action-buttons">
+                        {
+                            likeList.some((like) => like.userid === loginUser.id)? (
+                                <button className="icon-button" onClick={() => onLike()}>❤️</button>
+                            ) : (
+                                <button className="icon-button" onClick={() => onLike()}>🤍</button>
+                            )
+                        }
                         <button className="icon-button">👍</button>
                         <button className="icon-button">💬</button>
                     </div>

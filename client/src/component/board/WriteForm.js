@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
@@ -11,6 +11,15 @@ function WriteForm() {
     const [title, setTitle] = useState();
     const [content, setContent] = useState();
 
+    useEffect(
+        ()=>{
+            if(loginUser?.nickname){
+                setNickname(loginUser.nickname);
+            }else{
+                setNickname('');
+            }
+        },[]
+    )
 
     function onSubmit(){
         if( !loginUser.userid ){ 
