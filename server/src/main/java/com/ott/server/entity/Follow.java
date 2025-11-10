@@ -1,9 +1,6 @@
 package com.ott.server.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -15,5 +12,13 @@ public class Follow {
     private int id;
     private int ffrom;
     private int fto;
+
+    @ManyToOne
+    @JoinColumn(name = "ffrom", insertable = false, updatable = false)
+    private Member fromMember;
+
+    @ManyToOne
+    @JoinColumn(name = "fto", insertable = false, updatable = false)
+    private Member toMember;
 
 }

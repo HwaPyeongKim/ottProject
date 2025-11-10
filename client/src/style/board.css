@@ -7,11 +7,11 @@
   color: #1a1a1a;
 }
 
-.comment-section-container h2, label{
+.comment-section-container h2, .comment-section-container label{
     color: white;
 }
 
-.comment-section-container p, span{
+.comment-section-container p, .comment-section-container span{
     color: #1a1a1a;
 }
 
