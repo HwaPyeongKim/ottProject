@@ -48,4 +48,8 @@ public class AdminService {
         result.put("key", key);
         return result;
     }
+
+    public void writeQna(Qna qna) {
+        qr.save(qna);
+    }
 }

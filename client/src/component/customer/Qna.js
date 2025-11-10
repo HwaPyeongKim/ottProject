@@ -61,13 +61,17 @@ function Qna() {
         <button className="btn btn-primary" onClick={() => onPageMove(1)}>
           검색
         </button>
+        {/* 문의하기 버튼 추가 */}
+        <button className="btn btn-success" onClick={() => navigate('/qnaWrite')}>
+          문의하기
+        </button>
       </div>
 
       {/* Q&A 리스트 테이블 */}
       <div className="qna-table">
         <div className="qna-header">
           <div className="col">번호</div>
-          <div className="col">제목</div>
+          <div className="col flex3 title" style={{textAlign:"center"}}>제목</div>
           <div className="col">작성자</div>
           <div className="col">답변</div>
           <div className="col">작성일</div>
@@ -81,8 +85,8 @@ function Qna() {
               onClick={() => navigate(`/qnaView/${qna.qidx}`)}
             >
               <div className="col">{qna.qidx}</div>
-              <div className="col flex3 title">{qna.title}</div>
-              <div className="col">{qna.userid}</div>
+              <div className="col flex3 title" onClick={() => navigate(`/qnaView/${qna.qidx}`)}>{qna.title}</div>
+              <div className="col">{qna.member.nickname}</div>
               <div className="col">{qna.reply ? 'Y' : 'N'}</div>
               <div className="col">{qna.writedate.substring(2, 10)}</div>
             </div>

@@ -28,7 +28,7 @@ public class Qna {
     private String security;
 
     @ManyToOne
-    @JoinColumn(name = "member_midx")
+    @JoinColumn(name = "midx", insertable = false, updatable = false)
     private Member member;
 
 }
