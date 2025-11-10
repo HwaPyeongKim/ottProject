@@ -231,10 +231,7 @@ function Detail() {
                           return (
                             <li key={`${type.key}-${idx}`}>
                               {ottInfo ? (
-                                <img
-                                  src={require(`../../images/${ottInfo.label}.jpeg`)}
-                                  alt={`${provider.provider_name} 로고`}
-                                />
+                                <img src={require(`../../images/${ottInfo.label}.jpeg`)} alt={`${provider.provider_name} 로고`} />
                               ) : (
                                 <span>{provider.provider_name}</span>
                               )}

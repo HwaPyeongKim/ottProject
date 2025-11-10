@@ -1,5 +1,4 @@
 .content_wrapper {display: flex; justify-content: space-between;}
-.content_info .noFind {padding: 100px !important; background: #0c131e; color: #fff; font-weight: bold; text-align: center;}
 .content_info .bottom {display: flex; justify-content: space-between; margin-top: 30px;}
 .content_info .left {flex: 3; margin-right: 20px;}
 .content_info .right {flex: 1;}
