@@ -35,6 +35,7 @@ function Header() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    setOpen(false);
     console.log('로그인유저 : ' + loginUser.midx)
     if (!loginUser.profileimg) return;
     axios.get(`/api/file/url/${loginUser.profileimg}`)
@@ -81,7 +82,7 @@ function Header() {
             {open && <Mypage onClose={() => setOpen(false)} />}
             </>
           ):
-          (<FontAwesomeIcon icon={faUser} onClick={ ()=>{ setOpen(true) }}/>)
+          (<FontAwesomeIcon icon={faUser} onClick={ ()=>{ navigate('/login') }}/>)
         }
       </div>
 

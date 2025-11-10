@@ -52,7 +52,7 @@ public class MemberController {
     }
 
     @PostMapping("/emailcheck")
-    public HashMap<String, Object> emailcheck(@RequestParam String email){
+    public HashMap<String, Object> emailcheck(@RequestParam("email") String email){
         HashMap<String, Object> result = new HashMap<>();
         Member member = ms.checkEmail(email);
         if(member == null){
@@ -64,7 +64,7 @@ public class MemberController {
     }
 
     @PostMapping("/nicknamecheck")
-    public HashMap<String, Object> nicknamecheck(@RequestParam String nickname){
+    public HashMap<String, Object> nicknamecheck(@RequestParam("nickname") String nickname){
         HashMap<String, Object> result = new HashMap<>();
         Member member = ms.checkNickname(nickname);
         if(member == null){
@@ -226,5 +226,33 @@ public class MemberController {
         return result;
     }
 
+    @GetMapping("/getList")
+    public HashMap<String, Object> getList(@RequestParam("midx") int midx) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("myList", ms.getList(midx));
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @GetMapping("/getFollowings")
+    public HashMap<String, Object> getFollowings(@RequestParam("midx") int midx) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("followings", ms.getFollowings(midx));
+        return result;
+    }
+
+    @GetMapping("/getFollowers")
+    public HashMap<String, Object> getFollowers(@RequestParam("midx") int midx) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("followers", ms.getFollowers(midx));
+        return result;
+    }
+
+    @GetMapping("/getFollowMember")
+    public HashMap<String, Object> getFollowMember(@RequestParam("followMemberId") int midx) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("followMember", ms.getFollowMember(midx));
+        return result;
+    }
 
 }

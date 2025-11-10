@@ -34,6 +34,7 @@ public class JWTUtil {
     }
 
     public static Map<String, Object> validateToken(String accessToken) throws CustomJWTException {
+        System.out.println("---------------------------------------------validateToken");
         Map<String, Object> claim = null;
         SecretKey key = null;
         try {

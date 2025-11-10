@@ -23,6 +23,15 @@ import ModalTest from "./component/board/ModalTest";
 import Company from "./component/customer/Company";
 import Qna from "./component/customer/Qna";
 
+//---------------------------------------------------- dg
+import Login from "./component/member/Login";
+import Join from "./component/member/Join";
+import MyList from "./component/member/MyList";
+import Myfollow from "./component/member/Myfollow";
+import InsertList from "./component/member/InsertList";
+import FollowMemberView from "./component/member/FollowMemberView";
+//---------------------------------------------------- dg
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -46,6 +55,14 @@ function App() {
             <Route path="/company" element={<Company />} />
             <Route path="/qna" element={<Qna />} />
 
+            {/* dg */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/join" element={<Join />} />
+            <Route path="/mylist" element={<MyList />} />
+            <Route path="/myfollow" element={<Myfollow />} />
+            <Route path="/insertList" element={<InsertList />} />
+            <Route path="/followMemberView/:followMemberId" element={<FollowMemberView />} />
+            {/* dg */}
         </Routes>
       </div>
     </div>
