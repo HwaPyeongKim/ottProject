@@ -38,6 +38,22 @@ function Main() {
     "upcoming": setComing,
   };
 
+  const ottInfos = [
+    {key: 8, label: "netflix", link: "https://www.netflix.com/search?q="},
+    {key: 1796, label: "netflixbasicwithads", link: "https://www.netflix.com/search?q="},
+    {key: 356, label: "wavve", link: "https://www.wavve.com/search?searchWord="},
+    {key: 97, label: "watcha", link: "https://watcha.com/search?query="},
+    {key: 337, label: "disneyplus", link: "https://www.disneyplus.com/ko-kr/search?q="}, // 디즈니는 검색이 안됨
+    {key: 2, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
+    {key: 350, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
+    {key: 9, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+    {key: 10, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+    {key: 119, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+    {key: 3, label: "play", link: "https://play.google.com/store/search?q="}, // 구글플레이는 우리나라에서 안된다는데 다시 확인 필요
+    {key: 1883, label: "tving", link: "https://www.tving.com/search?query="},
+    {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
+  ]
+
   async function findMovies(target) {
     try {
       const result = await axios.get(`${baseUrl}/movie/${target}?language=ko-KR&region=KR&page=1&api_key=${process.env.REACT_APP_KEY}`);
@@ -103,22 +119,16 @@ function Main() {
                     {
                       item.providers ? (
                         <ul>
-                          {item.providers.map((provider)=>(
-                            <li>
-                              {provider.provider_id === 8 ? <button>넷플릭스</button> : null}
-                              {provider.provider_id === 1796 ? <button>넷플릭스 ad</button> : null}
-                              {provider.provider_id === 356 ? <button>웨이브</button> : null}
-                              {provider.provider_id === 97 ? <button>왓챠</button> : null}
-                              {provider.provider_id === 337 ? <button>디즈니</button> : null}
-                              {provider.provider_id === 2 ? <button>애플</button> : null}
-                              {provider.provider_id === 350 ? <button>애플</button> : null}
-                              {provider.provider_id === 9 ? <button>아마존 프라임 비디오</button> : null}
-                              {provider.provider_id === 10 ? <button>아마존 비디오</button> : null}
-                              {provider.provider_id === 119 ? <button>아마존 프라임 비디오</button> : null}
-                              {provider.provider_id === 3 ? <button>구글</button> : null}
-                              {provider.provider_id === 1883 ? <button>TVING</button> : null}
-                            </li>
-                          ))}
+                          {item.providers.map((provider, pidx)=>{
+                            const ott = ottInfos.find(info => info.key === provider.provider_id);
+                            if (!ott) return null;
+                            
+                            return (
+                              <li key={pidx}>
+                                <img src={require(`../../images/${ott.label}.jpeg`)} alt={`${ott.label} 로고`} />
+                              </li>
+                            )
+                          })}
                         </ul>
                       )
                       : null
@@ -144,6 +154,23 @@ function Main() {
                       <button><FontAwesomeIcon icon={faBookmark} /></button>
                       <button><FontAwesomeIcon icon={faThumbsUp} /></button>
                     </div>
+                    {
+                      item.providers ? (
+                        <ul>
+                          {item.providers.map((provider, pidx)=>{
+                            const ott = ottInfos.find(info => info.key === provider.provider_id);
+                            if (!ott) return null;
+                            
+                            return (
+                              <li key={pidx}>
+                                <img src={require(`../../images/${ott.label}.jpeg`)} alt={`${ott.label} 로고`} />
+                              </li>
+                            )
+                          })}
+                        </ul>
+                      )
+                      : null
+                    }
                   </a>
                 </div>
               </div>

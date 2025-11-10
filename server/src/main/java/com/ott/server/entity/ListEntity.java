@@ -9,7 +9,8 @@ import java.sql.Timestamp;
 
 @Entity
 @Data
-public class List {
+@Table(name = "list")
+public class ListEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

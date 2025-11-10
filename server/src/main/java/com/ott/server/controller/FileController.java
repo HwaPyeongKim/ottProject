@@ -28,4 +28,16 @@ public class FileController{
 
         return result;
     }
+
+    @GetMapping("/imgUrl/{fidx}")
+    public HashMap<String, Object> getFollowImg(@PathVariable("fidx") int fidx){
+        FileEntity fileentity = sus.getFile(fidx);
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("fidx", fileentity.getFidx());
+        result.put("image", sus.getFileUrl(fileentity.getPath()));
+        result.put("filename", fileentity.getOriginalname());
+
+        return result;
+    }
 }

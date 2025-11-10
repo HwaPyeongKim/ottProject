@@ -7,18 +7,19 @@ import { loginAction } from '../../store/userSlice';
 
 function Login() {
 
-    const [userid, setUserid] = useState('')
+    const [email, setEmail] = useState('')
     const [pwd, setPwd] = useState('')
     const navigate = useNavigate()
     const cookies = new Cookies()
     const dispatch = useDispatch()
 
     function onLoginlocal(){
-        if( !userid ){ return alert('아이디를 입력하세요')}
+        if( !email ){ return alert('이메일을 입력하세요')}
         if( !pwd ){ return alert('패스워드를 입력하세요')}
 
-        axios.post('/api/member/login', null, {params:{ username:userid, password:pwd }})
+        axios.post('/api/member/login', null, { params:{username:email, password:pwd} })
         .then((result)=>{   
+            console.log(result.data)
             if(result.data.error == 'ERROR_LOGIN'){
                 return alert('이메일과 패스워드를 확인하세요')
             }else{
@@ -36,7 +37,7 @@ function Login() {
                 <div className='memberform'>
                     <div className='field'>
                         <label style={{color:'white'}}>USERID</label>
-                        <input type='text' value={userid} onChange={(e)=>{setUserid( e.currentTarget.value)}}/>
+                        <input type='text' value={email} onChange={(e)=>{setEmail( e.currentTarget.value)}}/>
                     </div>
                     <div className='field'>
                         <label style={{color:'white'}}>PASSWORD</label>

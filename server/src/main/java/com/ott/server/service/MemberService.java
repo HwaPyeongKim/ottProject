@@ -1,13 +1,18 @@
 package com.ott.server.service;
 
 
+import com.ott.server.entity.Follow;
+import com.ott.server.entity.ListEntity;
 import com.ott.server.entity.Member;
+import com.ott.server.repository.FollowRepository;
+import com.ott.server.repository.ListEntityRepository;
 import com.ott.server.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +21,8 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository mr;
+    private final ListEntityRepository ler;
+    private final FollowRepository fr;
 
     public Member checkEmail(String email) {
         return mr.findByEmail(email);
@@ -38,7 +45,8 @@ public class MemberService {
     public void updateMember(Member member) {
         Optional<Member> updateMember = mr.findByMidx(member.getMidx());
         Member mem = updateMember.get();
-
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
+        mem.setPwd(pe.encode(member.getPwd()));
         mem.setEmail(member.getEmail());
         mem.setNickname(member.getNickname());
         mem.setPhone(member.getPhone());
@@ -47,5 +55,22 @@ public class MemberService {
         mem.setAddress2(member.getAddress2());
         mem.setProfileimg(member.getProfileimg());
         mem.setProfilemsg(member.getProfilemsg());
+    }
+
+    public List<ListEntity> getList(int midx) {
+        return ler.findByMidx(midx);
+    }
+
+    public List<Follow> getFollowings(int midx) {
+        return fr.findByFromMember_Midx(midx);
+    }
+
+    public List<Follow> getFollowers(int midx) {
+        return fr.findByToMember_Midx(midx);
+    }
+
+    public Optional<Member> getFollowMember(int midx) {
+        Optional<Member> member = mr.findByMidx(midx);
+        return member;
     }
 }

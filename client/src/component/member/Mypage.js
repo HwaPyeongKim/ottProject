@@ -3,7 +3,7 @@ import axios from 'axios'
 import {Cookies, useCookies} from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
-import { loginAction } from '../../store/userSlice';
+import { loginAction, logoutAction } from '../../store/userSlice';
 import DaumPostcode from "react-daum-postcode";
 import Modal from 'react-modal'
 import '../../style/mypageModal.css'
@@ -13,7 +13,8 @@ function Mypage({onClose}) {
 
     const loginUser = useSelector(state=>state.user)
     const [view, setView] = useState("menu")
-
+    const [pwd, setPwd] = useState('')
+    const [pwdChk, setPwdChk ] = useState('')
     const [nickname, setNickname] = useState('')
     const [email, setEmail] = useState('')
     const [phone, setPhone] = useState('')
@@ -32,9 +33,33 @@ function Mypage({onClose}) {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
+    useEffect(()=>{
+        if(loginUser){
+            setEmail(loginUser.email || '')
+            setNickname(loginUser.nickname || '')
+            setPhone(loginUser.phone || '')
+            setZipnum(loginUser.zipnum || '')
+            setAddress1(loginUser.address1 || '')
+            setAddress2(loginUser.address2 || '')
+            setProfilemsg(loginUser.profilemsg || '')
+            if( loginUser.profileimg ){
+                setImgSrc(loginUser.profileimg)
+            }else{
+                setImgSrc('http://localhost:8070/public/user.png')
+            }
+            setProfileimg(loginUser.profileimg);
+            if( loginUser.provider == 'KAKAO'){
+                setPwd('KAKAO')
+                setPwdChk('KAKAO')
+            }
+        }
+    }, [loginUser]);
+
     async function updateUser(){
         //각 입력란 밸리데이션
         if(email===''){ return alert('이메일을 입력하세요');}
+        if( loginUser.provider != 'KAKAO' && !pwd){ return alert('패스워드를 입력하세요')}
+        if( loginUser.provider != 'KAKAO' && pwd!=pwdChk){ return alert('패스워드확인이 일치하지 않습니다')}
         if(nickname===''){ return alert('닉네임을 입력하세요');}
         if(phone===''){ return alert('닉네임을 입력하세요');}
         if(zipnum===''){ return alert('닉네임을 입력하세요');}
@@ -62,19 +87,25 @@ function Mypage({onClose}) {
         }
 
         // 회원정보 수정
-        let result = await jaxios.post('/api/member/updateMember', { midx:loginUser.midx, email, nickname, phone, zipnum, address1, address2, profileimg, profilemsg });
+        let result = await jaxios.post('/api/member/updateMember', { midx:loginUser.midx, email, pwd, nickname, phone, zipnum, address1, address2, profileimg, profilemsg });
 
         if( result.data.msg === 'ok'){
             alert('회원 정보 수정이 완료되었습니다.')
-        
+            console.log('이메일 : ', email)
+            console.log('비밀번호 : ', loginUser.pwd)
+            console.log('액세스 토큰 : ', loginUser.accessToken)
+            console.log('리프레시 토큰 : ', loginUser.refreshToken)
             // 리듀스, 쿠키 수정, 토큰 수정(재로그인)
-            let res = await axios.post('/api/member/login', null, { params:{username:email, password:loginUser.pwd} })    
-            console.log(res.data)
+            let res = await axios.post('/api/member/login', null, { params:{username:email, password:pwd} })    
+            console.log("재로그인 후 데이터 : ", res.data)
             if( res.data.error === 'ERROR_LOGIN'){
                 return alert('이메일과 패스워드를 확인하세요')
             }else{
                 cookies.set('user', JSON.stringify( res.data ) , {path:'/', })
                 dispatch( loginAction( res.data ) )
+                if(onClose){
+                    onClose();
+                }
                 navigate('/');
             }
         }
@@ -122,13 +153,20 @@ function Mypage({onClose}) {
         setIsOpen(false);
     }
 
+    function onLogout(){
+        dispatch( logoutAction() );
+        cookies.remove('user', {path:'/',} )
+        alert('로그아웃되엇습니다')
+        navigate('/')
+    }
+
     return (
         <>
         <div className="modal-backdrop" onClick={onClose}>
             <div className="modal-container" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
                 <h2>
-                    {view === "menu" && "Hi"}
+                    {view === "menu" && `${loginUser.nickname} 님`}
                     {view === "profile" && "회원 정보 변경"}
                     {view === "password" && "암호 변경"}
                 </h2>
@@ -138,37 +176,51 @@ function Mypage({onClose}) {
                 <div className="modal-content">
                 {view === "menu" && (
                 <>
-                    <div style={{display:"flex", justifyContent:'center'}}>
-                        <div>{loginUser.email}</div>&nbsp;&nbsp;|&nbsp;&nbsp;
-                        <div onClick={() => setView("profile")} style={{cursor:'pointer'}}>회원 정보 변경</div>&nbsp;&nbsp;|&nbsp;&nbsp;
-                        <div onClick={() => setView("password")} style={{cursor:'pointer'}}>암호 변경</div>
+                    <div>
+                        <div onClick={()=>{ onClose(); navigate('/mylist') }}>마이리스트</div>
                     </div>
                     <hr />
-                    <h3>🎬 동영상 서비스</h3>
-                    <p>Netflix, Amazon Prime Video, Disney Plus</p>
-
-                    <h3>👤 로그인 관리자</h3>
-
-                    <h3>🖥 TV에 연결</h3>
-
-                    <h3>🌍 국가</h3>
-                    <p>대한민국</p>
-
-                    <h3>🈯 언어 설정</h3>
-                    <p>한국어</p>
-
-                    <h3>❓ FAQ</h3>
-
-                    <button className="logout-btn">로그아웃</button>
-                    <button className="delete-btn">계정 영구 삭제</button>
+                    <div style={{display:"flex", justifyContent:'center'}}>
+                        <div onClick={()=>{ onClose(); navigate('/myfollow') }}>팔로우&nbsp;&nbsp;|&nbsp;&nbsp;팔로워</div>
+                    </div>
+                    <hr />
+                    <div style={{display:"flex", justifyContent:'center'}}>
+                        <div onClick={() => setView("profile")} style={{cursor:'pointer'}}>회원 정보 변경</div>&nbsp;&nbsp;
+                        {/* <div onClick={() => setView("password")} style={{cursor:'pointer'}}>암호 변경</div> */}
+                    </div>
+                    <hr />
+                
+                    <button className="logout-btn" onClick={()=>{onLogout()}}>로그아웃</button>
+                    {/* <button className="delete-btn">계정 영구 삭제</button> */}
                 </>
                 )}
+
                 {/* 회원 정보 변경 화면 */}
                     {view === "profile" && (
                         <div>
                             <div>
                                 <label style={{color:'white'}}>E-MAIL</label>
                                 <input type='text' value={email} onChange={(e)=>{setEmail(e.currentTarget.value)}}/>
+                            </div>
+                            <div className='field'>
+                                <label>PASSWORD</label>
+                                {
+                                    (loginUser.provider==='KAKAO')?(
+                                        <input type="password" value={pwdChk} disabled/>
+                                    ):(
+                                        <input type="password" value={pwd} onChange={
+                                            (e)=>{ setPwd(e.currentTarget.value )}
+                                        }/>
+                                    )
+                                }   
+                            </div>
+                            <div className='field'>
+                                <label>RETYPE PW</label>
+                                {
+                                    (loginUser.provider==='KAKAO')?
+                                    (<input type="password" readOnly/>):
+                                    (<input type="password"  value={pwdChk} onChange={(e)=>{setPwdChk(e.currentTarget.value)}}/>)
+                                }
                             </div>
                             <div>
                                 <label style={{color:'white'}}>NAME</label>
@@ -214,7 +266,7 @@ function Mypage({onClose}) {
                         </div>
                     )}
 
-                {/* 암호 변경 화면 */}
+                {/* 암호 변경 화면
                     {view === "password" && (
                         <div>
                         <label>현재 비밀번호</label>
@@ -226,7 +278,7 @@ function Mypage({onClose}) {
                         <button onClick={ ()=>{ updatePwd() } }>변경</button>
                         <button onClick={() => setView("menu")}>뒤로</button>
                         </div>
-                    )}
+                    )} */}
                 </div>
             </div>
         </div>
