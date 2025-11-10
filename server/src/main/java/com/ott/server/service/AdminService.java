@@ -33,14 +33,14 @@ public class AdminService {
             int count = qr.findAll().size();
             paging.setTotalCount(count);
             paging.calPaging();
-            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "indate"));
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "writedate"));
             Page<Qna> list = qr.findAll( pageable );
             result.put("qnaList", list.getContent());
         }else{
             int count = qr.findByTitleContainingOrContentContaining(key, key).size();
             paging.setTotalCount(count);
             paging.calPaging();
-            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "indate"));
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "writedate"));
             Page<Qna> list = qr.findAllByTitleContainingOrContentContaining( key, key, pageable );
             result.put("qnaList", list.getContent());
         }

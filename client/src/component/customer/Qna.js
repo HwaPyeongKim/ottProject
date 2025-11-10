@@ -14,7 +14,7 @@ function Qna() {
 
   useEffect(() => {
     axios
-      .get('/admin/getQnaList', { params: { page: 1, key } })
+      .get('/api/admin/getQnaList', { params: { page: 1, key } })
       .then((result) => {
         setQnaList(result.data.qnaList);
         setPaging(result.data.paging);
@@ -31,7 +31,7 @@ function Qna() {
 
   function onPageMove(page) {
     axios
-      .get(`/admin/getQnaList`, { params: { page, key } })
+      .get(`/api/admin/getQnaList`, { params: { page, key } })
       .then((result) => {
         setQnaList([...result.data.qnaList]);
         setPaging(result.data.paging);
