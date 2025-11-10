@@ -8,6 +8,7 @@ import "../../style/board.css";
 
 
 function BoardMain() {
+    const loginUser = useSelector(state=>state.user);
     const [boardList, setBoardList] = useState([]);
     const navigate = useNavigate();
 

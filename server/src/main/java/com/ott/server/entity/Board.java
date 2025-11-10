@@ -29,7 +29,7 @@ public class Board {
     private String deleteyn;
 
     @ManyToOne
-    @JoinColumn(name = "member_midx")
-    private Member member;
+    @JoinColumn(name = "midx", insertable = false, updatable = false)
+    private Member boardMember;
 
 }

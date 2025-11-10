@@ -4,6 +4,7 @@ import Modal from 'react-modal'
 import CommentModalContent from './CommentModalContent';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import jaxios from '../../util/JWTUtil';
 
 Modal.setAppElement('#root');
 
@@ -12,6 +13,7 @@ function Board(props) {
     const closeModal = () => setIsOpen(false);
     const loginUser = useSelector(state => state.user);
     const [likeList, setLikeList] = useState([]);
+    const [imgSrc, setImgSrc] = useState('');
 
     const customStyles = {
         overlay: { backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", zIndex: 1000 },
@@ -51,7 +53,8 @@ function Board(props) {
     useEffect(
         ()=>{
             console.log("Board props:", props);
-            console.log("board data:", props.board);          
+            // console.log("board data:", props.board.member);          
+            console.log("board data:", props.board.boardMember);
 
             axios.get(`/api/post/getLikeList`, {params:{postid:props.board.id}})
             .then((result)=>{
@@ -60,6 +63,16 @@ function Board(props) {
             
         },[props.board]
     )
+
+    useEffect(() => {
+        if (!props.board.fidx) return;
+
+        axios.get(`/api/file/url/${props.board.fidx}`)
+            .then((res) => {
+                setImgSrc(res.data.image); // 실제 S3 URL
+            })
+            .catch((err) => console.error(err));
+    }, [props.board.fidx]);
 
     async function onLike(){
         let result = await axios.post('/api/post/addlike', { postid: props.board.id, userid: loginUser.id })
@@ -72,9 +85,9 @@ function Board(props) {
         <div className="comment-section-container"> 
             <div className="comment-item">
                 <div className="comment-header">
-                    <img className="profile-image" src={props.board.member.profileimg} alt="프로필 이미지" />
+                    <img className="profile-image" src={props.board.boardMember.profileimg} alt="프로필 이미지" />
                     <div className="user-info">
-                        <span className="username">{props.board.member.nickname}</span>
+                        <span className="username">{props.board.boardMember.nickname}</span>
                         <span className="timestamp">
                             {timeAgo(props.board.writedate)}
                         </span>
@@ -83,7 +96,7 @@ function Board(props) {
 
                 <div className="comment-body">
                     <div className="review-content">
-                        <img className="review-image" src={props.board.member.profileimg} alt="영화포스터 / 자유게시물 등" />
+                        <img className="review-image" src={imgSrc} alt="영화포스터 / 자유게시물 등" />
                         <div>
                             <p className="review-text">{props.board.title}</p>
                             <p className="review-text">{props.board.content}</p>

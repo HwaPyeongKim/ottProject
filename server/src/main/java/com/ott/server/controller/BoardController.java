@@ -1,9 +1,12 @@
 package com.ott.server.controller;
 
 import com.ott.server.entity.Board;
+import com.ott.server.entity.FileEntity;
 import com.ott.server.service.BoardService;
+import com.ott.server.service.S3UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 
@@ -25,6 +28,25 @@ public class BoardController {
     public HashMap<String, Object> writeForm(@RequestBody Board board){
         HashMap<String, Object> result = new HashMap<>();
         result.put("board", bs.insertBoard(board));
+        return result;
+    }
+
+    @Autowired
+    S3UploadService sus;
+
+    @PostMapping("/upload")
+    public HashMap<String, Object> fileUpload(@RequestParam("image") MultipartFile file) {
+        HashMap<String , Object> result = new HashMap<>();
+        try {
+            int fidx = sus.saveFile(file);
+            FileEntity fileEntity = sus.getFile(fidx);
+
+            result.put("fidx", fileEntity.getFidx());
+            result.put("image", sus.getFileUrl(fileEntity.getPath()));
+            result.put("filename", fileEntity.getOriginalname());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return result;
     }
 
