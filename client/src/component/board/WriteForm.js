@@ -7,7 +7,7 @@ function WriteForm() {
     
     return (
         <div className="write-form-container">
-            <h2>글쓰기</h2>
+            {/* <h2>글쓰기</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>제목</label>
@@ -29,7 +29,7 @@ function WriteForm() {
                 </div>
                 <button type="submit">등록</button>
                 <button type="button" onClick={()=>navigate("/board")}>취소</button>
-            </form>
+            </form> */}
         </div>
     )
 }
