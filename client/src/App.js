@@ -20,6 +20,8 @@ import MovieDetail from "./component/movie/Detail";
 import BoardMain from "./component/board/BoardMain";
 import WriteForm from "./component/board/WriteForm";
 import ModalTest from "./component/board/ModalTest";
+import Company from "./component/customer/Company";
+import Qna from "./component/customer/Qna";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -35,10 +37,15 @@ function App() {
             <Route path="/" element={<Main />} />
             <Route path="/search/:keyword" element={<Search />} />
             <Route path="/movie" element={<Movie />} />
+            <Route path="/movieDetail/:id" element={<MovieDetail />} />
+
             <Route path="/community" element={<BoardMain />} />
             <Route path="/writeForm" element={<WriteForm />} />
-            <Route path="/movieDetail/:id" element={<MovieDetail />} />
             <Route path="/test" element={<ModalTest />} />
+
+            <Route path="/company" element={<Company />} />
+            <Route path="/qna" element={<Qna />} />
+
         </Routes>
       </div>
     </div>
