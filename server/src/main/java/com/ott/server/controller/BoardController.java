@@ -1,5 +1,6 @@
 package com.ott.server.controller;
 
+import com.ott.server.entity.BLikes;
 import com.ott.server.entity.Board;
 import com.ott.server.entity.FileEntity;
 import com.ott.server.service.BoardService;
@@ -47,6 +48,22 @@ public class BoardController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return result;
+    }
+
+    @GetMapping("/getLikeList")
+    public HashMap<String, Object> getLikeList(@RequestParam("boardid")int boardid){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("likeList", bs.getLikeList(boardid));
+        return result;
+    }
+
+    @PostMapping("/addlike")
+    public HashMap<String, Object> addLike(@RequestBody BLikes blikes){
+        HashMap<String, Object> result = new HashMap<>();
+        bs.addlike(blikes);
+        result.put("msg","ok");
+        System.out.println("blikes : " + blikes);
         return result;
     }
 

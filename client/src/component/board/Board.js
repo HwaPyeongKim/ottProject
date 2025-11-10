@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+ import React, { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 
 import CommentModalContent from './CommentModalContent';
@@ -56,7 +56,7 @@ function Board(props) {
             // console.log("board data:", props.board.member);          
             console.log("board data:", props.board.boardMember);
 
-            axios.get(`/api/post/getLikeList`, {params:{postid:props.board.id}})
+            jaxios.get(`/api/board/getLikeList`, {params: {boardid: props.board.bidx}})
             .then((result)=>{
                 setLikeList([...result.data.likeList]);
             }).catch((err)=>{console.error(err)})
@@ -75,9 +75,9 @@ function Board(props) {
     }, [props.board.fidx]);
 
     async function onLike(){
-        let result = await axios.post('/api/post/addlike', { postid: props.board.id, userid: loginUser.id })
+        let result = await jaxios.post('/api/board/addlike', { boardid: props.board.bidx, userid: loginUser.email })
 
-        result = await axios.get('/api/post/getLikeList', {params:{postid:props.board.id}})
+        result = await jaxios.get('/api/board/getLikeList', {params: {boardid: props.board.bidx}})
         setLikeList( [ ...result.data.likeList ] );
     }
 
@@ -110,13 +110,13 @@ function Board(props) {
                 <div className="comment-actions">                    
                     <div className="action-buttons">
                         {
-                            likeList.some((like) => like.userid === loginUser.id)? (
+                            likeList.some((like) => like.userid === loginUser.email)? (
                                 <button className="icon-button" onClick={() => onLike()}>❤️</button>
                             ) : (
                                 <button className="icon-button" onClick={() => onLike()}>🤍</button>
                             )
                         }
-                        <button className="icon-button">👍</button>
+                        {/* <button className="icon-button">👍</button> */}
                         <button className="icon-button">💬</button>
                     </div>
                 </div>
