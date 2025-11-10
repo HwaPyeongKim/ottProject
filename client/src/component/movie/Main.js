@@ -73,7 +73,7 @@ function Main() {
           popular.map((item, idx)=>{
             return (
               <div className="list">
-                <a href={`/detail/movie/${item.id}`} key={idx}>
+                <a href={`/movieDetail/${item.id}`} key={idx}>
                   <div>
                     <h4>{item.title}</h4>
                     <p>{item.overview}</p>
@@ -95,7 +95,7 @@ function Main() {
               <div className="list" key={idx}>
                 <div className="cover">
                   <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`} />
-                  <a href={`/detail/movie/${item.id}`}>
+                  <a href={`/movieDetail/${item.id}`}>
                     <div>
                       <button><FontAwesomeIcon icon={faBookmark} /></button>
                       <button><FontAwesomeIcon icon={faThumbsUp} /></button>
@@ -111,8 +111,10 @@ function Main() {
                               {provider.provider_id === 97 ? <button>왓챠</button> : null}
                               {provider.provider_id === 337 ? <button>디즈니</button> : null}
                               {provider.provider_id === 2 ? <button>애플</button> : null}
+                              {provider.provider_id === 350 ? <button>애플</button> : null}
                               {provider.provider_id === 9 ? <button>아마존 프라임 비디오</button> : null}
                               {provider.provider_id === 10 ? <button>아마존 비디오</button> : null}
+                              {provider.provider_id === 119 ? <button>아마존 프라임 비디오</button> : null}
                               {provider.provider_id === 3 ? <button>구글</button> : null}
                               {provider.provider_id === 1883 ? <button>TVING</button> : null}
                             </li>
@@ -137,7 +139,7 @@ function Main() {
               <div className="list" key={idx}>
                 <div className="cover">
                   <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`} />
-                  <a href={`/detail/movie/${item.id}`}>
+                  <a href={`/movieDetail/${item.id}`}>
                     <div>
                       <button><FontAwesomeIcon icon={faBookmark} /></button>
                       <button><FontAwesomeIcon icon={faThumbsUp} /></button>

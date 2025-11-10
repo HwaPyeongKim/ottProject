@@ -42,7 +42,6 @@ kakao:
   client_id: 52c265fce2ca8dde2b8caebed750d33d
   redirect_uri: http://localhost:8070/member/kakaoLogin
 
-
 cloud:
   aws:
     s3:

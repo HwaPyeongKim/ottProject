@@ -27,4 +27,8 @@ public class Qna {
     @Column( length = 5)  @ColumnDefault("'N'")
     private String security;
 
+    @ManyToOne
+    @JoinColumn(name = "member_midx")
+    private Member member;
+
 }

@@ -3,9 +3,7 @@ package com.ott.server.controller;
 import com.ott.server.entity.Board;
 import com.ott.server.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -23,5 +21,11 @@ public class BoardController {
         return result;
     }
 
+    @PostMapping("/writeForm")
+    public HashMap<String, Object> writeForm(@RequestBody Board board){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("board", bs.insertBoard(board));
+        return result;
+    }
 
 }

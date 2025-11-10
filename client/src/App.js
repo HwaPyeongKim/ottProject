@@ -12,22 +12,16 @@ import Header from "./component/Header";
 
 import Main from "./component/Main";
 
-import Detail from "./component/Detail";
+import Search from "./component/Search";
 
 import Movie from "./component/movie/Main";
+import MovieDetail from "./component/movie/Detail";
 
 import BoardMain from "./component/board/BoardMain";
 import WriteForm from "./component/board/WriteForm";
 import ModalTest from "./component/board/ModalTest";
-
-//---------------------------------------------------- dg
-import Login from "./component/member/Login";
-import Join from "./component/member/Join";
-import MyList from "./component/member/MyList";
-import Myfollow from "./component/member/Myfollow";
-import InsertList from "./component/member/InsertList";
-import FollowMemberView from "./component/member/FollowMemberView";
-//---------------------------------------------------- dg
+import Company from "./component/customer/Company";
+import Qna from "./component/customer/Qna";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -41,19 +35,17 @@ function App() {
 
         <Routes>
             <Route path="/" element={<Main />} />
+            <Route path="/search/:keyword" element={<Search />} />
             <Route path="/movie" element={<Movie />} />
+            <Route path="/movieDetail/:id" element={<MovieDetail />} />
+
             <Route path="/community" element={<BoardMain />} />
             <Route path="/writeForm" element={<WriteForm />} />
-            <Route path="/detail/:type/:id" element={<Detail />} />
             <Route path="/test" element={<ModalTest />} />
-            {/* dg */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/join" element={<Join />} />
-            <Route path="/mylist" element={<MyList />} />
-            <Route path="/myfollow" element={<Myfollow />} />
-            <Route path="/insertList" element={<InsertList />} />
-            <Route path="/followMemberView/:followMemberId" element={<FollowMemberView />} />
-            {/* dg */}
+
+            <Route path="/company" element={<Company />} />
+            <Route path="/qna" element={<Qna />} />
+
         </Routes>
       </div>
     </div>

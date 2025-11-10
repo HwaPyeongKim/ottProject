@@ -15,7 +15,7 @@ function BoardMain() {
         ()=>{
             axios.get('/api/board/getBoardList')
             .then((result)=>{
-                console.log("boardlist : " , result.data);
+                console.log("boardlist : " , result.data.boardList);
                 setBoardList([...result.data.boardList]);
             }).catch((err)=>{})
         },[]
@@ -36,11 +36,10 @@ function BoardMain() {
                     (boardList && boardList.length != 0)?(
                         boardList
                         .map((board, idx)=>{
-                            return ( <Board key={idx}  />  )
+                            return ( <Board key={idx} board={board} />  )
                         })
                     ):(<h3>검색된 피드가 없습니다</h3>)
                 }
-                {/* <Board /> */}
             </div>
         </div>
     )
