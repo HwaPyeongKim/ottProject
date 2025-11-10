@@ -35,7 +35,6 @@ function Header() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    console.log('로그인유저 : ' + loginUser.midx)
     if (!loginUser.profileimg) return;
     axios.get(`/api/file/url/${loginUser.profileimg}`)
     .then((result) => {
