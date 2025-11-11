@@ -44,8 +44,8 @@ public class BoardService {
         }
     }
 
+
     public Board getBoard(int bidx) {
-        Board baord = (Board) blr.findByBidx(bidx);
-        return baord;
+        return br.findByBidx(bidx);
     }
 }
