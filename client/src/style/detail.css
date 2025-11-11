@@ -9,19 +9,41 @@
 .content_info .top p {margin-top: 15px;}
 .content_info .top div {margin-top: 15px;}
 .content_info .top div span {display: inline-block; margin-right: 10px;}
-.content_info .top div ul {display: flex; margin-top: 15px;}
+.content_info .top div span.star small {color:#777; font-size: 0.8em;}
+.content_info .top div ul {display: flex;}
 .content_info .top div ul li {margin-right: 10px;}
 .content_info .providers {}
 .content_info .providers > div {background: #0c131e; padding-top: 20px;}
 .content_info .providers > div h4 {padding: 0 20px; font-size: 1.1em;}
 .content_info .providers > div ul {margin-top: 20px;}
-.content_info .providers > div ul li {padding: 20px;}
+.content_info .providers > div ul li {display: flex; justify-content: space-between; align-items: center; padding: 20px;}
 .content_info .providers > div ul li:nth-child(2n-1) {background: #111924;}
+.content_info .providers > div ul li img {}
+.content_info .providers > div ul li a {padding: 15px; border-radius: 10px;}
 .content_info .synopsis p {background: #0c131e; padding: 20px;}
 .content_info .video > div, .content_info .cast > div, .content_info .recommendations > div {max-width: 1215px;}
-.content_info .cast .profile {padding: 20px 0; background: #0c131e; text-align: center;}
-.content_info .cast .profile .image_wrapper {display: inline-block; border-radius: 10px; overflow: hidden;}
+.content_info .cast .profile {background: #0c131e; text-align: center;}
+.content_info .cast .profile > div {height: 250px; padding: 20px;}
+.content_info .cast .profile .image_wrapper {display: inline-block; width: 92px; height: 138px; border-radius: 10px; overflow: hidden;}
+.content_info .cast .profile .image_wrapper img {display: inline-block; width: 100%; height: 100%;}
 .content_info .cast .profile p {margin-top: 15px;}
+.content_info .review {}
+.content_info .review h3 small {font-size: 0.8em;}
+.content_info .review .write {padding: 20px; background: #060d17;}
+.content_info .review .write .rating {font-size:1.5em;}
+.content_info .review .write .textBox {display: flex; justify-content: space-between;}
+.content_info .review .write .textBox textarea {flex: 10; height: 100px; padding: 10px; resize: none; margin-right: 10px; background: #111924; border: none; outline: none; color: #fff;}
+.content_info .review .write .textBox button {flex: 1;}
+.content_info .review .reviewList li {padding: 20px; background: #111924;}
+.content_info .review .reviewList li:nth-child(2n) {background: #0c131e;}
+.content_info .review .reviewList li p {margin-bottom: 10px;}
+.content_info .review .reviewList li p span {display: inline-block;}
+.content_info .review .reviewList li p small {color:#777; font-size: 0.8em;}
+.content_info .review .reviewList li div {display: flex; justify-content: space-between;}
+.content_info .review .reviewList li div pre {flex: 8; min-height: 50px;}
+.content_info .review .reviewList li div button {flex: 1; margin-left: 10px;}
+.content_info .review .more {margin-top: 20px;}
+.content_info .review .more button {width: 100%; height: 60px;}
 
 .content_info .right .movieInfo {}
 .content_info .right .movieInfo ul {}

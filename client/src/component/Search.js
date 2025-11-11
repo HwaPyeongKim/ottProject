@@ -89,7 +89,7 @@ function Search() {
     ()=>{
       findMovies(keyword);
       findTvs(keyword);
-    },[]
+    },[keyword]
   )
 
   return (
@@ -104,7 +104,7 @@ function Search() {
                 <div className="list" key={idx}>
                   <div className="cover">
                     <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`}/>
-                    <a href={`/movieDetail/${item.id}`}>
+                    <a href={`/movie/Detail/${item.id}`}>
                       <div>
                         <button><FontAwesomeIcon icon={faBookmark} /></button>
                         <button><FontAwesomeIcon icon={faThumbsUp} /></button>
@@ -117,7 +117,7 @@ function Search() {
 
                             return (
                               <li key={pidx}>
-                                <img src={require(`../images/${ott.label}.jpeg`)} alt={`${ott.label} 로고`} />
+                                <img src={`/images/${ott.label}.jpeg`} alt={`${ott.label} 로고`} />
                               </li>
                             );
                           })}
@@ -153,7 +153,7 @@ function Search() {
                 <div className="list" key={idx}>
                   <div className="cover">
                     <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`}/>
-                    <a href={`/tvDetail/${item.id}`}>
+                    <a href={`/tv/Detail/${item.id}`}>
                       <div>
                         <button><FontAwesomeIcon icon={faBookmark} /></button>
                         <button><FontAwesomeIcon icon={faThumbsUp} /></button>
@@ -166,7 +166,7 @@ function Search() {
 
                             return (
                               <li key={pidx}>
-                                <img src={require(`../images/${ott.label}.jpeg`)} alt={`${ott.label} 로고`} />
+                                <img src={`/images/${ott.label}.jpeg`} alt={`${ott.label} 로고`} />
                               </li>
                             );
                           })}

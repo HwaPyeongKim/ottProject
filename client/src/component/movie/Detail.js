@@ -1,11 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Navigation } from 'swiper/modules';
+import { useSelector } from "react-redux";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import axios from "axios";
+import jaxios from "../../util/JWTUtil";
+import dayjs from "dayjs";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookmark, faThumbsUp, faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faStar as solidStar, faStarHalfAlt } from "@fortawesome/free-solid-svg-icons";
+import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
+import { faBookmark, faThumbsUp, faArrowLeft, faArrowRight, faPlay, faStar } from "@fortawesome/free-solid-svg-icons";
 
 import "../../style/detail.css";
 
@@ -13,19 +18,96 @@ import "../../style/detail.css";
 function Detail() {
   const baseUrl = "https://api.themoviedb.org/3/movie";
 
+  const loginUser = useSelector(state=>state.user);
+  const [page, setPage] = useState(1);
   const {id} = useParams();
   const [item, setItem] = useState({});
-
+  const [average, setAverage] = useState(0);
+  const [content, setContent] = useState("");
+  const [reviewList, setReviewList] = useState([]);
+  const [displayRow, setDisplayRow] = useState(5);
+  const [totalCount, setTotalCount] = useState(0);
+  const [view, setView] = useState(false);
+  const [imdb, setImdb] = useState("");
+  const [rottenTomatoes, setRottenTomatoes] = useState("");
+  const [metacritic, setMetacritic] = useState("");
   const prevRef = useRef(null);
   const nextRef = useRef(null);
+  
+  const [score, setScore] = useState(0);
+  const [hover, setHover] = useState(0);
 
-  function formatRuntime(minutes) {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
+  const handleClick = (starIndex, isHalf) => {
+    const newScore = isHalf ? starIndex - 0.5 : starIndex;
+    setScore(newScore);
+  };
 
-    if (hours === 0) return `${mins}분`;
-    if (mins === 0) return `${hours}시간`;
-    return `${hours}시간 ${mins}분`;
+  const getStarIcon = (starIndex) => {
+    const current = hover || score;
+    if (current >= starIndex) return solidStar;
+    if (current >= starIndex - 0.5) return faStarHalfAlt;
+    return regularStar;
+  };
+
+  function StarRating() {
+    return (
+      <div style={{ display: "flex", flexDirection: "row", fontSize: "24px" }}>
+        {[1,2,3,4,5].map((star) => (
+          <div key={star} style={{ position: "relative", marginRight: "4px" }}>
+            <div
+              onMouseEnter={() => setHover(star - 0.5)}
+              onMouseLeave={() => setHover(0)}
+              onClick={() => handleClick(star, true)}
+              style={{
+                position: "absolute",
+                width: "50%",
+                height: "100%",
+                left: 0,
+                top: 0,
+                cursor: "pointer",
+                zIndex: 1,
+              }}
+            />
+
+            <div
+              onMouseEnter={() => setHover(star)}
+              onMouseLeave={() => setHover(0)}
+              onClick={() => handleClick(star, false)}
+              style={{
+                position: "absolute",
+                width: "50%",
+                height: "100%",
+                right: 0,
+                top: 0,
+                cursor: "pointer",
+                zIndex: 1,
+              }}
+            />
+            <FontAwesomeIcon icon={getStarIcon(star)} style={{ color: "#f39c12" }} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  function AverageRating({ avgScore }) {
+    const stars = [1, 2, 3, 4, 5];
+
+    // 별 아이콘 결정 함수
+    const getStarIcon = (star) => {
+      if (avgScore >= star) return solidStar;
+      else if (avgScore >= star - 0.5) return faStarHalfAlt;
+      else return regularStar;
+    };
+
+    return (
+      <>
+        {stars.map((star) => (
+          <FontAwesomeIcon key={star} icon={getStarIcon(star)} />
+        ))}
+        <small> ({avgScore.toFixed(1)} / 5)</small>
+      </>
+    );
   }
 
   const countryMap = {
@@ -57,12 +139,6 @@ function Detail() {
     "SG": "싱가포르"
   };
 
-  function getOttUrl(link, title) {
-    if (!link) return null;
-    const query = encodeURIComponent(title);
-    return `${link}${query}`;
-  }
-
   const YouTubeVideo = ({videoKey}) => (
     <iframe
       height="180"
@@ -74,90 +150,162 @@ function Detail() {
     />
   );
 
-  async function findItem (id) {
+  function formatRuntime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+
+    if (hours === 0) return `${mins}분`;
+    if (mins === 0) return `${hours}시간`;
+    return `${hours}시간 ${mins}분`;
+  }
+
+  function getOttUrl(link, title) {
+    if (!link) return null;
+    const query = encodeURIComponent(title);
+    return `${link}${query}`;
+  }
+
+  async function findItem() {
     try {
-      const result = await axios.get(`${baseUrl}/${id}?language=ko-KR&region=KR&api_key=${process.env.REACT_APP_KEY}`);
-      if (result.data.adult === true) {
-        
+      const {data} = await axios.get(`${baseUrl}/${id}`, {
+        params: {
+          api_key: process.env.REACT_APP_KEY,
+          language: "ko-KR",
+          region: "KR",
+          append_to_response: "videos,credits,recommendations,release_dates,watch/providers"
+        }
+      });
+      
+      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.imdb_id}&apikey=${process.env.REACT_OMDB_KEY}`);
+      console.log(omdbData);
+      // const ratingData = omdbData.data?.Ratings || [];
+
+      // const imdb = ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "N/A";
+      // const rotten = ratingData.find(r => r.Source === "Rotten Tomatoes")?.Value || "N/A";
+      // const metacritic = ratingData.find(r => r.Source === "Metacritic")?.Value || "N/A";
+
+
+      // 성인 여부 체크
+      if (data.adult === true) {
+
       }
+
       // OTT 정보
-      result.data.providers = [];
-      const providers = await axios.get(`${baseUrl}/${id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
-      if (providers.data.results && providers.data.results["KR"]) {
-        result.data.providers = providers.data.results["KR"];
+      data.providers = [];
+      if (data["watch/providers"]?.results?.KR) {
+        data.providers = data["watch/providers"].results.KR;
       }
-      // 출연진 및 제작진
-      const credits = await axios.get(`${baseUrl}/${id}/credits?api_key=${process.env.REACT_APP_KEY}`);
-      result.data.director = {};
-      result.data.cast = [];
-      // 주연배우
-      const sorted = credits.data.cast.sort(
-        (a, b) => new Date(a.order) - new Date(b.order)
-      );
-      for (let i=0; i<credits.data.cast.length; i++) {
-        let data = credits.data.cast[i];
-        if (data.known_for_department === "Acting") {
-          result.data.cast.push(data);
+
+      // 출연진 및 감독
+      data.cast = [];
+      data.director = {};
+      if (data.credits) {
+        const sortedCast = data.credits.cast.sort((a, b) => a.order - b.order);
+        for (let i = 0; i < sortedCast.length && i < 20; i++) {
+          if (sortedCast[i].known_for_department === "Acting") {
+            data.cast.push(sortedCast[i]);
+          }
         }
-        if (i === 19) break;
-      }
-      // 감독
-      for (let i=0; i<credits.data.crew.length; i++) {
-        let data = credits.data.crew[i];
-        if (data.job === "Director") {
-          result.data.director = data;
-          break;
+
+        for (let crew of data.credits.crew) {
+          if (crew.job === "Director") {
+            data.director = crew;
+            break;
+          }
         }
       }
 
-      // 예고편 및 관련 비디오 정보
-      result.data.videos = [];
-      const videos = await axios.get(`${baseUrl}/${id}/videos?api_key=${process.env.REACT_APP_KEY}`);
-      for (let i=0; i<videos.data.results.length; i++) {
-        let data = videos.data.results[i];
-        if (data.site === "YouTube") {
-          result.data.videos.push(data);
-        }
+      // 예고편
+      if (data.videos?.results?.length > 0) {
+        data.videos = data.videos.results.filter(v => v.site === "YouTube");
       }
 
-      //연령 등급
-      result.data.release_dates = {};
-      const release_dates = await axios.get(`${baseUrl}/${id}/release_dates?api_key=${process.env.REACT_APP_KEY}`);
-      for (let i=0; i<release_dates.data.results.length; i++) {
-        let data = release_dates.data.results[i];
-        if (data.iso_3166_1 === "KR") {
-          const sorted = data.release_dates.sort(
+      // 연령 등급
+      if (data.release_dates?.results) {
+        const krRelease = data.release_dates.results.find(r => r.iso_3166_1 === "KR");
+        if (krRelease) {
+          data.release_dates = krRelease.release_dates.sort(
             (a, b) => new Date(b.release_date) - new Date(a.release_date)
           );
-          result.data.release_dates = data.release_dates;
-          break;
         }
       }
 
-      result.data.recommendations = [];
-      const recommendations = await axios.get(`${baseUrl}/${id}/recommendations?language=ko-KR&region=KR&api_key=${process.env.REACT_APP_KEY}`);
-      if (recommendations.data && recommendations.data.results.length > 0) {
-        result.data.recommendations = recommendations.data.results;
-      }
+      // 추천 영화
+      data.recommendations = data.recommendations?.results || [];
 
-      setItem(result.data);
+      setItem(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function saveReview() {
+    jaxios.post("/api/review/saveReview", {midx:loginUser.midx, content, dbidx:id, score})
+    .then((result)=>{
+      if (result.data.msg === "ok") {
+        alert("후기가 등록되었습니다");
+        setScore(0);
+        setHover(0);
+        setContent("");
+        getReviews(1,true);
+      } else {
+        alert("후기 등록이 실패했습니다");
+      }
+    })
+    .catch((err)=>{console.error(err);})
+  }
+
+  function deleteReview(ridx) {
+    if (window.confirm("해당 댓글을 삭제하시겠습니까?")) {
+      jaxios.delete(`/api/review/delete/${ridx}`)
+      .then((result)=>{
+        if (result.data.msg === "ok") {
+          alert("댓글을 삭제했습니다");
+          getReviews(1,true);
+        }
+      })
+      .catch((err)=>{console.error(err);})
+    }
+  }
+
+  async function getReviews(p, reset=false) {
+    try {
+      const result = await axios.get(`/api/review/getReviews/${p}`, {params: {dbidx: id, displayRow}});
+      const newList = [...reviewList, ...result.data.list];
+
+      if (reset) {
+        setReviewList(result.data.list);
+      } else {
+        setReviewList(prev => [...prev, ...result.data.list]);
+      }
+      setTotalCount(result.data.totalCount);
+      setPage(prev => prev + 1);
+      if ((p * displayRow) < result.data.totalCount) {
+        setView(true);
+      } else {
+        setView(false);
+      }
     } catch (err) {
       console.error(err);
     }
   }
-  
-  const settings = {
-    dots: false,               // 밑에 점 표시 여부
-    infinite: false,           // 무한 루프
-    speed: 500,               // 슬라이드 전환 속도 (ms)
-    slidesToShow: 4,          // 한 번에 보여줄 슬라이드 개수
-    slidesToScroll: 1,        // 한 번에 넘어갈 슬라이드 개수
-    arrows: true 
+
+  async function getAverage() {
+    try {
+      const result = await axios.get("/api/review/getAverage", {params: {dbidx: id}});
+      if (result.data !== undefined && result.data.average !== undefined) {
+        setAverage(result.data.average);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   useEffect(
     ()=>{
       findItem(id);
+      getReviews(1);
+      getAverage();
     },[]
   )
 
@@ -167,7 +315,7 @@ function Detail() {
         <h2>{item.title} <span>[{item.release_date ? item.release_date.substr(0,4) : null}]</span></h2>
         <p>원제 : {item.original_title}</p>
         <div>
-          <span></span>
+          <span className="star">평점 : <AverageRating avgScore={average} /></span>
           <span>재생시간 : {formatRuntime(item.runtime)}</span>
           <ul>
             {
@@ -231,11 +379,11 @@ function Detail() {
                           return (
                             <li key={`${type.key}-${idx}`}>
                               {ottInfo ? (
-                                <img src={require(`../../images/${ottInfo.label}.jpeg`)} alt={`${provider.provider_name} 로고`} />
+                                <img src={`/images/${ottInfo.label}.jpeg`} alt={`${provider.provider_name} 로고`} />
                               ) : (
                                 <span>{provider.provider_name}</span>
                               )}
-                              <a href={url} target="_blank">지금 시청하기</a>
+                              <a href={url} target="_blank" className="mainButton"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
                             </li>
                           );
                         })}
@@ -251,7 +399,9 @@ function Detail() {
 
           <div className="synopsis">
             <h3>시놉시스</h3>
-            <p>{item.overview}</p>
+            {
+              item.overview ? <p>{item.overview}</p> : <div className="noFind">시놉시스 정보를 찾을 수 없습니다.</div>
+            }
           </div>
 
           <div className="video">
@@ -308,7 +458,7 @@ function Detail() {
                         <SwiperSlide className="profile" key={idx}>
                           <div>
                             <div className="image_wrapper">
-                              <img src={`https://image.tmdb.org/t/p/w92${cast.profile_path}`} alt={`${cast.name} 프로필 사진`} />
+                              <img src={`https://image.tmdb.org/t/p/w92${cast.profile_path}`} alt={`${cast.name} 프로필 사진`} onError={(e)=>{e.target.src="/images/noImage.png"}} />
                             </div>
                             <p>{cast.name}</p>
                             <p>{cast.character} 역</p>
@@ -349,7 +499,7 @@ function Detail() {
                       <SwiperSlide className="list" key={idx}>
                         <div className="cover">
                           <img src={`https://image.tmdb.org/t/p/w185${recommendation.poster_path}`} alt={`${recommendation.title} 포스터`} />
-                          <a href={`/movieDetail/${recommendation.id}`}>
+                          <a href={`/movie/Detail/${recommendation.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
                               <button><FontAwesomeIcon icon={faThumbsUp} /></button>
@@ -367,6 +517,47 @@ function Detail() {
               )}
             </div>
           </div>
+
+          <div className="review">
+            <h3>후기 {totalCount ? <small>({totalCount.toLocaleString()})</small> : null}</h3>
+            <div className="write">
+              <h4>내 별점</h4>
+              <div className="rating">
+                <StarRating score={score} setScore={setScore} />
+              </div>
+              <div className="textBox">
+                <textarea value={content} onChange={(e)=>{setContent(e.currentTarget.value)}} placeholder="리뷰를 입력해주세요" ></textarea>
+                <button onClick={()=>{saveReview()}} className="mainButton">작성완료</button>
+              </div>
+            </div>
+            <ul className="reviewList">
+              {
+                reviewList && reviewList.length > 0 ?
+                reviewList.map((review, idx)=>{
+                  const formattedDate = review.writedate ? dayjs(review.writedate).format("YYYY-MM-DD HH:mm") : null;
+                  
+                  return (
+                    <li key={idx}>
+                      <p><span>{review.member.nickname}</span> <span><FontAwesomeIcon icon={faStar} /> {review.score}</span> <small>({formattedDate})</small></p>
+                      <div>
+                        <pre>{review.content}</pre>
+                        {
+                          review.member.midx == loginUser.midx ?
+                          <>
+                            <button onClick={()=>{deleteReview(review.ridx)}} className="mainButton">삭제하기</button>
+                          </>
+                          : null
+                        }
+                      </div>
+                    </li>
+                  )
+                })
+                :
+                <li className="noFind">작성된 리뷰가 없습니다</li>
+              }
+              {view ? <div className="more"><button className="mainButton" onClick={()=>{getReviews(page)}}>더보기</button></div> : null}
+            </ul>
+          </div>
         </div>
         <div className="right">
           <div className="movieInfo">
@@ -377,8 +568,8 @@ function Detail() {
                   <img src={`https://image.tmdb.org/t/p/w154${item.poster_path}`} alt={`${item.title} 포스터`} />
                 </div>
                 <div>
-                  <button><FontAwesomeIcon icon={faBookmark} /></button>
-                  <button><FontAwesomeIcon icon={faThumbsUp} /></button>
+                  <button className="buttonHover"><FontAwesomeIcon icon={faBookmark} /></button>
+                  <button className="buttonHover"><FontAwesomeIcon icon={faThumbsUp} /></button>
                 </div>
               </li>
               <li>
@@ -394,7 +585,8 @@ function Detail() {
               </li>
               <li>
                 <h4>평점</h4>
-                
+                <p><AverageRating avgScore={average} /></p>
+                <p></p>
               </li>
               <li>
                 <h4>장르</h4>
