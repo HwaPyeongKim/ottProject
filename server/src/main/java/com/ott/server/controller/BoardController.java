@@ -3,6 +3,7 @@ package com.ott.server.controller;
 import com.ott.server.entity.BLikes;
 import com.ott.server.entity.Board;
 import com.ott.server.entity.FileEntity;
+import com.ott.server.repository.BoardRepository;
 import com.ott.server.service.BoardService;
 import com.ott.server.service.S3UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,8 @@ public class BoardController {
     @GetMapping("/getBoard/{bidx}")
     public HashMap<String, Object> getBoard(@PathVariable int bidx){
         HashMap<String, Object> result = new HashMap<>();
-        result.put("board", bs.getBoard(bidx));
+        Board board =  bs.getBoard(bidx);
+        result.put("board", board);
         return result;
     }
 

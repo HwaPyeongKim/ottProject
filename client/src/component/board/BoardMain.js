@@ -16,7 +16,8 @@ function BoardMain() {
         ()=>{
             axios.get('/api/board/getBoardList')
             .then((result)=>{
-                console.log("boardlist : " , result.data.boardList);
+                // console.log("boardlist : " , result.data.boardList);
+                // console.log("현재 로그인 정보:", loginUser);
                 setBoardList([...result.data.boardList]);
             }).catch((err)=>{})
         },[]

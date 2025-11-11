@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import jaxios from '../../util/JWTUtil';
 import { useNavigate } from 'react-router-dom';
+import { Cookies } from 'react-cookie';
 
 Modal.setAppElement('#root');
 
@@ -18,6 +19,7 @@ function Board(props) {
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
     const updateButtonRef = useRef(null);
+    const cookies = new Cookies();
 
     const customStyles = {
         overlay: { backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", zIndex: 1000 },
@@ -53,12 +55,15 @@ function Board(props) {
         if (days < 365) return `${Math.floor(days / 30)}개월 전`;
         return `${Math.floor(days / 365)}년 전`;
     }
+    
 
     useEffect(
         ()=>{
             // console.log("Board props:", props);
             // console.log("board data:", props.board.member);          
             // console.log("board data:", props.board.boardMember);
+            console.log("현재 로그인 정보:", loginUser);
+            console.log("🔍 쿠키 user:", cookies.get("user"));
 
             jaxios.get(`/api/board/getLikeList`, {params: {boardid: props.board.bidx}})
             .then((result)=>{
@@ -139,7 +144,7 @@ function Board(props) {
                         <div className="update-button" ref={updateButtonRef}>
                             <button className="icon-button" onClick={() => setMenuOpen(prev => !prev)}>⋯</button>
                             <div className={`dropdown_menu ${menuOpen ? 'open' : ''}`}>
-                                <button onClick={()=>{navigate('/updateForm')}}>수정</button>
+                                <button onClick={()=>{navigate(`/updateForm/${props.board.bidx}`)}}>수정</button>
                                 <button>스포일러 신고</button>
                                 <button>삭제</button>
                             </div>
