@@ -124,7 +124,7 @@ function Main() {
                             
                             return (
                               <li key={pidx}>
-                                <img src={require(`../../images/${ott.label}.jpeg`)} alt={`${ott.label} 로고`} />
+                                <img src={`/images/${ott.label}.jpeg`} alt={`${ott.label} 로고`} />
                               </li>
                             )
                           })}
@@ -162,7 +162,7 @@ function Main() {
                             
                             return (
                               <li key={pidx}>
-                                <img src={require(`../../images/${ott.label}.jpeg`)} alt={`${ott.label} 로고`} />
+                                <img src={`/images/${ott.label}.jpeg`} alt={`${ott.label} 로고`} />
                               </li>
                             )
                           })}

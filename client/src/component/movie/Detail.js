@@ -19,10 +19,18 @@ function Detail() {
   const baseUrl = "https://api.themoviedb.org/3/movie";
 
   const loginUser = useSelector(state=>state.user);
+  const [page, setPage] = useState(1);
   const {id} = useParams();
   const [item, setItem] = useState({});
+  const [average, setAverage] = useState(0);
   const [content, setContent] = useState("");
-  const [reviewLists, setReviewLists] = useState([]);
+  const [reviewList, setReviewList] = useState([]);
+  const [displayRow, setDisplayRow] = useState(5);
+  const [totalCount, setTotalCount] = useState(0);
+  const [view, setView] = useState(false);
+  const [imdb, setImdb] = useState("");
+  const [rottenTomatoes, setRottenTomatoes] = useState("");
+  const [metacritic, setMetacritic] = useState("");
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   
@@ -82,6 +90,26 @@ function Detail() {
     );
   }
 
+  function AverageRating({ avgScore }) {
+    const stars = [1, 2, 3, 4, 5];
+
+    // 별 아이콘 결정 함수
+    const getStarIcon = (star) => {
+      if (avgScore >= star) return solidStar;
+      else if (avgScore >= star - 0.5) return faStarHalfAlt;
+      else return regularStar;
+    };
+
+    return (
+      <>
+        {stars.map((star) => (
+          <FontAwesomeIcon key={star} icon={getStarIcon(star)} />
+        ))}
+        <small> ({avgScore.toFixed(1)} / 5)</small>
+      </>
+    );
+  }
+
   const countryMap = {
     "KR": "한국",
     "JP": "일본",
@@ -137,78 +165,6 @@ function Detail() {
     return `${link}${query}`;
   }
 
-  // async function findItem (id) {
-  //   try {
-  //     const result = await axios.get(`${baseUrl}/${id}?language=ko-KR&region=KR&api_key=${process.env.REACT_APP_KEY}`);
-  //     if (result.data.adult === true) {
-        
-  //     }
-  //     // OTT 정보
-  //     result.data.providers = [];
-  //     const providers = await axios.get(`${baseUrl}/${id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
-  //     if (providers.data.results && providers.data.results["KR"]) {
-  //       result.data.providers = providers.data.results["KR"];
-  //     }
-  //     // 출연진 및 제작진
-  //     const credits = await axios.get(`${baseUrl}/${id}/credits?api_key=${process.env.REACT_APP_KEY}`);
-  //     result.data.director = {};
-  //     result.data.cast = [];
-  //     // 주연배우
-  //     const sorted = credits.data.cast.sort(
-  //       (a, b) => new Date(a.order) - new Date(b.order)
-  //     );
-  //     for (let i=0; i<credits.data.cast.length; i++) {
-  //       let data = credits.data.cast[i];
-  //       if (data.known_for_department === "Acting") {
-  //         result.data.cast.push(data);
-  //       }
-  //       if (i === 19) break;
-  //     }
-  //     // 감독
-  //     for (let i=0; i<credits.data.crew.length; i++) {
-  //       let data = credits.data.crew[i];
-  //       if (data.job === "Director") {
-  //         result.data.director = data;
-  //         break;
-  //       }
-  //     }
-
-  //     // 예고편 및 관련 비디오 정보
-  //     result.data.videos = [];
-  //     const videos = await axios.get(`${baseUrl}/${id}/videos?api_key=${process.env.REACT_APP_KEY}`);
-  //     for (let i=0; i<videos.data.results.length; i++) {
-  //       let data = videos.data.results[i];
-  //       if (data.site === "YouTube") {
-  //         result.data.videos.push(data);
-  //       }
-  //     }
-
-  //     //연령 등급
-  //     result.data.release_dates = {};
-  //     const release_dates = await axios.get(`${baseUrl}/${id}/release_dates?api_key=${process.env.REACT_APP_KEY}`);
-  //     for (let i=0; i<release_dates.data.results.length; i++) {
-  //       let data = release_dates.data.results[i];
-  //       if (data.iso_3166_1 === "KR") {
-  //         const sorted = data.release_dates.sort(
-  //           (a, b) => new Date(b.release_date) - new Date(a.release_date)
-  //         );
-  //         result.data.release_dates = data.release_dates;
-  //         break;
-  //       }
-  //     }
-
-  //     result.data.recommendations = [];
-  //     const recommendations = await axios.get(`${baseUrl}/${id}/recommendations?language=ko-KR&region=KR&api_key=${process.env.REACT_APP_KEY}`);
-  //     if (recommendations.data && recommendations.data.results.length > 0) {
-  //       result.data.recommendations = recommendations.data.results;
-  //     }
-
-  //     setItem(result.data);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
-
   async function findItem() {
     try {
       const {data} = await axios.get(`${baseUrl}/${id}`, {
@@ -219,6 +175,15 @@ function Detail() {
           append_to_response: "videos,credits,recommendations,release_dates,watch/providers"
         }
       });
+      
+      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.imdb_id}&apikey=${process.env.REACT_OMDB_KEY}`);
+      console.log(omdbData);
+      // const ratingData = omdbData.data?.Ratings || [];
+
+      // const imdb = ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "N/A";
+      // const rotten = ratingData.find(r => r.Source === "Rotten Tomatoes")?.Value || "N/A";
+      // const metacritic = ratingData.find(r => r.Source === "Metacritic")?.Value || "N/A";
+
 
       // 성인 여부 체크
       if (data.adult === true) {
@@ -279,6 +244,10 @@ function Detail() {
     .then((result)=>{
       if (result.data.msg === "ok") {
         alert("후기가 등록되었습니다");
+        setScore(0);
+        setHover(0);
+        setContent("");
+        getReviews(1,true);
       } else {
         alert("후기 등록이 실패했습니다");
       }
@@ -286,24 +255,57 @@ function Detail() {
     .catch((err)=>{console.error(err);})
   }
 
-  async function getReviews() {
+  function deleteReview(ridx) {
+    if (window.confirm("해당 댓글을 삭제하시겠습니까?")) {
+      jaxios.delete(`/api/review/delete/${ridx}`)
+      .then((result)=>{
+        if (result.data.msg === "ok") {
+          alert("댓글을 삭제했습니다");
+          getReviews(1,true);
+        }
+      })
+      .catch((err)=>{console.error(err);})
+    }
+  }
+
+  async function getReviews(p, reset=false) {
     try {
-      const result = await axios.get("/api/review/getReviews", {params: {dbidx: id}});
-      setReviewLists([...result.data.list]);
+      const result = await axios.get(`/api/review/getReviews/${p}`, {params: {dbidx: id, displayRow}});
+      const newList = [...reviewList, ...result.data.list];
+
+      if (reset) {
+        setReviewList(result.data.list);
+      } else {
+        setReviewList(prev => [...prev, ...result.data.list]);
+      }
+      setTotalCount(result.data.totalCount);
+      setPage(prev => prev + 1);
+      if ((p * displayRow) < result.data.totalCount) {
+        setView(true);
+      } else {
+        setView(false);
+      }
     } catch (err) {
       console.error(err);
+    }
+  }
+
+  async function getAverage() {
+    try {
+      const result = await axios.get("/api/review/getAverage", {params: {dbidx: id}});
+      if (result.data !== undefined && result.data.average !== undefined) {
+        setAverage(result.data.average);
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 
   useEffect(
     ()=>{
       findItem(id);
-    },[]
-  )
-
-  useEffect(
-    ()=>{
-      getReviews();
+      getReviews(1);
+      getAverage();
     },[]
   )
 
@@ -313,7 +315,7 @@ function Detail() {
         <h2>{item.title} <span>[{item.release_date ? item.release_date.substr(0,4) : null}]</span></h2>
         <p>원제 : {item.original_title}</p>
         <div>
-          <span>평점 : <FontAwesomeIcon icon={faStar} /></span>
+          <span className="star">평점 : <AverageRating avgScore={average} /></span>
           <span>재생시간 : {formatRuntime(item.runtime)}</span>
           <ul>
             {
@@ -377,11 +379,11 @@ function Detail() {
                           return (
                             <li key={`${type.key}-${idx}`}>
                               {ottInfo ? (
-                                <img src={require(`../../images/${ottInfo.label}.jpeg`)} alt={`${provider.provider_name} 로고`} />
+                                <img src={`/images/${ottInfo.label}.jpeg`} alt={`${provider.provider_name} 로고`} />
                               ) : (
                                 <span>{provider.provider_name}</span>
                               )}
-                              <a href={url} target="_blank"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
+                              <a href={url} target="_blank" className="mainButton"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
                             </li>
                           );
                         })}
@@ -456,7 +458,7 @@ function Detail() {
                         <SwiperSlide className="profile" key={idx}>
                           <div>
                             <div className="image_wrapper">
-                              <img src={`https://image.tmdb.org/t/p/w92${cast.profile_path}`} alt={`${cast.name} 프로필 사진`} />
+                              <img src={`https://image.tmdb.org/t/p/w92${cast.profile_path}`} alt={`${cast.name} 프로필 사진`} onError={(e)=>{e.target.src="/images/noImage.png"}} />
                             </div>
                             <p>{cast.name}</p>
                             <p>{cast.character} 역</p>
@@ -517,7 +519,7 @@ function Detail() {
           </div>
 
           <div className="review">
-            <h3>후기</h3>
+            <h3>후기 {totalCount ? <small>({totalCount.toLocaleString()})</small> : null}</h3>
             <div className="write">
               <h4>내 별점</h4>
               <div className="rating">
@@ -525,13 +527,13 @@ function Detail() {
               </div>
               <div className="textBox">
                 <textarea value={content} onChange={(e)=>{setContent(e.currentTarget.value)}} placeholder="리뷰를 입력해주세요" ></textarea>
-                <button onClick={saveReview}>작성완료</button>
+                <button onClick={()=>{saveReview()}} className="mainButton">작성완료</button>
               </div>
             </div>
-            <ul className="reviewLists">
+            <ul className="reviewList">
               {
-                reviewLists && reviewLists.length > 0 ?
-                reviewLists.map((review, idx)=>{
+                reviewList && reviewList.length > 0 ?
+                reviewList.map((review, idx)=>{
                   const formattedDate = review.writedate ? dayjs(review.writedate).format("YYYY-MM-DD HH:mm") : null;
                   
                   return (
@@ -542,8 +544,7 @@ function Detail() {
                         {
                           review.member.midx == loginUser.midx ?
                           <>
-                            <button>수정하기</button>
-                            <button>삭제하기</button>
+                            <button onClick={()=>{deleteReview(review.ridx)}} className="mainButton">삭제하기</button>
                           </>
                           : null
                         }
@@ -554,6 +555,7 @@ function Detail() {
                 :
                 <li className="noFind">작성된 리뷰가 없습니다</li>
               }
+              {view ? <div className="more"><button className="mainButton" onClick={()=>{getReviews(page)}}>더보기</button></div> : null}
             </ul>
           </div>
         </div>
@@ -566,8 +568,8 @@ function Detail() {
                   <img src={`https://image.tmdb.org/t/p/w154${item.poster_path}`} alt={`${item.title} 포스터`} />
                 </div>
                 <div>
-                  <button><FontAwesomeIcon icon={faBookmark} /></button>
-                  <button><FontAwesomeIcon icon={faThumbsUp} /></button>
+                  <button className="buttonHover"><FontAwesomeIcon icon={faBookmark} /></button>
+                  <button className="buttonHover"><FontAwesomeIcon icon={faThumbsUp} /></button>
                 </div>
               </li>
               <li>
@@ -583,7 +585,8 @@ function Detail() {
               </li>
               <li>
                 <h4>평점</h4>
-                
+                <p><AverageRating avgScore={average} /></p>
+                <p></p>
               </li>
               <li>
                 <h4>장르</h4>
