@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.ott.server.dto.KakaoProfile;
 import com.ott.server.dto.OAuthToken;
 import com.ott.server.entity.FileEntity;
+import com.ott.server.entity.Follow;
 import com.ott.server.entity.Member;
 import com.ott.server.security.util.CustomJWTException;
 import com.ott.server.security.util.JWTUtil;
@@ -252,6 +253,22 @@ public class MemberController {
     public HashMap<String, Object> getFollowMember(@RequestParam("followMemberId") int midx) {
         HashMap<String, Object> result = new HashMap<>();
         result.put("followMember", ms.getFollowMember(midx));
+        return result;
+    }
+
+    @PostMapping("/follow")
+    public HashMap<String, Object> followMember(@RequestBody Follow follow) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.insertFollow(follow);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @DeleteMapping("/nofollow")
+    public HashMap<String, Object> deleteFollowMember(@RequestBody Follow follow) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.deleteFollow(follow);
+        result.put("msg", "ok");
         return result;
     }
 

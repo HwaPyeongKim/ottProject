@@ -73,4 +73,12 @@ public class MemberService {
         Optional<Member> member = mr.findByMidx(midx);
         return member;
     }
+
+    public void insertFollow(Follow follow) {
+        fr.save(follow);
+    }
+
+    public void deleteFollow(Follow follow) {
+        fr.deleteByFfromAndFto(follow.getFfrom(), follow.getFto());
+    }
 }

@@ -51,6 +51,7 @@
   align-items: center;
   margin-top: -30px; /* 아바타 때문에 위로 올라간 공간 조정 */
   margin-bottom: 10px;
+  flex-direction: column;
 }
 
 .profile-name {

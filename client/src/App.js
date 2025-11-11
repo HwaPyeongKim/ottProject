@@ -20,6 +20,17 @@ import MovieDetail from "./component/movie/Detail";
 import BoardMain from "./component/board/BoardMain";
 import WriteForm from "./component/board/WriteForm";
 import ModalTest from "./component/board/ModalTest";
+
+//---------------------------------------------------- dg
+import Login from "./component/member/Login";
+import Join from "./component/member/Join";
+import MyList from "./component/member/MyList";
+import Myfollow from "./component/member/Myfollow";
+import InsertList from "./component/member/InsertList";
+import FollowMemberView from "./component/member/FollowMemberView";
+import SocialList from "./component/member/SocialList";
+//---------------------------------------------------- dg
+
 import Company from "./component/customer/Company";
 import Qna from "./component/customer/Qna";
 
@@ -42,7 +53,15 @@ function App() {
             <Route path="/community" element={<BoardMain />} />
             <Route path="/writeForm" element={<WriteForm />} />
             <Route path="/test" element={<ModalTest />} />
-
+            {/* dg */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/join" element={<Join />} />
+            <Route path="/mylist" element={<MyList />} />
+            <Route path="/myfollow" element={<Myfollow />} />
+            <Route path="/insertList" element={<InsertList />} />
+            <Route path="/followMemberView/:followMemberId" element={<FollowMemberView />} />
+            <Route path="/socialList/:socialId" element={<SocialList />} />
+            {/* dg */}
             <Route path="/company" element={<Company />} />
             <Route path="/qna" element={<Qna />} />
 

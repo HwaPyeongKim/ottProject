@@ -7,6 +7,7 @@ import jaxios from '../../util/JWTUtil';
 
 function FollowMemberView() {
     const loginUser = useSelector( state=>state.user );
+    const navigate = useNavigate()
     const {followMemberId} = useParams()
     const [profile, setProfile] = useState('');
     const [imgSrc, setImgSrc] = useState('')
@@ -15,11 +16,15 @@ function FollowMemberView() {
     const [profileImageUrl, setProfileImageUrl] = useState('')
     const [name, setName] = useState('')
     const [tagline, setTagline] = useState('')
-    const [followers, setFollowers] = useState('')
-    const [followings, setFollowings] = useState('')
+    const [followers, setFollowers] = useState([])
+    const [followings, setFollowings] = useState([])
     const [ratings, setRatings] = useState('')
     const [comments, setComments] = useState('')
     const [collections, setCollections] = useState('')
+
+    const [followButton, setFollowButton] = useState('')
+    const [userFollowers, setUserFollowers] = useState([])
+    const [userFollowings, setUserFollowings] = useState([])
 
     useEffect(
         () => {
@@ -54,20 +59,53 @@ function FollowMemberView() {
         }, [followMemberId]
     )
 
+    // useEffect(
+    //     ()=>{
+    //         jaxios.get('/api/member/getFollowings', {params:{midx:loginUser.midx}} )
+    //         .then((result)=>{
+    //             console.log('유저팔로잉 : ', result.data)
+    //             setUserFollowings( [...result.data.followings] );
+    //         }).catch((err)=>{console.error(err)})
+    //         jaxios.get('/api/member/getFollowers', {params:{midx:loginUser.midx}} )
+    //         .then((result)=>{
+    //             console.log('유저팔로워 : ', result.data)
+    //             setUserFollowers( [...result.data.followers] );
+    //         }).catch((err)=>{console.error(err)})
+    //     },[followMemberId]
+    // )
+
     useEffect(
         ()=>{
             jaxios.get('/api/member/getFollowings', {params:{midx:followMemberId}} )
             .then((result)=>{
-                console.log('팔로잉 : ', result.data)
+                console.log('상세정보 팔로잉 : ', result.data)
                 setFollowings( [...result.data.followings] );
             }).catch((err)=>{console.error(err)})
             jaxios.get('/api/member/getFollowers', {params:{midx:followMemberId}} )
             .then((result)=>{
-                console.log('팔로워 : ', result.data)
+                console.log('상세정보 팔로워 : ', result.data)
                 setFollowers( [...result.data.followers] );
             }).catch((err)=>{console.error(err)})
-        },[]
+        },[followMemberId]
     )
+
+    async function checkFollow(){
+        await jaxios.post('/api/member/follow', { ffrom:loginUser.midx, fto:followMemberId });
+        
+        let result = await jaxios.get('/api/member/getFollowers', {params:{midx:followMemberId}})
+        setFollowers( [...result.data.followers] )
+        result = await jaxios.get('/api/member/getFollowings', {params:{midx:followMemberId}})
+        setFollowings( [...result.data.followings] )
+    }
+    async function noFollow(){
+        console.log('언팔로우 버튼')
+        await jaxios.delete('/api/member/nofollow', {data: { ffrom:loginUser.midx, fto:followMemberId }});
+        
+        let result = await jaxios.get('/api/member/getFollowers', {params:{midx:followMemberId}})
+        setFollowers( [...result.data.followers] )
+        result = await jaxios.get('/api/member/getFollowings', {params:{midx:followMemberId}})
+        setFollowings( [...result.data.followings] )
+    }
 
     return (
         <div className="profile-card">
@@ -79,41 +117,49 @@ function FollowMemberView() {
         {/* 2. 프로필 정보 섹션 */}
         <div className="profile-info">
             <div className="profile-avatar-container">
-            {/* 프로필 이미지를 커버 이미지 위에 겹치도록 배치합니다. */}
-            <img src={imgSrc} alt="Profile" className="profile-avatar" />
+                {/* 프로필 이미지를 커버 이미지 위에 겹치도록 배치합니다. */}
+                <img src={imgSrc} alt="Profile" className="profile-avatar" />
             </div>
 
             <div className="name-and-follow">
-            <h2 className="profile-name">
-                {name}
-                <span className="verified-badge">W</span>
-            </h2>
-            {/* 팔로우/팔로잉 정보 */}
-            <div className="follow-stats">
-                <span className="stat-item" style={{color:'orange', fontWeight:'bold'}}>팔로워 **{followers.length}**</span>
-                <span className="separator">|</span>
-                <span className="stat-item" style={{color:'orange', fontWeight:'bold'}}>팔로잉 **{followings.length}**</span>
-            </div>
+                <h2 className="profile-name" style={{color:'orange'}}>
+                    <span className="verified-badge">W</span>
+                    {profile.nickname}
+                </h2>
+                <div className='follow-stats'>
+                    <span className='stat-item' style={{color:'orange', fontWeight:'bold'}}>{profile.profilemsg}</span>
+                </div>
+                {/* 팔로우/팔로잉 정보 */}
+                <div className="follow-stats">
+                    <span className="stat-item" style={{color:'orange', fontWeight:'bold'}}>팔로워 **{followers.length}**</span>
+                    <span className="separator">|</span>
+                    <span className="stat-item" style={{color:'orange', fontWeight:'bold'}}>팔로잉 **{followings.length}**</span>
+                </div>
             </div>
 
             <p className="tagline">{tagline}</p>
             
             {/* 3. 팔로우 버튼 */}
-            <button className="follow-button">팔로우</button>
+            {
+                (followers.some((follower)=>{return (String)(follower.ffrom) === loginUser.midx}))
+                ?(<button className="follow-button" onClick={()=>{noFollow()}}>언팔로우</button>):
+                (<button className="follow-button" onClick={()=>{checkFollow()}}>팔로우</button>)
+                
+            }
 
             {/* 4. 통계/수치 섹션 */}
             <div className="stats-container">
             <div className="stat-box">
                 <p className="stat-number">{ratings.toLocaleString()}</p>
-                <p className="stat-label">평가</p>
+                <div className="stat-label" onClick={()=>{navigate(`/socialList/${profile.midx}`)}}>리스트</div>
             </div>
             <div className="stat-box">
-                <p className="stat-number">{comments.toLocaleString()}</p>
-                <p className="stat-label">코멘트</p>
+                {/* <p className="stat-number">{comments.toLocaleString()}</p> */}
+                <p className="stat-label">?</p>
             </div>
             <div className="stat-box">
-                <p className="stat-number">{collections.toLocaleString()}</p>
-                <p className="stat-label">컬렉션</p>
+                {/* <p className="stat-number">{collections.toLocaleString()}</p> */}
+                <p className="stat-label">?</p>
             </div>
             </div>
         </div>

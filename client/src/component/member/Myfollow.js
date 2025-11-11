@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/JWTUtil';
 
+import '../../style/followlist.css';
+
 function Myfollow() {
 
     const loginUser = useSelector( state=>state.user );
-    //const [ imgSrc, setImgSrc ]=useState('http://43.201.183.35:8070/public/user.png');
-    const navigate=useNavigate();
-    const [imgList, setImgList] = useState([])
+    const navigate = useNavigate();
     const [followingsImg, setFollowingsImg] = useState('')
     const [followersImg, setFollowersImg] = useState('')
     const [followings, setFollowings] = useState([])
@@ -77,25 +77,27 @@ function Myfollow() {
 
     return (
         <div style={{display:'flex'}}>
-            <div>
+            <div className="follower-container">
                 <div style={{display:'flex'}}>
-                    <div style={{color:'white'}}>팔로워</div>
-                    <div style={{color:'white'}}>
+                    <div className="follower-title" style={{color:'white'}}>{loginUser.nickname} 님의 팔로워</div>
+                    <div style={{fontSize:'25px', color:'coral', justifyContent:'center', alignItems:'center', paddingLeft:'10px'}}>
                         {
                             (followers)?(followers.length):(0)
                         }
                     </div>
                 </div>
-                <div style={{color:'white'}}>
+                <div className="follower-list" style={{color:'white'}}>
                     {
                         followers.map((frList, idx)=>{
                             return(
                                 <>  
-                                    <div onClick={()=>{navigate(`/followMemberView/${frList.fromMember.midx}`)}}>
-                                        <div>{frList.fromMember.nickname}</div>
-                                        <div key={idx} style={{display:'flex', margin:'5px 3px'}}>
-                                            <img src={followersImg[idx]} 
-                                            style={{weight:'30px', height:'30px'}}/>
+                                    <div className="follower-info" onClick={()=>{navigate(`/followMemberView/${frList.fromMember.midx}`)}}>
+                                        <div className="follow-image-container" key={idx} style={{display:'flex', margin:'5px 3px'}}>
+                                            <img src={followersImg[idx]} />
+                                        </div>
+                                        <div className="follower-text">
+                                            <div className='follower-name'>{frList.fromMember.nickname}</div>
+                                            <div className='follower-desc'>여러가지 정보</div>
                                         </div>
                                     </div>
                                 </>
@@ -105,25 +107,27 @@ function Myfollow() {
                 </div>
             </div>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <div>
+            <div className="follower-container">
                 <div style={{display:'flex'}}>
-                    <div style={{color:'white'}}>팔로잉</div>
-                    <div style={{color:'white'}}>
+                    <div className="follower-title"style={{color:'white'}}>{loginUser.nickname} 님의 팔로잉</div>
+                    <div style={{fontSize:'25px', color:'coral', justifyContent:'center', alignItems:'center', paddingLeft:'10px'}}>
                         {
                             (followings)?(followings.length):(0)
                         }
                     </div>
                 </div>
-                <div style={{color:'white'}}>
+                <div className="follower-list" style={{color:'white'}}>
                     {
                         followings.map((fiList, idx)=>{
                             return(
                                 <>  
-                                    <div onClick={()=>{navigate(`/followMemberView/${fiList.toMember.midx}`)}}>
-                                        <div>{fiList.toMember.nickname}</div>
-                                        <div key={idx} style={{display:'flex', margin:'5px 3px'}}>
-                                            <img src={followingsImg[idx]} 
-                                            style={{weight:'30px', height:'30px'}}/>
+                                    <div className="follower-info" onClick={()=>{navigate(`/followMemberView/${fiList.toMember.midx}`)}}>
+                                        <div className="follow-image-container" key={idx} style={{display:'flex', margin:'5px 3px'}}>
+                                            <img src={followingsImg[idx]} />
+                                        </div>
+                                        <div className="follower-text">
+                                            <div className='follower-name'>{fiList.toMember.nickname}</div>
+                                            <div className='follower-desc'>여러가지 정보</div>
                                         </div>
                                     </div>
                                 </>
