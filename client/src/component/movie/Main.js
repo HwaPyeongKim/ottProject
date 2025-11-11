@@ -12,6 +12,13 @@ function Main() {
   const [popular, setPopular] = useState([]);
   const [now, setNow] = useState([]);
   const [coming, setComing] = useState([]);
+  const [action, setAction] = useState([]);
+  const [comedy, setComedy] = useState([]);
+  const [drama, setDrama] = useState([]);
+  const [documentary, setDocumentary] = useState([]);
+  const [horror, setHorror] = useState([]);
+  const [SF, setSF] = useState([]);
+  const [topRated, setTopRated] = useState([]);
 
   const mainSettings = {
     dots: true,               // 밑에 점 표시 여부
@@ -33,9 +40,10 @@ function Main() {
   };
 
   const setters = {
-    "popular": setPopular,
     "now_playing": setNow,
-    "upcoming": setComing,
+    "popular": setPopular,
+    "top_rated": setTopRated,
+    "upcoming": setComing
   };
 
   const ottInfos = [
@@ -76,8 +84,12 @@ function Main() {
 
   useEffect(
     ()=>{
-      findMovies("popular");
       findMovies("now_playing");
+      findMovies("popular");
+      findMovies("top_rated");
+      findGenres("")
+      // 장르별
+      // 트랜드
       findMovies("upcoming");
     },[]
   )
@@ -86,7 +98,7 @@ function Main() {
     <div>
       <Slider {...mainSettings} className="lists popular">
         {
-          popular.map((item, idx)=>{
+          now.map((item, idx)=>{
             return (
               <div className="list">
                 <a href={`/movie/Detail/${item.id}`} key={idx}>
@@ -102,10 +114,48 @@ function Main() {
         }
       </Slider>
 
-      <h3>상영중인 영화</h3>
+      <h3>인기 영화</h3>
       <Slider {...settings} className="lists">
         {
-          now.map((item, idx)=>{
+          popular.map((item, idx)=>{
+            return (
+              <div className="list" key={idx}>
+                <div className="cover">
+                  <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`} />
+                  <a href={`/movie/Detail/${item.id}`}>
+                    <div>
+                      <button><FontAwesomeIcon icon={faBookmark} /></button>
+                      <button><FontAwesomeIcon icon={faThumbsUp} /></button>
+                    </div>
+                    {
+                      item.providers ? (
+                        <ul>
+                          {item.providers.map((provider, pidx)=>{
+                            const ott = ottInfos.find(info => info.key === provider.provider_id);
+                            if (!ott) return null;
+                            
+                            return (
+                              <li key={pidx}>
+                                <img src={`/images/${ott.label}.jpeg`} alt={`${ott.label} 로고`} />
+                              </li>
+                            )
+                          })}
+                        </ul>
+                      )
+                      : null
+                    }
+                  </a>
+                </div>
+              </div>
+            )
+          })
+        }
+      </Slider>
+
+      <h3>평점 높은 영화</h3>
+      <Slider {...settings} className="lists">
+        {
+          topRated.map((item, idx)=>{
             return (
               <div className="list" key={idx}>
                 <div className="cover">

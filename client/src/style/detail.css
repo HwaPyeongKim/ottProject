@@ -51,7 +51,12 @@
 .content_info .right .movieInfo ul li:first-child {padding-top: 0;}
 .content_info .right .movieInfo ul li div {display: flex; justify-content: space-between; margin-top: 20px;}
 .content_info .right .movieInfo ul li div button {width: 45%; padding: 15px; background: #222c38; color: #fff; font-size: 1.2em; border: 0; border-radius: 10px;}
+.content_info .right .movieInfo ul li div button.on {background: #f5c518 !important; color: #060d17 !important;}
+.content_info .right .movieInfo ul li div button small {font-size: 0.8em; margin-left: 10px;}
 .content_info .right .movieInfo ul li h4 {margin-bottom: 20px; font-size: 1.1em;}
+.content_info .right .movieInfo ul li.ratings p {margin-bottom: 10px;}
+.content_info .right .movieInfo ul li.ratings p img {display: inline-block; height: 30px; margin-right: 10px; vertical-align: middle;}
+.content_info .right .movieInfo ul li.ratings p small {display: inline-block;}
 
 .lists {margin-bottom: 30px;}
 .lists .list {padding: 0; text-align: center;}

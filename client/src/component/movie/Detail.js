@@ -29,8 +29,10 @@ function Detail() {
   const [totalCount, setTotalCount] = useState(0);
   const [view, setView] = useState(false);
   const [imdb, setImdb] = useState("");
-  const [rottenTomatoes, setRottenTomatoes] = useState("");
+  const [rotten, setRotten] = useState("");
   const [metacritic, setMetacritic] = useState("");
+  const [likeCount , setLikeCount] = useState(0);
+  const [likeOn, setLikeOn] = useState(false);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   
@@ -176,14 +178,11 @@ function Detail() {
         }
       });
       
-      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.imdb_id}&apikey=${process.env.REACT_OMDB_KEY}`);
-      console.log(omdbData);
-      // const ratingData = omdbData.data?.Ratings || [];
-
-      // const imdb = ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "N/A";
-      // const rotten = ratingData.find(r => r.Source === "Rotten Tomatoes")?.Value || "N/A";
-      // const metacritic = ratingData.find(r => r.Source === "Metacritic")?.Value || "N/A";
-
+      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
+      const ratingData = omdbData.data?.Ratings || [];
+      setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
+      setRotten(ratingData.find(r => r.Source === "Rotten Tomatoes")?.Value || "Unknown");
+      setMetacritic(ratingData.find(r => r.Source === "Metacritic")?.Value || "Unknown");
 
       // 성인 여부 체크
       if (data.adult === true) {
@@ -225,7 +224,7 @@ function Detail() {
         const krRelease = data.release_dates.results.find(r => r.iso_3166_1 === "KR");
         if (krRelease) {
           data.release_dates = krRelease.release_dates.sort(
-            (a, b) => new Date(b.release_date) - new Date(a.release_date)
+            (a, b) => new Date(a.release_date) - new Date(b.release_date)
           );
         }
       }
@@ -285,6 +284,7 @@ function Detail() {
       } else {
         setView(false);
       }
+      getAverage();
     } catch (err) {
       console.error(err);
     }
@@ -301,11 +301,53 @@ function Detail() {
     }
   }
 
+  function favorite() {
+    if (!loginUser || loginUser.midx === undefined) {
+      alert("로그인 후 이용해주세요");
+      return;
+    }
+
+  }
+
+  function like() {
+    if (!loginUser || loginUser.midx === undefined) {
+      alert("로그인 후 이용해주세요");
+      return;
+    }
+
+    jaxios.post("/api/main/like", {midx: loginUser.midx, dbidx: id})
+    .then((result)=>{
+      getLikes();
+    })
+    .catch((err)=>{console.error(err);})
+  }
+
+  async function getLikes() {
+    try {
+      if (!loginUser || loginUser.midx === undefined) {
+        const likes = await axios.get("/api/main/getLikes", {params: {dbidx: id}});
+        setLikeCount(likes.data.count);
+      } else {
+        const likes = await axios.get("/api/main/getLikes", {params: {dbidx: id, midx: loginUser.midx}});
+        setLikeCount(likes.data.count);
+        if (likes.data.likes) {
+          setLikeOn(true);
+        } else {
+          setLikeOn(false);
+        }
+      }
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   useEffect(
     ()=>{
       findItem(id);
       getReviews(1);
       getAverage();
+      getLikes();
     },[]
   )
 
@@ -328,6 +370,7 @@ function Detail() {
               : null
             }
           </ul>
+          <p>{item.tagline}</p>
         </div>
       </div>
 
@@ -568,25 +611,24 @@ function Detail() {
                   <img src={`https://image.tmdb.org/t/p/w154${item.poster_path}`} alt={`${item.title} 포스터`} />
                 </div>
                 <div>
-                  <button className="buttonHover"><FontAwesomeIcon icon={faBookmark} /></button>
-                  <button className="buttonHover"><FontAwesomeIcon icon={faThumbsUp} /></button>
+                  <button className="buttonHover" onClick={()=>{favorite()}}><FontAwesomeIcon icon={faBookmark} /></button>
+                  <button className={`buttonHover ${likeOn ? "on" : ""}`} onClick={()=>{like()}}><FontAwesomeIcon icon={faThumbsUp} /><small>{likeCount}</small></button>
                 </div>
               </li>
               <li>
                 <h4>감독</h4>
                 {
                   item.director ?
-                  <>
-                    {/* <img src={`https://image.tmdb.org/t/p/w154${item.director.profile_path}`} alt={`${item.director.name} 사진`} /> */}
-                    <p>{item.director ? item.director.name : "Unknown"}</p>
-                  </>
+                  <p>{item.director ? item.director.name : "Unknown"}</p>
                   : <p>Unknown</p>
                 }
               </li>
-              <li>
+              <li className="ratings">
                 <h4>평점</h4>
                 <p><AverageRating avgScore={average} /></p>
-                <p></p>
+                <p><img src="/images/imdb.png" alt="imdb 점수" /><small>{imdb}</small></p>
+                <p><img src="/images/rotten.png" alt="rotten tomatoes 점수" /><small>{rotten}</small></p>
+                <p><img src="/images/metacritic.png" alt="metacritic 점수" /><small>{metacritic}</small></p>
               </li>
               <li>
                 <h4>장르</h4>
