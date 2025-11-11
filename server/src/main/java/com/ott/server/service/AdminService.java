@@ -52,4 +52,8 @@ public class AdminService {
     public void writeQna(Qna qna) {
         qr.save(qna);
     }
+
+    public Qna getQna(int qidx) {
+        return qr.findByQidx(qidx);
+    }
 }

@@ -29,4 +29,25 @@ public class AdminController {
         return result;
     }
 
+    @PostMapping("/confirmPass")
+    public HashMap<String, Object> confirmPass(
+            @RequestParam("qidx") int qidx, @RequestParam("pass") String pass) {
+        HashMap<String, Object> result = new HashMap<>();
+        Qna qna = as.getQna(qidx);
+        if( qna.getPass().equals(pass) )    result.put("msg", "ok");
+        else   result.put("msg", "fail");
+        return result;
+    }
+
+    @GetMapping("/getQna")
+    public HashMap<String, Object> getQna(@RequestParam("qidx") int qidx) {
+        HashMap<String, Object> result = new HashMap<>();
+        Qna qna = as.getQna(qidx);
+        result.put("qna", qna);
+        return result;
+    }
+
+
+
+
 }

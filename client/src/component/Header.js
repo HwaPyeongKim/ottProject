@@ -81,13 +81,13 @@ function Header() {
             {open && <Mypage onClose={() => setOpen(false)} />}
             </>
           ):
-          (<FontAwesomeIcon icon={faUser} onClick={ ()=>{ navigate('/login') }}/>)
+          (<FontAwesomeIcon icon={faUser} style={{color: "#FFD43B", fontSize: "20px"}} onClick={ ()=>{ navigate('/login') }}/>)
         }
       </div>
 
       <div className="menu">
         <button onClick={() => setMenuOpen(!menuOpen)}>
-          <FontAwesomeIcon icon={faBars} />
+          <FontAwesomeIcon icon={faBars} style={{color: "#FFD43B", fontSize: "20px"}}/>
         </button>
       </div>
 
