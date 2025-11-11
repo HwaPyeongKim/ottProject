@@ -87,7 +87,7 @@ function Main() {
       findMovies("now_playing");
       findMovies("popular");
       findMovies("top_rated");
-      findGenres("")
+      // findGenres("")
       // 장르별
       // 트랜드
       findMovies("upcoming");
