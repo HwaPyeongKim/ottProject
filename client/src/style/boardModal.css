@@ -77,6 +77,8 @@
   font-weight: bold;
   font-size: 0.9rem;
   margin-right: 8px;
+  
+  color: #000;
 }
 
 .modal-timestamp {
@@ -88,7 +90,8 @@
   font-size: 0.95rem;
   line-height: 1.4;
   margin: 0 0 5px 0;
-  white-space: pre-wrap; /* 줄바꿈 유지 */
+  white-space: pre-wrap; /* 줄바꿈 유지 */  
+  color: #000;
 }
 
 .modal-comment-actions {

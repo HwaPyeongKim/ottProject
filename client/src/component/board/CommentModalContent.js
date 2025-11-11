@@ -1,5 +1,5 @@
 import React from 'react';
-import "../../style/modal.css";
+import "../../style/boardModal.css";
 
 // 댓글 목록 더미 데이터 
 const dummyComment = {

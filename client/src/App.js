@@ -17,9 +17,13 @@ import Search from "./component/Search";
 import Movie from "./component/movie/Main";
 import MovieDetail from "./component/movie/Detail";
 
+//---------------------------------------------------- gy
 import BoardMain from "./component/board/BoardMain";
 import WriteForm from "./component/board/WriteForm";
 import ModalTest from "./component/board/ModalTest";
+import UpdateForm from "./component/board/UpdateForm";
+//---------------------------------------------------- gy
+
 import Company from "./component/customer/Company";
 import Qna from "./component/customer/Qna";
 
@@ -48,9 +52,12 @@ function App() {
             <Route path="/movie" element={<Movie />} />
             <Route path="/movieDetail/:id" element={<MovieDetail />} />
 
+            {/* gy */}
             <Route path="/community" element={<BoardMain />} />
             <Route path="/writeForm" element={<WriteForm />} />
             <Route path="/test" element={<ModalTest />} />
+            <Route path="/updateForm/:bidx" element={<UpdateForm />} />
+            {/* gy */}
 
             <Route path="/company" element={<Company />} />
             <Route path="/qna" element={<Qna />} />

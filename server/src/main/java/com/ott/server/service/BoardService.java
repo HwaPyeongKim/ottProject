@@ -33,13 +33,19 @@ public class BoardService {
     }
 
     public void addlike(BLikes blikes) {
-        BLikes list = blr.findByMidxAndBidx(blikes.getMidx(), blikes.getBidx());
-        if (list == null) {
+        BLikes existing = blr.findByBidxAndMidx(blikes.getBidx(), blikes.getMidx());
+        if (existing == null) {
             blr.save(blikes);
         }else {
-            Optional<BLikes> delLikes = blr.findByBlidx(list.getBlidx());
-            BLikes delList = delLikes.get();
-            blr.save(delList);
+//            Optional<BLikes> delLikes = blr.findByBlidx(list.getBlidx());
+//            BLikes delList = delLikes.get();
+//            blr.save(delList);
+            blr.delete(existing);
         }
+    }
+
+    public Board getBoard(int bidx) {
+        Board baord = (Board) blr.findByBidx(bidx);
+        return baord;
     }
 }

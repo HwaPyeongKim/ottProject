@@ -1,10 +1,11 @@
- import React, { useEffect, useState } from 'react'
+ import React, { useEffect, useRef, useState } from 'react'
 import Modal from 'react-modal'
 
 import CommentModalContent from './CommentModalContent';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import jaxios from '../../util/JWTUtil';
+import { useNavigate } from 'react-router-dom';
 
 Modal.setAppElement('#root');
 
@@ -14,6 +15,9 @@ function Board(props) {
     const loginUser = useSelector(state => state.user);
     const [likeList, setLikeList] = useState([]);
     const [imgSrc, setImgSrc] = useState('');
+    const navigate = useNavigate();
+    const [menuOpen, setMenuOpen] = useState(false);
+    const updateButtonRef = useRef(null);
 
     const customStyles = {
         overlay: { backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", zIndex: 1000 },
@@ -52,15 +56,14 @@ function Board(props) {
 
     useEffect(
         ()=>{
-            console.log("Board props:", props);
+            // console.log("Board props:", props);
             // console.log("board data:", props.board.member);          
-            console.log("board data:", props.board.boardMember);
+            // console.log("board data:", props.board.boardMember);
 
             jaxios.get(`/api/board/getLikeList`, {params: {boardid: props.board.bidx}})
             .then((result)=>{
                 setLikeList([...result.data.likeList]);
-            }).catch((err)=>{console.error(err)})
-            
+            }).catch((err)=>{console.error(err)})            
         },[props.board]
     )
 
@@ -75,11 +78,24 @@ function Board(props) {
     }, [props.board.fidx]);
 
     async function onLike(){
-        let result = await jaxios.post('/api/board/addlike', { boardid: props.board.bidx, userid: loginUser.email })
+        let result = await jaxios.post('/api/board/addlike', { bidx: props.board.bidx, midx: loginUser.midx })
 
         result = await jaxios.get('/api/board/getLikeList', {params: {boardid: props.board.bidx}})
         setLikeList( [ ...result.data.likeList ] );
     }
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (updateButtonRef.current && !updateButtonRef.current.contains(event.target)) {
+                setMenuOpen(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     return (
         <div className="comment-section-container"> 
@@ -109,22 +125,33 @@ function Board(props) {
                 </div>
                 <div className="comment-actions">                    
                     <div className="action-buttons">
-                        {
-                            likeList.some((like) => like.userid === loginUser.email)? (
-                                <button className="icon-button" onClick={() => onLike()}>❤️</button>
-                            ) : (
-                                <button className="icon-button" onClick={() => onLike()}>🤍</button>
-                            )
-                        }
-                        {/* <button className="icon-button">👍</button> */}
-                        <button className="icon-button">💬</button>
+                        <div className='left-buttons'>
+                            {
+                                likeList.some((like) => Number(like.midx) === Number(loginUser.midx))? (
+                                    <button className="icon-button" onClick={() => onLike()}>❤️</button>
+                                ) : (
+                                    <button className="icon-button" onClick={() => onLike()}>🤍</button>
+                                )
+                            }
+                            {/* <button className="icon-button">👍</button> */}
+                            <button className="icon-button" onClick={()=>{setIsOpen(true)}}>💬</button>
+                        </div>
+                        <div className="update-button" ref={updateButtonRef}>
+                            <button className="icon-button" onClick={() => setMenuOpen(prev => !prev)}>⋯</button>
+                            <div className={`dropdown_menu ${menuOpen ? 'open' : ''}`}>
+                                <button onClick={()=>{navigate('/updateForm')}}>수정</button>
+                                <button>스포일러 신고</button>
+                                <button>삭제</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                {/* <div>
+
+                <div>
                     <Modal isOpen={isOpen}  ariaHideApp={false}  style={customStyles} >
                         <CommentModalContent onClose={closeModal} />
                     </Modal>
-                </div> */}
+                </div>
             </div>
         </div>
     );

@@ -67,4 +67,11 @@ public class BoardController {
         return result;
     }
 
+    @GetMapping("/getBoard/{bidx}")
+    public HashMap<String, Object> getBoard(@PathVariable int bidx){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("board", bs.getBoard(bidx));
+        return result;
+    }
+
 }

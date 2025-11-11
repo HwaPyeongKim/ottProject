@@ -10,7 +10,5 @@ public interface BLikesRepository extends JpaRepository<BLikes, Integer> {
 
     List<BLikes> findByBidx(int boardid);
 
-    Optional<BLikes> findByBlidx(int blidx);
-
-    BLikes findByMidxAndBidx(int midx, int bidx);
+    BLikes findByBidxAndMidx(int bidx, int midx);
 }
