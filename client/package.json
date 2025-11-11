@@ -16,6 +16,7 @@
     "axios": "^1.13.1",
     "dayjs": "^1.11.19",
     "http-proxy-middleware": "^3.0.5",
+    "navigate": "^0.3.6",
     "react": "^19.2.0",
     "react-cookie": "^8.0.1",
     "react-daum-postcode": "^3.2.0",

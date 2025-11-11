@@ -10,4 +10,6 @@ import java.util.Collection;
 public interface QnaRepository extends JpaRepository<Qna, Integer> {
     Collection<Qna> findByTitleContainingOrContentContaining(String key, String key1);
     Page<Qna> findAllByTitleContainingOrContentContaining(String key, String key1, Pageable pageable);
+
+    Qna findByQidx(int qidx);
 }

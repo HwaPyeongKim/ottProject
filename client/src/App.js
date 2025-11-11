@@ -26,6 +26,8 @@ import UpdateForm from "./component/board/UpdateForm";
 
 import Company from "./component/customer/Company";
 import Qna from "./component/customer/Qna";
+import QnaWrite from "./component/customer/QnaWrite";
+import QnaView from "./component/customer/QnaView";
 
 
 //---------------------------------------------------- dg
@@ -64,6 +66,8 @@ function App() {
 
             <Route path="/company" element={<Company />} />
             <Route path="/qna" element={<Qna />} />
+            <Route path="/qnaWrite" element={<QnaWrite />} />
+            <Route path="/qnaView/:qidx" element={<QnaView />} />
 
             {/* dg */}
             <Route path="/login" element={<Login />} />
