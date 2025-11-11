@@ -27,6 +27,7 @@ import UpdateForm from "./component/board/UpdateForm";
 import Company from "./component/customer/Company";
 import Qna from "./component/customer/Qna";
 
+
 //---------------------------------------------------- dg
 import Login from "./component/member/Login";
 import Join from "./component/member/Join";
@@ -34,7 +35,9 @@ import MyList from "./component/member/MyList";
 import Myfollow from "./component/member/Myfollow";
 import InsertList from "./component/member/InsertList";
 import FollowMemberView from "./component/member/FollowMemberView";
+import SocialList from "./component/member/SocialList";
 //---------------------------------------------------- dg
+
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -69,6 +72,7 @@ function App() {
             <Route path="/myfollow" element={<Myfollow />} />
             <Route path="/insertList" element={<InsertList />} />
             <Route path="/followMemberView/:followMemberId" element={<FollowMemberView />} />
+            <Route path="/socialList/:socialId" element={<SocialList />} />
             {/* dg */}
         </Routes>
       </div>
