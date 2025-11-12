@@ -3,7 +3,7 @@
 .content_info .left {flex: 3; margin-right: 20px;}
 .content_info .right {flex: 1;}
 .content_info .left > div {margin-bottom: 30px;}
-.content_info .top {position: relative; height: 250px; overflow: hidden; padding: 40px 100px;}
+.content_info .top {position: relative; height: 250px; overflow: hidden; padding: 40px 100px; background-size: auto; background-position: center right; background-repeat: no-repeat;}
 .content_info .top h2 {font-size: 1.8em;}
 .content_info .top h2 span {color: #d9e8ed; font-size: 1.5rem;}
 .content_info .top p {margin-top: 15px;}
@@ -12,6 +12,12 @@
 .content_info .top div span.star small {color:#777; font-size: 0.8em;}
 .content_info .top div ul {display: flex;}
 .content_info .top div ul li {margin-right: 10px;}
+.content_info .top div .oneline {margin-top: 30px; color: #777; font-style: italic}
+.content_info .episodes li {padding: 20px; background: #111924; display: flex;}
+.content_info .episodes li:nth-child(2n) {background: #0c131e;}
+.content_info .episodes li p {margin-bottom: 10px; margin-left: 20px;}
+.content_info .episodes li p:last-child {margin-bottom: 0;}
+.content_info .episodes li p span {color: #777; font-size: 0.9em;}
 .content_info .providers {}
 .content_info .providers > div {background: #0c131e; padding-top: 20px;}
 .content_info .providers > div h4 {padding: 0 20px; font-size: 1.1em;}
@@ -21,7 +27,7 @@
 .content_info .providers > div ul li img {}
 .content_info .providers > div ul li a {padding: 15px; border-radius: 10px;}
 .content_info .synopsis p {background: #0c131e; padding: 20px;}
-.content_info .video > div, .content_info .cast > div, .content_info .recommendations > div {max-width: 1215px;}
+.content_info .video > div, .content_info .seasons > div, .content_info .video > div, .content_info .cast > div, .content_info .similar > div, .content_info .recommendations > div {max-width: 1215px;}
 .content_info .cast .profile {background: #0c131e; text-align: center;}
 .content_info .cast .profile > div {height: 250px; padding: 20px;}
 .content_info .cast .profile .image_wrapper {display: inline-block; width: 92px; height: 138px; border-radius: 10px; overflow: hidden;}
@@ -54,16 +60,10 @@
 .content_info .right .movieInfo ul li div button.on {background: #f5c518 !important; color: #060d17 !important;}
 .content_info .right .movieInfo ul li div button small {font-size: 0.8em; margin-left: 10px;}
 .content_info .right .movieInfo ul li h4 {margin-bottom: 20px; font-size: 1.1em;}
+.content_info .right .movieInfo ul li.directors p {margin-top: 10px;}
 .content_info .right .movieInfo ul li.ratings p {margin-bottom: 10px;}
 .content_info .right .movieInfo ul li.ratings p img {display: inline-block; height: 30px; margin-right: 10px; vertical-align: middle;}
 .content_info .right .movieInfo ul li.ratings p small {display: inline-block;}
 
 .lists {margin-bottom: 30px;}
 .lists .list {padding: 0; text-align: center;}
-.lists .list div.cover {position: relative; display: inline-block; border-radius: 10px; overflow: hidden;}
-.lists .list div.cover a {position: absolute; top: 0; left : 0; display: none; width: 100%; height: 100%; background: rgba(0,0,0,0.6);}
-.lists .list div.cover:hover a {display: flex; justify-content: space-between; flex-direction: column;}
-.lists .list div.cover a div {display: flex; justify-content: space-around;}
-.lists .list div.cover a div button {border: 0; background: transparent; color: #fff; font-size: 1.2em;}
-.lists .list div.cover a ul {padding: 20px 5px;}
-.lists .list div.cover a ul li {color: #fff; margin-top: 5px;}

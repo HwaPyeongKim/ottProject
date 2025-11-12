@@ -14,9 +14,8 @@ import { faBookmark, faThumbsUp, faArrowLeft, faArrowRight, faPlay, faStar } fro
 
 import "../../style/detail.css";
 
-
 function Detail() {
-  const baseUrl = "https://api.themoviedb.org/3/movie";
+  const baseUrl = "https://api.themoviedb.org/3/tv";
 
   const loginUser = useSelector(state=>state.user);
   const [page, setPage] = useState(1);
@@ -29,8 +28,6 @@ function Detail() {
   const [totalCount, setTotalCount] = useState(0);
   const [view, setView] = useState(false);
   const [imdb, setImdb] = useState("");
-  const [rotten, setRotten] = useState("");
-  const [metacritic, setMetacritic] = useState("");
   const [likeCount , setLikeCount] = useState(0);
   const [likeOn, setLikeOn] = useState(false);
   const prevRef = useRef(null);
@@ -90,7 +87,7 @@ function Detail() {
         ))}
       </div>
     );
-  }
+  };
 
   function AverageRating({ avgScore }) {
     const stars = [1, 2, 3, 4, 5];
@@ -110,7 +107,7 @@ function Detail() {
         <small> ({avgScore.toFixed(1)} / 5)</small>
       </>
     );
-  }
+  };
 
   const countryMap = {
     "KR": "한국",
@@ -152,20 +149,11 @@ function Detail() {
     />
   );
 
-  function formatRuntime(minutes) {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-
-    if (hours === 0) return `${mins}분`;
-    if (mins === 0) return `${hours}시간`;
-    return `${hours}시간 ${mins}분`;
-  }
-
   function getOttUrl(link, title) {
     if (!link) return null;
     const query = encodeURIComponent(title);
     return `${link}${query}`;
-  }
+  };
 
   async function findItem() {
     try {
@@ -174,15 +162,13 @@ function Detail() {
           api_key: process.env.REACT_APP_KEY,
           language: "ko-KR",
           region: "KR",
-          append_to_response: "videos,credits,similar,recommendations,release_dates,watch/providers"
+          append_to_response: "videos,credits,similar,recommendations,content_ratings,watch/providers,external_ids"
         }
       });
-      
-      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
+
+      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.external_ids.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
       const ratingData = omdbData.data?.Ratings || [];
       setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
-      setRotten(ratingData.find(r => r.Source === "Rotten Tomatoes")?.Value || "Unknown");
-      setMetacritic(ratingData.find(r => r.Source === "Metacritic")?.Value || "Unknown");
 
       // 성인 여부 체크
       if (data.adult === true) {
@@ -197,7 +183,12 @@ function Detail() {
 
       // 출연진 및 감독
       data.cast = [];
-      data.directors = [];
+      data.writing = [];
+      if (data.created_by.length) {
+        for (let crew of data.created_by) {
+          data.writing.push(crew);
+        }
+      }
       if (data.credits) {
         const sortedCast = data.credits.cast.sort((a, b) => a.order - b.order);
         for (let i = 0; i < sortedCast.length && i < 20; i++) {
@@ -206,9 +197,11 @@ function Detail() {
           }
         }
 
-        for (let crew of data.credits.crew) {
-          if (crew.job === "Director") {
-            data.directors.push(crew);
+        if (data.writing.length === 0) {
+          for (let crew of data.credits.crew) {
+            if (crew.job === "Executive Producer" || crew.department === "Writing") {
+              data.writing.push(crew);
+            }
           }
         }
       }
@@ -219,19 +212,18 @@ function Detail() {
       }
 
       // 연령 등급
-      if (data.release_dates?.results) {
-        const krRelease = data.release_dates.results.find(r => r.iso_3166_1 === "KR");
+      data.age = "Unknown"
+      if (data.content_ratings?.results) {
+        const krRelease = data.content_ratings.results.find(r => r.iso_3166_1 === "KR");
         if (krRelease) {
-          data.release_dates = krRelease.release_dates.sort(
-            (a, b) => new Date(a.release_date) - new Date(b.release_date)
-          );
+          data.age = krRelease.rating
         }
       }
 
       // 비슷한 영화
       data.similars = data.similar?.results || [];
 
-      // 추천 영화
+      // // 추천 영화
       data.recommendations = data.recommendations?.results || [];
 
       setItem(data);
@@ -346,7 +338,7 @@ function Detail() {
 
   useEffect(
     ()=>{
-      findItem(id);
+      findItem();
       getReviews(1);
       getAverage();
       getLikes();
@@ -356,11 +348,10 @@ function Detail() {
   return (
     <section className="content_info">
       <div className="top" style={{backgroundImage: `linear-gradient(to right, rgba(6, 13, 23, 1) 0%, rgba(6, 13, 23, 1) 58%, rgba(6, 13, 23, 0) 100%), url(https://image.tmdb.org/t/p/w780${item.backdrop_path})`}}>
-        <h2>{item.title} <span>[{item.release_date ? item.release_date.substr(0,4) : null}]</span></h2>
-        <p>원제 : {item.original_title}</p>
+        <h2>{item.name} <span>[{item.first_air_date ? item.first_air_date.substr(0,4) : null}]</span></h2>
+        <p>원제 : {item.original_name}</p>
         <div>
           <span className="star">평점 : <AverageRating avgScore={average} /></span>
-          <span>재생시간 : {formatRuntime(item.runtime)}</span>
           <ul>
             {
               item.genres ?
@@ -378,6 +369,46 @@ function Detail() {
 
       <div className="bottom">
         <div className="left">
+          <div className="seasons">
+            {
+              item.seasons && item.seasons.length > 1 && (
+                <>
+                  <h3>{item.seasons.length}개의 시즌</h3>
+                  <Swiper
+                    className="lists"
+                    modules={[Navigation]}
+                    spaceBetween={20}
+                    slidesPerView={6}
+                    slidesPerGroup={6}
+                    onInit={(swiper) => {
+                      // 커스텀 버튼 연결
+                      swiper.params.navigation.prevEl = prevRef.current;
+                      swiper.params.navigation.nextEl = nextRef.current;
+                      swiper.navigation.init();
+                      swiper.navigation.update();
+                    }}
+                  >
+                    {item.seasons.map((season, idx) => (
+                      <SwiperSlide className="list" key={idx}>
+                        <div className="cover">
+                          <img src={`https://image.tmdb.org/t/p/w185${season.poster_path}`} alt={`${season.name} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
+                          <a href={`/tv/season/${item.id}/${season.season_number}`}>
+                            <div>
+                              <p>{season.name}</p>
+                            </div>
+                          </a>
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                    <button className="swiper-button-prev" ref={prevRef}><FontAwesomeIcon icon={faArrowLeft} /></button>
+                    <button className="swiper-button-next" ref={nextRef}><FontAwesomeIcon icon={faArrowRight} /></button>
+                  </Swiper>
+                </>
+              )
+            }
+
+          </div>
+
           <div className="providers">
             <h3>지금 시청하기</h3>
             {
@@ -522,7 +553,7 @@ function Detail() {
           </div>
 
           <div className="similar">
-            <h3>{item.title} 과 유사한 영화</h3>
+            <h3>{item.name} 과 유사한 TV 시리즈</h3>
             <div>
               {item.similars && item.similars.length > 0 ? (
                 <>
@@ -558,13 +589,13 @@ function Detail() {
                   </Swiper>
                 </>
               ) : (
-                <div className="noFind">유사한 영화가 없습니다.</div>
+                <div className="noFind">유사한 TV 시리즈가 없습니다</div>
               )}
             </div>
           </div>
 
           <div className="recommendations">
-            <h3>추천 영화</h3>
+            <h3>추천 TV 시리즈</h3>
             <div>
               {item.recommendations && item.recommendations.length > 0 ? (
                 <>
@@ -586,7 +617,7 @@ function Detail() {
                       <SwiperSlide className="list" key={idx}>
                         <div className="cover">
                           <img src={`https://image.tmdb.org/t/p/w185${recommendation.poster_path}`} alt={`${recommendation.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                          <a href={`/movie/detail/${recommendation.id}`}>
+                          <a href={`/tv/detail/${recommendation.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
                               <button><FontAwesomeIcon icon={faThumbsUp} /></button>
@@ -600,7 +631,7 @@ function Detail() {
                   </Swiper>
                 </>
               ) : (
-                <div className="noFind">추천 영화가 없습니다.</div>
+                <div className="noFind">추천 TV 시리즈가 없습니다</div>
               )}
             </div>
           </div>
@@ -646,6 +677,7 @@ function Detail() {
             </ul>
           </div>
         </div>
+
         <div className="right">
           <div className="movieInfo">
             <h3>영화 정보</h3>
@@ -662,10 +694,10 @@ function Detail() {
               <li className="directors">
                 <h4>감독</h4>
                 {
-                  item.directors && item.directors.length > 0 ?
-                  item.directors.map((director, didx)=>{
+                  item.writing && item.writing.length > 0 ?
+                  item.writing.map((writing, didx)=> {
                     return (
-                      <p>{director.name}</p>
+                      <p key={didx}>{writing.name}</p>
                     )
                   })
                   : <p>Unknown</p>
@@ -675,8 +707,6 @@ function Detail() {
                 <h4>평점</h4>
                 <p><AverageRating avgScore={average} /></p>
                 <p><img src="/images/imdb.png" alt="imdb 점수" /><small>{imdb}</small></p>
-                <p><img src="/images/rotten.png" alt="rotten tomatoes 점수" /><small>{rotten}</small></p>
-                <p><img src="/images/metacritic.png" alt="metacritic 점수" /><small>{metacritic}</small></p>
               </li>
               <li>
                 <h4>장르</h4>
@@ -691,16 +721,8 @@ function Detail() {
                 }
               </li>
               <li>
-                <h4>재생 시간</h4>
-                <p>{formatRuntime(item.runtime)}</p>
-              </li>
-              <li>
                 <h4>연령 등급</h4>
-                {
-                  item.release_dates && item.release_dates.length > 0 ?
-                  <p>{item.release_dates[0].certification}</p>
-                  : <p>Unknown</p>
-                }
+                <p>{item.age}</p>
               </li>
               <li>
                 <h4>제작 국가</h4>

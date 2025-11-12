@@ -14,14 +14,15 @@ import { faBookmark, faThumbsUp, faArrowLeft, faArrowRight, faPlay, faStar } fro
 
 import "../../style/detail.css";
 
-
-function Detail() {
-  const baseUrl = "https://api.themoviedb.org/3/movie";
-
+function Season() {
+  const baseUrl = "https://api.themoviedb.org/3/tv";
+  
   const loginUser = useSelector(state=>state.user);
   const [page, setPage] = useState(1);
   const {id} = useParams();
+  const {snum} = useParams();
   const [item, setItem] = useState({});
+  const [season, setSeason] = useState({});
   const [average, setAverage] = useState(0);
   const [content, setContent] = useState("");
   const [reviewList, setReviewList] = useState([]);
@@ -29,8 +30,6 @@ function Detail() {
   const [totalCount, setTotalCount] = useState(0);
   const [view, setView] = useState(false);
   const [imdb, setImdb] = useState("");
-  const [rotten, setRotten] = useState("");
-  const [metacritic, setMetacritic] = useState("");
   const [likeCount , setLikeCount] = useState(0);
   const [likeOn, setLikeOn] = useState(false);
   const prevRef = useRef(null);
@@ -40,132 +39,132 @@ function Detail() {
   const [hover, setHover] = useState(0);
 
   const handleClick = (starIndex, isHalf) => {
-    const newScore = isHalf ? starIndex - 0.5 : starIndex;
-    setScore(newScore);
-  };
-
-  const getStarIcon = (starIndex) => {
-    const current = hover || score;
-    if (current >= starIndex) return solidStar;
-    if (current >= starIndex - 0.5) return faStarHalfAlt;
-    return regularStar;
-  };
-
-  function StarRating() {
-    return (
-      <div style={{ display: "flex", flexDirection: "row", fontSize: "24px" }}>
-        {[1,2,3,4,5].map((star) => (
-          <div key={star} style={{ position: "relative", marginRight: "4px" }}>
-            <div
-              onMouseEnter={() => setHover(star - 0.5)}
-              onMouseLeave={() => setHover(0)}
-              onClick={() => handleClick(star, true)}
-              style={{
-                position: "absolute",
-                width: "50%",
-                height: "100%",
-                left: 0,
-                top: 0,
-                cursor: "pointer",
-                zIndex: 1,
-              }}
-            />
-
-            <div
-              onMouseEnter={() => setHover(star)}
-              onMouseLeave={() => setHover(0)}
-              onClick={() => handleClick(star, false)}
-              style={{
-                position: "absolute",
-                width: "50%",
-                height: "100%",
-                right: 0,
-                top: 0,
-                cursor: "pointer",
-                zIndex: 1,
-              }}
-            />
-            <FontAwesomeIcon icon={getStarIcon(star)} style={{ color: "#f39c12" }} />
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  function AverageRating({ avgScore }) {
-    const stars = [1, 2, 3, 4, 5];
-
-    // 별 아이콘 결정 함수
-    const getStarIcon = (star) => {
-      if (avgScore >= star) return solidStar;
-      else if (avgScore >= star - 0.5) return faStarHalfAlt;
-      else return regularStar;
+      const newScore = isHalf ? starIndex - 0.5 : starIndex;
+      setScore(newScore);
     };
-
-    return (
-      <>
-        {stars.map((star) => (
-          <FontAwesomeIcon key={star} icon={getStarIcon(star)} />
-        ))}
-        <small> ({avgScore.toFixed(1)} / 5)</small>
-      </>
+  
+    const getStarIcon = (starIndex) => {
+      const current = hover || score;
+      if (current >= starIndex) return solidStar;
+      if (current >= starIndex - 0.5) return faStarHalfAlt;
+      return regularStar;
+    };
+  
+    function StarRating() {
+      return (
+        <div style={{ display: "flex", flexDirection: "row", fontSize: "24px" }}>
+          {[1,2,3,4,5].map((star) => (
+            <div key={star} style={{ position: "relative", marginRight: "4px" }}>
+              <div
+                onMouseEnter={() => setHover(star - 0.5)}
+                onMouseLeave={() => setHover(0)}
+                onClick={() => handleClick(star, true)}
+                style={{
+                  position: "absolute",
+                  width: "50%",
+                  height: "100%",
+                  left: 0,
+                  top: 0,
+                  cursor: "pointer",
+                  zIndex: 1,
+                }}
+              />
+  
+              <div
+                onMouseEnter={() => setHover(star)}
+                onMouseLeave={() => setHover(0)}
+                onClick={() => handleClick(star, false)}
+                style={{
+                  position: "absolute",
+                  width: "50%",
+                  height: "100%",
+                  right: 0,
+                  top: 0,
+                  cursor: "pointer",
+                  zIndex: 1,
+                }}
+              />
+              <FontAwesomeIcon icon={getStarIcon(star)} style={{ color: "#f39c12" }} />
+            </div>
+          ))}
+        </div>
+      );
+    };
+  
+    function AverageRating({ avgScore }) {
+      const stars = [1, 2, 3, 4, 5];
+  
+      // 별 아이콘 결정 함수
+      const getStarIcon = (star) => {
+        if (avgScore >= star) return solidStar;
+        else if (avgScore >= star - 0.5) return faStarHalfAlt;
+        else return regularStar;
+      };
+  
+      return (
+        <>
+          {stars.map((star) => (
+            <FontAwesomeIcon key={star} icon={getStarIcon(star)} />
+          ))}
+          <small> ({avgScore.toFixed(1)} / 5)</small>
+        </>
+      );
+    };
+  
+    const countryMap = {
+      "KR": "한국",
+      "JP": "일본",
+      "US": "미국",
+      "GB": "영국",
+      "FR": "프랑스",
+      "DE": "독일",
+      "CN": "중국",
+      "IT": "이탈리아",
+      "CA": "캐나다",
+      "AU": "호주",
+      "ES": "스페인",
+      "IN": "인도",
+      "RU": "러시아",
+      "BR": "브라질",
+      "MX": "멕시코",
+      "SE": "스웨덴",
+      "NL": "네덜란드",
+      "BE": "벨기에",
+      "DK": "덴마크",
+      "FI": "핀란드",
+      "NO": "노르웨이",
+      "NZ": "뉴질랜드",
+      "AR": "아르헨티나",
+      "TR": "터키",
+      "TH": "태국",
+      "SG": "싱가포르"
+    };
+  
+    const YouTubeVideo = ({videoKey}) => (
+      <iframe
+        height="180"
+        src={`https://www.youtube.com/embed/${videoKey}`}
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
     );
-  }
 
-  const countryMap = {
-    "KR": "한국",
-    "JP": "일본",
-    "US": "미국",
-    "GB": "영국",
-    "FR": "프랑스",
-    "DE": "독일",
-    "CN": "중국",
-    "IT": "이탈리아",
-    "CA": "캐나다",
-    "AU": "호주",
-    "ES": "스페인",
-    "IN": "인도",
-    "RU": "러시아",
-    "BR": "브라질",
-    "MX": "멕시코",
-    "SE": "스웨덴",
-    "NL": "네덜란드",
-    "BE": "벨기에",
-    "DK": "덴마크",
-    "FI": "핀란드",
-    "NO": "노르웨이",
-    "NZ": "뉴질랜드",
-    "AR": "아르헨티나",
-    "TR": "터키",
-    "TH": "태국",
-    "SG": "싱가포르"
-  };
+    function formatRuntime(minutes) {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
 
-  const YouTubeVideo = ({videoKey}) => (
-    <iframe
-      height="180"
-      src={`https://www.youtube.com/embed/${videoKey}`}
-      title="YouTube video player"
-      frameBorder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowFullScreen
-    />
-  );
-
-  function formatRuntime(minutes) {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-
-    if (hours === 0) return `${mins}분`;
-    if (mins === 0) return `${hours}시간`;
-    return `${hours}시간 ${mins}분`;
-  }
-
-  function getOttUrl(link, title) {
-    if (!link) return null;
-    const query = encodeURIComponent(title);
-    return `${link}${query}`;
-  }
+      if (hours === 0) return `${mins}분`;
+      if (mins === 0) return `${hours}시간`;
+      return `${hours}시간 ${mins}분`;
+    }
+  
+    function getOttUrl(link, title) {
+      if (!link) return null;
+      const query = encodeURIComponent(title);
+      return `${link}${query}`;
+    };
 
   async function findItem() {
     try {
@@ -174,20 +173,39 @@ function Detail() {
           api_key: process.env.REACT_APP_KEY,
           language: "ko-KR",
           region: "KR",
-          append_to_response: "videos,credits,similar,recommendations,release_dates,watch/providers"
+          append_to_response: "videos,similar,recommendations,content_ratings,watch/providers,external_ids"
         }
       });
-      
-      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
+
+      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.external_ids.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
       const ratingData = omdbData.data?.Ratings || [];
       setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
-      setRotten(ratingData.find(r => r.Source === "Rotten Tomatoes")?.Value || "Unknown");
-      setMetacritic(ratingData.find(r => r.Source === "Metacritic")?.Value || "Unknown");
 
-      // 성인 여부 체크
-      if (data.adult === true) {
-
+      // 연령 등급
+      data.age = "Unknown"
+      if (data.content_ratings?.results) {
+        const krRelease = data.content_ratings.results.find(r => r.iso_3166_1 === "KR");
+        if (krRelease) {
+          data.age = krRelease.rating;
+        }
       }
+
+      setItem(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function findSeason() {
+    try {
+      const {data} = await axios.get(`${baseUrl}/${id}/season/${snum}`, {
+        params: {
+          api_key: process.env.REACT_APP_KEY,
+          language: "ko-KR",
+          watch_region: "KR",
+          append_to_response: "videos,credits,watch/providers"
+        }
+      });
 
       // OTT 정보
       data.providers = [];
@@ -197,7 +215,7 @@ function Detail() {
 
       // 출연진 및 감독
       data.cast = [];
-      data.directors = [];
+      data.writing = [];
       if (data.credits) {
         const sortedCast = data.credits.cast.sort((a, b) => a.order - b.order);
         for (let i = 0; i < sortedCast.length && i < 20; i++) {
@@ -206,9 +224,11 @@ function Detail() {
           }
         }
 
-        for (let crew of data.credits.crew) {
-          if (crew.job === "Director") {
-            data.directors.push(crew);
+        if (data.writing.length === 0) {
+          for (let crew of data.credits.crew) {
+            if (crew.job === "Executive Producer" || crew.department === "Writing") {
+              data.writing.push(crew);
+            }
           }
         }
       }
@@ -217,26 +237,12 @@ function Detail() {
       if (data.videos?.results?.length > 0) {
         data.videos = data.videos.results.filter(v => v.site === "YouTube");
       }
+      
+      console.log(data);
 
-      // 연령 등급
-      if (data.release_dates?.results) {
-        const krRelease = data.release_dates.results.find(r => r.iso_3166_1 === "KR");
-        if (krRelease) {
-          data.release_dates = krRelease.release_dates.sort(
-            (a, b) => new Date(a.release_date) - new Date(b.release_date)
-          );
-        }
-      }
-
-      // 비슷한 영화
-      data.similars = data.similar?.results || [];
-
-      // 추천 영화
-      data.recommendations = data.recommendations?.results || [];
-
-      setItem(data);
-    } catch (error) {
-      console.error(error);
+      setSeason(data);
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -346,7 +352,9 @@ function Detail() {
 
   useEffect(
     ()=>{
-      findItem(id);
+      findItem();
+      findSeason();
+
       getReviews(1);
       getAverage();
       getLikes();
@@ -356,11 +364,10 @@ function Detail() {
   return (
     <section className="content_info">
       <div className="top" style={{backgroundImage: `linear-gradient(to right, rgba(6, 13, 23, 1) 0%, rgba(6, 13, 23, 1) 58%, rgba(6, 13, 23, 0) 100%), url(https://image.tmdb.org/t/p/w780${item.backdrop_path})`}}>
-        <h2>{item.title} <span>[{item.release_date ? item.release_date.substr(0,4) : null}]</span></h2>
-        <p>원제 : {item.original_title}</p>
+        <h2>{season.name} <span>[{season.air_date ? season.air_date.substr(0,4) : null}]</span></h2>
+        <p>원제 : {item.original_name}</p>
         <div>
           <span className="star">평점 : <AverageRating avgScore={average} /></span>
-          <span>재생시간 : {formatRuntime(item.runtime)}</span>
           <ul>
             {
               item.genres ?
@@ -378,10 +385,35 @@ function Detail() {
 
       <div className="bottom">
         <div className="left">
+
+          <div className="episodes">
+            <h3>에피소드</h3>
+            <div>
+              {
+                season.episodes && season.episodes.length > 0 ?
+                (
+                  <ul>
+                    {season.episodes.map((episode, eidx) => (
+                      <li key={eidx}>
+                        <img src={`https://image.tmdb.org/t/p/w185${episode.still_path}`} alt={`${episode.episode_number} 스틸컷`} />
+                        <div>
+                          <p>시즌 {snum} {episode.episode_number}화 - {episode.name} <span>({formatRuntime(episode.runtime)})</span></p>
+                          <p>{episode.overview}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="noFind">관련 영상이 없습니다.</div>
+                )
+              }
+            </div>
+          </div>
+
           <div className="providers">
             <h3>지금 시청하기</h3>
             {
-              item.providers ? (
+              season.providers ? (
                 (() => {
                   const types = [
                     { key: "buy", label: "구매" },
@@ -406,7 +438,7 @@ function Detail() {
                   ]
 
                   const available = types.filter(
-                    (type) => item.providers[type.key]?.length > 0
+                    (type) => season.providers[type.key]?.length > 0
                   );
 
                   if (available.length === 0) {
@@ -417,9 +449,9 @@ function Detail() {
                     <div key={type.key}>
                       <h4>{type.label}</h4>
                       <ul>
-                        {item.providers[type.key].map((provider, idx) => {
+                        {season.providers[type.key].map((provider, idx) => {
                           const ottInfo = ottInfos.find((l) => l.key === provider.provider_id);
-                          const url = getOttUrl(ottInfo.link, item.title);
+                          const url = getOttUrl(ottInfo.link, season.title);
 
                           return (
                             <li key={`${type.key}-${idx}`}>
@@ -445,14 +477,14 @@ function Detail() {
           <div className="synopsis">
             <h3>시놉시스</h3>
             {
-              item.overview ? <p>{item.overview}</p> : <div className="noFind">시놉시스 정보를 찾을 수 없습니다.</div>
+              season.overview ? <p>{season.overview}</p> : <div className="noFind">시놉시스 정보를 찾을 수 없습니다.</div>
             }
           </div>
 
           <div className="video">
             <h3>영상</h3>
             <div>
-              {item.videos && item.videos.length > 0 ? (
+              {season.videos && season.videos.length > 0 ? (
                 <>
                   <Swiper
                     modules={[Navigation]}
@@ -467,7 +499,7 @@ function Detail() {
                       swiper.navigation.update();
                     }}
                   >
-                    {item.videos.map((video, idx) => (
+                    {season.videos.map((video, idx) => (
                       <SwiperSlide key={idx}><YouTubeVideo videoKey={video.key} /></SwiperSlide>
                     ))}
                     <button className="swiper-button-prev" ref={prevRef}><FontAwesomeIcon icon={faArrowLeft} /></button>
@@ -484,7 +516,7 @@ function Detail() {
             <h3>출연진</h3>
             <div>
               {
-                item.cast && item.cast.length > 0 ? (
+                season.cast && season.cast.length > 0 ? (
                   <>
                     <Swiper
                       modules={[Navigation]}
@@ -499,7 +531,7 @@ function Detail() {
                         swiper.navigation.update();
                       }}
                     >
-                      {item.cast.map((cast, idx) => (
+                      {season.cast.map((cast, idx) => (
                         <SwiperSlide className="profile" key={idx}>
                           <div>
                             <div className="image_wrapper">
@@ -518,90 +550,6 @@ function Detail() {
                   <div className="noFind">출연진 정보를 조회할 수 없습니다.</div>
                 )
               }
-            </div>
-          </div>
-
-          <div className="similar">
-            <h3>{item.title} 과 유사한 영화</h3>
-            <div>
-              {item.similars && item.similars.length > 0 ? (
-                <>
-                  <Swiper
-                    className="lists"
-                    modules={[Navigation]}
-                    spaceBetween={20}
-                    slidesPerView={6}
-                    slidesPerGroup={6}
-                    onInit={(swiper) => {
-                      // 커스텀 버튼 연결
-                      swiper.params.navigation.prevEl = prevRef.current;
-                      swiper.params.navigation.nextEl = nextRef.current;
-                      swiper.navigation.init();
-                      swiper.navigation.update();
-                    }}
-                  >
-                    {item.similars.map((similar, idx) => (
-                      <SwiperSlide className="list" key={idx}>
-                        <div className="cover">
-                          <img src={`https://image.tmdb.org/t/p/w185${similar.poster_path}`} alt={`${similar.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                          <a href={`/movie/detail/${similar.id}`}>
-                            <div>
-                              <button><FontAwesomeIcon icon={faBookmark} /></button>
-                              <button><FontAwesomeIcon icon={faThumbsUp} /></button>
-                            </div>
-                          </a>
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                    <button className="swiper-button-prev" ref={prevRef}><FontAwesomeIcon icon={faArrowLeft} /></button>
-                    <button className="swiper-button-next" ref={nextRef}><FontAwesomeIcon icon={faArrowRight} /></button>
-                  </Swiper>
-                </>
-              ) : (
-                <div className="noFind">유사한 영화가 없습니다.</div>
-              )}
-            </div>
-          </div>
-
-          <div className="recommendations">
-            <h3>추천 영화</h3>
-            <div>
-              {item.recommendations && item.recommendations.length > 0 ? (
-                <>
-                  <Swiper
-                    className="lists"
-                    modules={[Navigation]}
-                    spaceBetween={20}
-                    slidesPerView={6}
-                    slidesPerGroup={6}
-                    onInit={(swiper) => {
-                      // 커스텀 버튼 연결
-                      swiper.params.navigation.prevEl = prevRef.current;
-                      swiper.params.navigation.nextEl = nextRef.current;
-                      swiper.navigation.init();
-                      swiper.navigation.update();
-                    }}
-                  >
-                    {item.recommendations.map((recommendation, idx) => (
-                      <SwiperSlide className="list" key={idx}>
-                        <div className="cover">
-                          <img src={`https://image.tmdb.org/t/p/w185${recommendation.poster_path}`} alt={`${recommendation.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                          <a href={`/movie/detail/${recommendation.id}`}>
-                            <div>
-                              <button><FontAwesomeIcon icon={faBookmark} /></button>
-                              <button><FontAwesomeIcon icon={faThumbsUp} /></button>
-                            </div>
-                          </a>
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                    <button className="swiper-button-prev" ref={prevRef}><FontAwesomeIcon icon={faArrowLeft} /></button>
-                    <button className="swiper-button-next" ref={nextRef}><FontAwesomeIcon icon={faArrowRight} /></button>
-                  </Swiper>
-                </>
-              ) : (
-                <div className="noFind">추천 영화가 없습니다.</div>
-              )}
             </div>
           </div>
 
@@ -646,26 +594,27 @@ function Detail() {
             </ul>
           </div>
         </div>
+
         <div className="right">
           <div className="movieInfo">
             <h3>영화 정보</h3>
             <ul>
               <li>
                 <div>
-                  <img src={`https://image.tmdb.org/t/p/w154${item.poster_path}`} alt={`${item.title} 포스터`} />
+                  <img src={`https://image.tmdb.org/t/p/w154${season.poster_path}`} alt={`${item.name} 포스터`} />
                 </div>
                 <div>
-                  <button className="buttonHover" onClick={()=>{favorite()}}><FontAwesomeIcon icon={faBookmark} /></button>
-                  <button className={`buttonHover ${likeOn ? "on" : ""}`} onClick={()=>{like()}}><FontAwesomeIcon icon={faThumbsUp} /><small>{likeCount}</small></button>
+                  {/* <button className="buttonHover" onClick={()=>{favorite()}}><FontAwesomeIcon icon={faBookmark} /></button>
+                  <button className={`buttonHover ${likeOn ? "on" : ""}`} onClick={()=>{like()}}><FontAwesomeIcon icon={faThumbsUp} /><small>{likeCount}</small></button> */}
                 </div>
               </li>
               <li className="directors">
                 <h4>감독</h4>
                 {
-                  item.directors && item.directors.length > 0 ?
-                  item.directors.map((director, didx)=>{
+                  season.writing && season.writing.length > 0 ?
+                  season.writing.map((writing, didx)=> {
                     return (
-                      <p>{director.name}</p>
+                      <p key={didx}>{writing.name}</p>
                     )
                   })
                   : <p>Unknown</p>
@@ -675,8 +624,6 @@ function Detail() {
                 <h4>평점</h4>
                 <p><AverageRating avgScore={average} /></p>
                 <p><img src="/images/imdb.png" alt="imdb 점수" /><small>{imdb}</small></p>
-                <p><img src="/images/rotten.png" alt="rotten tomatoes 점수" /><small>{rotten}</small></p>
-                <p><img src="/images/metacritic.png" alt="metacritic 점수" /><small>{metacritic}</small></p>
               </li>
               <li>
                 <h4>장르</h4>
@@ -691,16 +638,8 @@ function Detail() {
                 }
               </li>
               <li>
-                <h4>재생 시간</h4>
-                <p>{formatRuntime(item.runtime)}</p>
-              </li>
-              <li>
                 <h4>연령 등급</h4>
-                {
-                  item.release_dates && item.release_dates.length > 0 ?
-                  <p>{item.release_dates[0].certification}</p>
-                  : <p>Unknown</p>
-                }
+                <p>{item.age}</p>
               </li>
               <li>
                 <h4>제작 국가</h4>
@@ -724,4 +663,4 @@ function Detail() {
   )
 }
 
-export default Detail
+export default Season

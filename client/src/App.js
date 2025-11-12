@@ -8,6 +8,7 @@ import "./style/common.css";
 import "./style/list.css";
 import 'swiper/css';
 
+
 import Header from "./component/Header";
 
 import Main from "./component/Main";
@@ -16,6 +17,9 @@ import Search from "./component/Search";
 
 import Movie from "./component/movie/Main";
 import MovieDetail from "./component/movie/Detail";
+import Tv from "./component/tv/Main";
+import TvDetail from "./component/tv/Detail";
+import TvSeason from "./component/tv/Season";
 
 //---------------------------------------------------- gy
 import BoardMain from "./component/board/BoardMain";
@@ -55,7 +59,10 @@ function App() {
             <Route path="/" element={<Main />} />
             <Route path="/search/:keyword" element={<Search />} />
             <Route path="/movie" element={<Movie />} />
-            <Route path="/movie/Detail/:id" element={<MovieDetail />} />
+            <Route path="/movie/detail/:id" element={<MovieDetail />} />
+            <Route path="/tv" element={<Tv />} />
+            <Route path="/tv/detail/:id" element={<TvDetail />} />
+            <Route path="/tv/season/:id/:snum" element={<TvSeason />} />
 
             {/* gy */}
             <Route path="/community" element={<BoardMain />} />
