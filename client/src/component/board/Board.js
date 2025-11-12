@@ -5,7 +5,7 @@ import CommentModalContent from './CommentModalContent';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import jaxios from '../../util/JWTUtil';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Cookies } from 'react-cookie';
 
 Modal.setAppElement('#root');
@@ -20,6 +20,7 @@ function Board(props) {
     const [menuOpen, setMenuOpen] = useState(false);
     const updateButtonRef = useRef(null);
     const cookies = new Cookies();
+    const {bidx} = useParams();
 
     const customStyles = {
         overlay: { backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", zIndex: 1000 },
@@ -62,8 +63,8 @@ function Board(props) {
             // console.log("Board props:", props);
             // console.log("board data:", props.board.member);          
             // console.log("board data:", props.board.boardMember);
-            console.log("현재 로그인 정보:", loginUser);
-            console.log("🔍 쿠키 user:", cookies.get("user"));
+            // console.log("현재 로그인 정보:", loginUser);
+            // console.log("🔍 쿠키 user:", cookies.get("user"));
 
             jaxios.get(`/api/board/getLikeList`, {params: {boardid: props.board.bidx}})
             .then((result)=>{
@@ -73,8 +74,11 @@ function Board(props) {
     )
 
     useEffect(() => {
-        if (!props.board.fidx) return;
-
+        if (!props.board.fidx) {
+            setImgSrc('');
+            return;
+        }
+        setImgSrc('');
         axios.get(`/api/file/url/${props.board.fidx}`)
             .then((res) => {
                 setImgSrc(res.data.image); // 실제 S3 URL
@@ -95,12 +99,13 @@ function Board(props) {
                 setMenuOpen(false);
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+   
 
     return (
         <div className="comment-section-container"> 
@@ -146,7 +151,7 @@ function Board(props) {
                             <div className={`dropdown_menu ${menuOpen ? 'open' : ''}`}>
                                 <button onClick={()=>{navigate(`/updateForm/${props.board.bidx}`)}}>수정</button>
                                 <button>스포일러 신고</button>
-                                <button>삭제</button>
+                                <button onClick={()=>{props.deleteBoard(props.board.bidx); setMenuOpen(false);}}>삭제</button>
                             </div>
                         </div>
                     </div>

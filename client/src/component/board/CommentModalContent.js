@@ -1,5 +1,6 @@
 import React from 'react';
 import "../../style/boardModal.css";
+import { useNavigate } from 'react-router-dom';
 
 // 댓글 목록 더미 데이터 
 const dummyComment = {
@@ -10,6 +11,9 @@ const dummyComment = {
 };
 
 const CommentModalContent = ({ onClose }) => {
+    const navigate = useNavigate();
+
+
     return (
         <div className="comment-modal-content">
         {/* 1. 모달 헤더 (제목 및 닫기 버튼) */}
@@ -32,7 +36,6 @@ const CommentModalContent = ({ onClose }) => {
                     <div className="modal-comment-header">
                     <span className="modal-username">{dummyComment.user.nickname}</span>
                     <span className="modal-timestamp">{dummyComment.timeAgo} 전</span>
-                    {/* 별점 기능 제외 */}
                     </div>
                     <p className="modal-comment-text">{dummyComment.text}</p>
                     <div className="modal-comment-actions">
@@ -41,26 +44,7 @@ const CommentModalContent = ({ onClose }) => {
                     </div>
                 </div>
                 <button className="modal-more-button">...</button>
-            </div>
-            
-            {/* 추가 댓글 아이템 (스크롤링 확인용) */}
-            <div className="modal-comment-item">
-            <img className="modal-profile-image" src="https://via.placeholder.com/30?text=A" alt="프로필 이미지" />
-            <div className="modal-comment-info">
-                <div className="modal-comment-header">
-                <span className="modal-username">추가 사용자</span>
-                <span className="modal-timestamp">2일 전</span>
-                {/* 별점 기능 제외 */}
-                </div>
-                <p className="modal-comment-text">좋은 글 감사합니다!</p>
-                <div className="modal-comment-actions">
-                <button className="modal-icon-button">👍</button>
-                <span className="modal-likes">좋아요 5</span>
-                </div>
-            </div>
-            <button className="modal-more-button">...</button>
-            </div>
-            
+            </div>   
         </div>
 
         {/* 3. 댓글 입력창 (하단 고정) */}

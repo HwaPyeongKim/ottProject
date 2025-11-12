@@ -19,10 +19,11 @@ public class BoardController {
     @Autowired
     BoardService bs;
 
-    @GetMapping("/getBoardList")
-    public HashMap<String, Object> getBoardList(){
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("boardList", bs.getBoardList());
+    @GetMapping("/getBoardList/{page}")
+    public HashMap<String, Object> getBoardList(
+            @PathVariable("page") int page,
+            @RequestParam(value = "searchWord", required = false, defaultValue = "") String searchWord){
+        HashMap<String, Object> result = bs.getBoardList(page, searchWord);
         return result;
     }
 
@@ -73,6 +74,22 @@ public class BoardController {
         HashMap<String, Object> result = new HashMap<>();
         Board board =  bs.getBoard(bidx);
         result.put("board", board);
+        return result;
+    }
+
+    @PostMapping("/updateBoard")
+    public HashMap<String, Object> updateBoard(@RequestBody Board board){
+        HashMap<String, Object> result = new HashMap<>();
+        bs.updateBoard(board);
+        result.put("msg","ok");
+        return result;
+    }
+
+    @DeleteMapping("/deleteBoard/{bidx}")
+    public HashMap<String, Object> deleteBoard(@PathVariable int bidx){
+        HashMap<String, Object> result = new HashMap<>();
+        bs.deleteBoard(bidx);
+        result.put("msg","ok");
         return result;
     }
 
