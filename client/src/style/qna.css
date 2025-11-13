@@ -38,6 +38,11 @@
   text-align: left;
 }
 
+.flex15 {
+  flex: 1.5;
+  text-align: center;
+}
+
 .title {
   padding-left: 10px;
 }
@@ -206,7 +211,7 @@
   font-size: 1.5rem;
 }
 
-.qna-write-form .field {
+.qna-write-form .qnafield {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

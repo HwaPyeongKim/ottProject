@@ -72,7 +72,7 @@ function Qna() {
         <div className="qna-header">
           <div className="col">번호</div>
           <div className="col flex3 title" style={{textAlign:"center"}}>제목</div>
-          <div className="col">작성자</div>
+          <div className="col flex1.5 title">작성자</div>
           <div className="col">답변</div>
           <div className="col">작성일</div>
         </div>
@@ -86,7 +86,12 @@ function Qna() {
             >
               <div className="col">{qna.qidx}</div>
               <div className="col flex3 title" onClick={() => navigate(`/qnaView/${qna.qidx}`)}>{qna.title}</div>
-              <div className="col">{qna.member.nickname}</div>
+              <div className="col flex15 title">
+                {qna.member.nickname.length > 6
+                  ? `${qna.member.nickname.slice(0, 6)}...`
+                  : qna.member.nickname
+                }
+              </div>
               <div className="col">{qna.reply ? 'Y' : 'N'}</div>
               <div className="col">{qna.writedate.substring(2, 10)}</div>
             </div>
