@@ -180,28 +180,30 @@ function Mypage({onClose}) {
       <button className="close-btn" onClick={onClose}>✕</button>
     </div>
 
-                <div className="modal-content">
-                {view === "menu" && (
-                <>
-                    <div>
-                        <div onClick={()=>{ onClose(); navigate('/mylist') }}>마이리스트</div>
-                    </div>
-                    <hr />
-                    <div style={{display:"flex", justifyContent:'center'}}>
-                        <div onClick={()=>{ onClose(); navigate('/myfollow') }}>팔로우</div>&nbsp;&nbsp;|&nbsp;&nbsp;
-                        <div onClick={()=>{ onClose(); navigate('/myfollower') }}>팔로워</div>
-                    </div>
-                    <hr />
-                    <div style={{display:"flex", justifyContent:'center'}}>
-                        <div onClick={() => setView("profile")} style={{cursor:'pointer'}}>회원 정보 변경</div>&nbsp;&nbsp;
-                        {/* <div onClick={() => setView("password")} style={{cursor:'pointer'}}>암호 변경</div> */}
-                    </div>
-                    <hr />
-                
-                    <button className="logout-btn" onClick={()=>{onLogout()}}>로그아웃</button>
-                    {/* <button className="delete-btn">계정 영구 삭제</button> */}
-                </>
-                )}
+    <div className="modal-content">
+      {view === "menu" && (
+        <>
+          <div className="menu-item">
+            <div onClick={() => { onClose(); navigate('/mypage'); }}>마이페이지</div>
+          </div>
+          {/* <div>
+              <div onClick={()=>{ onClose(); navigate('/mylist') }}>마이리스트</div>
+          </div>
+          <hr />
+          <div style={{display:"flex", justifyContent:'center'}}>
+              <div onClick={()=>{ onClose(); navigate('/myfollow') }}>팔로우&nbsp;&nbsp;|&nbsp;&nbsp;팔로워</div>
+          </div> */}
+          <hr className="menu-divider" />
+          <div className="menu-item">
+            <div onClick={() => setView("profile")} style={{ cursor: 'pointer' }}>회원 정보 변경</div>
+            {/* <div onClick={() => setView("password")} style={{cursor:'pointer'}}>암호 변경</div> */}
+          </div>
+          <hr className="menu-divider" />
+
+          <button className="logout-btn" onClick={() => { onLogout(); }}>로그아웃</button>
+          {/* <button className="delete-btn">계정 영구 삭제</button> */}
+        </>
+      )}
 
       {/* 회원 정보 변경 화면 */}
       {view === "profile" && (
