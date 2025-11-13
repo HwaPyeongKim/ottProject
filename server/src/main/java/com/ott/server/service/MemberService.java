@@ -1,6 +1,7 @@
 package com.ott.server.service;
 
 
+import com.ott.server.dto.Paging;
 import com.ott.server.entity.Follow;
 import com.ott.server.entity.ListEntity;
 import com.ott.server.entity.Member;
@@ -8,10 +9,16 @@ import com.ott.server.repository.FollowRepository;
 import com.ott.server.repository.ListEntityRepository;
 import com.ott.server.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,12 +68,54 @@ public class MemberService {
         return ler.findByMidx(midx);
     }
 
-    public List<Follow> getFollowings(int midx) {
-        return fr.findByFromMember_Midx(midx);
+    public HashMap<String, Object> getFollowings(int page, int midx) {
+        //return fr.findByFromMember_Midx(midx);
+        HashMap<String , Object> result = new HashMap<>();
+        if( (Integer)page == null || page < 1 ){
+            result.put("followings", fr.findAllByFromMember_Midx(midx));
+        }else{
+            Paging paging = new Paging();
+            paging.setPage(page);
+
+            //int count = fr.findAll().size();
+            int count = fr.countByFromMember_Midx(midx);
+            System.out.println("팔로우 카운트 : " + count);
+            paging.setDisplayRow(7);
+            paging.setDisplayPage(7);
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow() , Sort.by(Sort.Direction.DESC, "id"));
+            Page<Follow> follows = fr.findByFromMember_Midx(midx, pageable);
+            result.put("followings", follows.getContent());
+            result.put("paging",  paging);
+            result.put("totalFollowingsCount", count);
+        }
+        return result;
     }
 
-    public List<Follow> getFollowers(int midx) {
-        return fr.findByToMember_Midx(midx);
+    public HashMap<String, Object> getFollowers(int page, int midx) {
+        //return fr.findByToMember_Midx(midx);
+        HashMap<String , Object> result = new HashMap<>();
+        if( (Integer)page == null || page < 1 ){
+            result.put("followers", fr.findAllByToMember_Midx(midx));
+        }else {
+            Paging paging = new Paging();
+            paging.setPage(page);
+
+            //int count = fr.findAll().size();
+            int count = fr.countByToMember_Midx(midx);
+            System.out.println("팔로워 카운트 : " + count);
+            paging.setDisplayRow(7);
+            paging.setDisplayPage(7);
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "id"));
+            Page<Follow> follows = fr.findByToMember_Midx(midx, pageable);
+            result.put("followers", follows.getContent());
+            result.put("paging", paging);
+            result.put("totalFollowersCount", count);
+        }
+        return result;
     }
 
     public Optional<Member> getFollowMember(int midx) {

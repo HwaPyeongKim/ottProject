@@ -35,6 +35,7 @@ import Login from "./component/member/Login";
 import Join from "./component/member/Join";
 import MyList from "./component/member/MyList";
 import Myfollow from "./component/member/Myfollow";
+import Myfollower from "./component/member/Myfollower";
 import InsertList from "./component/member/InsertList";
 import FollowMemberView from "./component/member/FollowMemberView";
 import SocialList from "./component/member/SocialList";
@@ -74,6 +75,7 @@ function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/mylist" element={<MyList />} />
             <Route path="/myfollow" element={<Myfollow />} />
+            <Route path="/myfollower" element={<Myfollower />} />
             <Route path="/insertList" element={<InsertList />} />
             <Route path="/followMemberView/:followMemberId" element={<FollowMemberView />} />
             <Route path="/socialList/:socialId" element={<SocialList />} />
