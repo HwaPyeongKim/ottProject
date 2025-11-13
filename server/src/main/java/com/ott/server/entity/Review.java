@@ -14,6 +14,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ridx;
     private int dbidx;
+    private int season;
     private int midx;
     @Column(nullable = false)
     private double score;

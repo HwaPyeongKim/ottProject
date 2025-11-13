@@ -60,6 +60,17 @@ function Main() {
     {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
   ]
 
+  const genreIds = [
+    "10759", // 액션
+    "16", // 애니메이션
+    "35", // 코미디
+    "80", // 범죄
+    "18", // 드라마
+    "10765", // SF
+    "10751", // 가족
+    "10762" // 키드
+  ];
+
   async function findTvs(target) {
     try {
       const result = await axios.get(`${baseUrl}/tv/${target}?language=ko-KR&region=KR&page=1&api_key=${process.env.REACT_APP_KEY}`);
@@ -100,6 +111,14 @@ function Main() {
     }
   }
 
+  async function fetchAllGenres() {
+    try {
+      await Promise.all(genreIds.map(id => findGenres(id)));
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async function findTrending() {
     try {
       const result = await axios.get(`${baseUrl}/trending/tv/week?language=ko-KR&region=KR&sort_by=popularity.desc&page=1&api_key=${process.env.REACT_APP_KEY}`);
@@ -127,15 +146,7 @@ function Main() {
       findTvs("popular");
       findTvs("top_rated");
 
-      findGenres("10759");
-      findGenres("16");
-      findGenres("35");
-      findGenres("80");
-      findGenres("18");
-      findGenres("10765");
-      findGenres("10751");
-      findGenres("10762");
-
+      fetchAllGenres();
     },[]
   )
 

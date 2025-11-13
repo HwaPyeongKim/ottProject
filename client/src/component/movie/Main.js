@@ -69,6 +69,19 @@ function Main() {
     {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
   ]
 
+  const genreIds = [
+    "28", // 액션
+    "12", // 모험
+    "35", // 코미디
+    "10749", // 로맨스
+    "18", // 드라마
+    "99", // 다큐멘터리
+    "27", // 공포
+    "53", // 스릴러
+    "878", // SF
+    "10402" // 음악
+  ];
+
   async function findMovies(target) {
     try {
       const result = await axios.get(`${baseUrl}/movie/${target}?language=ko-KR&region=KR&page=1&api_key=${process.env.REACT_APP_KEY}`);
@@ -91,19 +104,34 @@ function Main() {
 
   async function findGenres(target) {
     try {
-      const result = await axios.get(`${baseUrl}/discover/movie?with_genres=${target}&language=ko-KR&region=KR&sort_by=popularity.desc&page=1&api_key=${process.env.REACT_APP_KEY}`);
+      const result = await axios.get(
+        `${baseUrl}/discover/movie?with_genres=${target}&language=ko-KR&region=KR&sort_by=popularity.desc&page=1&api_key=${process.env.REACT_APP_KEY}`
+      );
       const movieDatas = result.data.results;
+
       if (movieDatas.length > 0) {
         const moviesWithProviders = await Promise.all(
           movieDatas.map(async (movie) => {
-            const providerRes = await axios.get(`${baseUrl}/movie/${movie.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
+            const providerRes = await axios.get(
+              `${baseUrl}/movie/${movie.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`
+            );
             return {
-              ...movie, providers: providerRes.data.results["KR"]?.flatrate || []
-            }
+              ...movie,
+              providers: providerRes.data.results["KR"]?.flatrate || [],
+            };
           })
-        )
+        );
+
         setters[target]?.(moviesWithProviders);
       }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function fetchAllGenres() {
+    try {
+      await Promise.all(genreIds.map(id => findGenres(id)));
     } catch (err) {
       console.error(err);
     }
@@ -132,23 +160,12 @@ function Main() {
   useEffect(
     ()=>{
       findMovies("now_playing");
-      
       findTrending();
-
       findMovies("popular");
       findMovies("top_rated");
-      findMovies("upcoming");
+      // findMovies("upcoming"); // 메인으로 빠질것
 
-      findGenres("28") // 액션
-      findGenres("12") // 모험
-      findGenres("35") // 코미디
-      findGenres("10749") // 로맨스
-      findGenres("18") // 드라마
-      findGenres("99") // 다큐멘터리
-      findGenres("27") // 공포
-      findGenres("53") // 스릴러
-      findGenres("878") // SF
-      findGenres("10402") // 음악
+      fetchAllGenres();
     },[]
   )
 

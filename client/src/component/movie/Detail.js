@@ -378,75 +378,77 @@ function Detail() {
 
       <div className="bottom">
         <div className="left">
-          <div className="providers">
-            <h3>지금 시청하기</h3>
-            {
-              item.providers ? (
-                (() => {
-                  const types = [
-                    { key: "buy", label: "구매" },
-                    { key: "rent", label: "대여" },
-                    { key: "flatrate", label: "구독" },
-                  ];
+          <div className="synop_pro">
+            <div className="synopsis">
+              <h3>시놉시스</h3>
+              {
+                item.overview ? <p>{item.overview}</p> : <div className="noFind">시놉시스 정보를 찾을 수 없습니다.</div>
+              }
+            </div>
 
-                  const ottInfos = [
-                    {key: 8, label: "netflix", link: "https://www.netflix.com/search?q="},
-                    {key: 1796, label: "netflixbasicwithads", link: "https://www.netflix.com/search?q="},
-                    {key: 356, label: "wavve", link: "https://www.wavve.com/search?searchWord="},
-                    {key: 97, label: "watcha", link: "https://watcha.com/search?query="},
-                    {key: 337, label: "disneyplus", link: "https://www.disneyplus.com/ko-kr/search?q="}, // 디즈니는 검색이 안됨
-                    {key: 2, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
-                    {key: 350, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
-                    {key: 9, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-                    {key: 10, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-                    {key: 119, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-                    {key: 3, label: "play", link: "https://play.google.com/store/search?q="}, // 구글플레이는 우리나라에서 안된다는데 다시 확인 필요
-                    {key: 1883, label: "tving", link: "https://www.tving.com/search?query="},
-                    {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
-                  ]
+            <div className="providers">
+              <h3>지금 시청하기</h3>
+              {
+                item.providers ? (
+                  (() => {
+                    const types = [
+                      { key: "buy", label: "구매" },
+                      { key: "rent", label: "대여" },
+                      { key: "flatrate", label: "구독" },
+                    ];
 
-                  const available = types.filter(
-                    (type) => item.providers[type.key]?.length > 0
-                  );
+                    const ottInfos = [
+                      {key: 8, label: "netflix", link: "https://www.netflix.com/search?q="},
+                      {key: 1796, label: "netflixbasicwithads", link: "https://www.netflix.com/search?q="},
+                      {key: 356, label: "wavve", link: "https://www.wavve.com/search?searchWord="},
+                      {key: 97, label: "watcha", link: "https://watcha.com/search?query="},
+                      {key: 337, label: "disneyplus", link: "https://www.disneyplus.com/ko-kr/search?q="}, // 디즈니는 검색이 안됨
+                      {key: 2, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
+                      {key: 350, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
+                      {key: 9, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+                      {key: 10, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+                      {key: 119, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+                      {key: 3, label: "play", link: "https://play.google.com/store/search?q="}, // 구글플레이는 우리나라에서 안된다는데 다시 확인 필요
+                      {key: 1883, label: "tving", link: "https://www.tving.com/search?query="},
+                      {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
+                    ]
 
-                  if (available.length === 0) {
-                    return <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>;
-                  }
+                    const available = types.filter(
+                      (type) => item.providers[type.key]?.length > 0
+                    );
 
-                  return available.map((type) => (
-                    <div key={type.key}>
-                      <h4>{type.label}</h4>
-                      <ul>
-                        {item.providers[type.key].map((provider, idx) => {
-                          const ottInfo = ottInfos.find((l) => l.key === provider.provider_id);
-                          const url = getOttUrl(ottInfo.link, item.title);
+                    if (available.length === 0) {
+                      return <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>;
+                    }
 
-                          return (
-                            <li key={`${type.key}-${idx}`}>
-                              {ottInfo ? (
-                                <img src={`/images/${ottInfo.label}.jpeg`} alt={`${provider.provider_name} 로고`} />
-                              ) : (
-                                <span>{provider.provider_name}</span>
-                              )}
-                              <a href={url} target="_blank" className="mainButton"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  ));
-                })()
-              ) : (
-                <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>
-              )
-            }
-          </div>
+                    return available.map((type) => (
+                      <div key={type.key}>
+                        <h4>{type.label}</h4>
+                        <ul>
+                          {item.providers[type.key].map((provider, idx) => {
+                            const ottInfo = ottInfos.find((l) => l.key === provider.provider_id);
+                            const url = getOttUrl(ottInfo.link, item.title);
 
-          <div className="synopsis">
-            <h3>시놉시스</h3>
-            {
-              item.overview ? <p>{item.overview}</p> : <div className="noFind">시놉시스 정보를 찾을 수 없습니다.</div>
-            }
+                            return (
+                              <li key={`${type.key}-${idx}`}>
+                                {ottInfo ? (
+                                  <img src={`/images/${ottInfo.label}.jpeg`} alt={`${provider.provider_name} 로고`} />
+                                ) : (
+                                  <span>{provider.provider_name}</span>
+                                )}
+                                <a href={url} target="_blank" className="mainButton"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    ));
+                  })()
+                ) : (
+                  <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>
+                )
+              }
+            </div>
           </div>
 
           <div className="video">
@@ -650,9 +652,16 @@ function Detail() {
           <div className="movieInfo">
             <h3>영화 정보</h3>
             <ul>
-              <li>
+              <li className="poster">
                 <div>
                   <img src={`https://image.tmdb.org/t/p/w154${item.poster_path}`} alt={`${item.title} 포스터`} />
+                  <div className="ratings">
+                    <h4>평점</h4>
+                    <p><AverageRating avgScore={average} /></p>
+                    <p><img src="/images/imdb.png" alt="imdb 점수" /><small>{imdb}</small></p>
+                    <p><img src="/images/rotten.png" alt="rotten tomatoes 점수" /><small>{rotten}</small></p>
+                    <p><img src="/images/metacritic.png" alt="metacritic 점수" /><small>{metacritic}</small></p>
+                  </div>
                 </div>
                 <div>
                   <button className="buttonHover" onClick={()=>{favorite()}}><FontAwesomeIcon icon={faBookmark} /></button>
@@ -670,13 +679,6 @@ function Detail() {
                   })
                   : <p>Unknown</p>
                 }
-              </li>
-              <li className="ratings">
-                <h4>평점</h4>
-                <p><AverageRating avgScore={average} /></p>
-                <p><img src="/images/imdb.png" alt="imdb 점수" /><small>{imdb}</small></p>
-                <p><img src="/images/rotten.png" alt="rotten tomatoes 점수" /><small>{rotten}</small></p>
-                <p><img src="/images/metacritic.png" alt="metacritic 점수" /><small>{metacritic}</small></p>
               </li>
               <li>
                 <h4>장르</h4>
