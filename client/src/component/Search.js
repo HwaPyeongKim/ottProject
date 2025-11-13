@@ -104,7 +104,7 @@ function Search() {
                 <div className="list" key={idx}>
                   <div className="cover">
                     <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`}/>
-                    <a href={`/movie/Detail/${item.id}`}>
+                    <a href={`/movie/detail/${item.id}`}>
                       <div>
                         <button><FontAwesomeIcon icon={faBookmark} /></button>
                         <button><FontAwesomeIcon icon={faThumbsUp} /></button>
