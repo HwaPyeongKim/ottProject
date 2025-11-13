@@ -4,7 +4,6 @@ import {Cookies, useCookies} from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAction } from '../store/userSlice';
-import '../style/mypageModal.css'
 
 function Main() {
 
