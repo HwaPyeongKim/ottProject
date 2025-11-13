@@ -1,9 +1,33 @@
 package com.ott.server.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.ott.server.entity.Likes;
+import com.ott.server.service.MainService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/main")
 public class MainController {
+
+    @Autowired
+    MainService ms;
+
+    @GetMapping("/getLikes")
+    public HashMap<String, Object> getLikes(@RequestParam("dbidx") int dbidx, @RequestParam(value="midx", required = false, defaultValue = "0") int midx) {
+        HashMap<String, Object> result = new HashMap<>();
+        HashMap<String, Object> likes = ms.getLikes(midx, dbidx);
+        result.put("count", likes.get("count"));
+        result.put("likes", likes.get("likes"));
+        return result;
+    }
+
+    @PostMapping("/like")
+    public HashMap<String, Object> like(@RequestBody Likes likes){
+        HashMap<String,Object> result = new HashMap<>();
+        HashMap<String,Object> like = ms.like(likes);
+        return result;
+    }
+
 }
