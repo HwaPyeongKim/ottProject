@@ -7,9 +7,9 @@ import axios from 'axios';
 function UpdateForm() {
     const loginUser = useSelector(state=>state.user);
     const navigate = useNavigate();
-    const [nickname, setNickname] = useState();
-    const [title, setTitle] = useState();
-    const [content, setContent] = useState();
+    const [nickname, setNickname] = useState('');
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
 
     const [fidx, setFidx] = useState('');
     const [imgSrc, setImgSrc] = useState('');
@@ -28,10 +28,19 @@ function UpdateForm() {
                 return;
             }
             jaxios.get(`/api/board/getBoard/${bidx}`).then((result)=>{
-                setNickname(result.data.board.nickname);
+                setNickname(result.data.board.boardMember.nickname);
                 setTitle(result.data.board.title);
                 setContent(result.data.board.content);
                 setFidx(result.data.board.fidx);
+                // 기존 이미지 URL이 존재하면 상태와 스타일 업데이트
+                if(result.data.board.fidx){
+                    axios.get(`/api/file/url/${result.data.board.fidx}`) // S3 이미지 URL 가져오기
+                    .then((res) => {
+                        setImgSrc(res.data.image);
+                        setImgStyle({display:"block", width:"200px"});
+                    }).catch(err => console.error(err));
+                }
+                // console.log("서버 응답:", result.data);
             }).catch(err=>console.error(err));
         },[]
     )
@@ -46,7 +55,7 @@ function UpdateForm() {
         if( !title ){ return alert('제목을 입력하세요')}
         if( !content ){ return alert('제목을 입력하세요')}
 
-        jaxios.post('/api/board/writeForm', {title, content, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
+        jaxios.post('/api/board/updateBoard', {bidx: bidx, title, content, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
         .then((result)=>{
             alert('게시글 작성이 완료되었습니다');
             navigate('/community');
@@ -57,10 +66,10 @@ function UpdateForm() {
     function fileUpload(e){
         const formData = new FormData();
         formData.append('image', e.target.files[0])
-        axios.post( '/api/board/upload', formData)
+        jaxios.post( '/api/board/upload', formData)
         .then((result)=>{
-            setImgSrc(result.data.image);
-            setImgStyle({display:"block", width:"200px"});
+            setNewImgSrc(result.data.image);
+            setNewImgStyle({display:"block", width:"200px"});
             setFidx(result.data.fidx);
         }).catch((err)=>{console.error(err)})
     }
@@ -83,11 +92,7 @@ function UpdateForm() {
             <div className='field'>
                 <label>기존이미지</label>
                 <div><img src={imgSrc} style={imgStyle} /></div>
-            </div>
-            <div className='field'>
-                <label>이미지업로드</label>
-                <input type="file" onChange={(e)=>{fileUpload(e)}}/>
-            </div>
+            </div>            
             <div className='field'>
                 <label>수정이미지</label>
                 <div>

@@ -1,19 +1,31 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Slider from "react-slick";
+import ListCard from '../ListCard';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
 function Main() {
   const baseUrl = "https://api.themoviedb.org/3";
-  
-  const [sliderShow, setSliderShow] = useState(8);
-  const [popular, setPopular] = useState([]);
-  const [now, setNow] = useState([]);
-  const [coming, setComing] = useState([]);
 
-  const mainSettings = {
+  const [now, setNow] = useState([]);
+  const [popular, setPopular] = useState([]);
+  const [trending, setTrending] = useState([]);
+  const [coming, setComing] = useState([]);
+  const [action, setAction] = useState([]);
+  const [adventure, setAdventure] = useState([]);
+  const [comedy, setComedy] = useState([]);
+  const [romance, setRomance] = useState([]);
+  const [drama, setDrama] = useState([]);
+  const [documentary, setDocumentary] = useState([]);
+  const [horror, setHorror] = useState([]);
+  const [thriller, setThriller] = useState([]);
+  const [SF, setSF] = useState([]);
+  const [music, setMusic] = useState([]);
+  const [topRated, setTopRated] = useState([]);
+
+  const settings = {
     dots: true,               // 밑에 점 표시 여부
     infinite: true,           // 무한 루프
     speed: 500,               // 슬라이드 전환 속도 (ms)
@@ -24,18 +36,21 @@ function Main() {
     arrows: true 
   }
 
-  const settings = {
-    dots: true,
-    speed: 500,
-    slidesToShow: sliderShow,
-    slidesToScroll: sliderShow,
-    arrows: true
-  };
-
   const setters = {
-    "popular": setPopular,
     "now_playing": setNow,
+    "popular": setPopular,
+    "top_rated": setTopRated,
     "upcoming": setComing,
+    "28" : setAction,
+    "12" : setAdventure,
+    "35" : setComedy,
+    "10749" : setRomance,
+    "18" : setDrama,
+    "99" : setDocumentary,
+    "27" : setHorror,
+    "53" : setThriller,
+    "878" : setSF,
+    "10402" : setMusic
   };
 
   const ottInfos = [
@@ -58,7 +73,7 @@ function Main() {
     try {
       const result = await axios.get(`${baseUrl}/movie/${target}?language=ko-KR&region=KR&page=1&api_key=${process.env.REACT_APP_KEY}`);
       const movieDatas = result.data.results;
-      if (movieDatas) {
+      if (movieDatas.length > 0) {
         const moviesWithProviders = await Promise.all(
           movieDatas.map(async (movie) => {
             const providerRes = await axios.get(`${baseUrl}/movie/${movie.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
@@ -74,22 +89,77 @@ function Main() {
     }
   }
 
+  async function findGenres(target) {
+    try {
+      const result = await axios.get(`${baseUrl}/discover/movie?with_genres=${target}&language=ko-KR&region=KR&sort_by=popularity.desc&page=1&api_key=${process.env.REACT_APP_KEY}`);
+      const movieDatas = result.data.results;
+      if (movieDatas.length > 0) {
+        const moviesWithProviders = await Promise.all(
+          movieDatas.map(async (movie) => {
+            const providerRes = await axios.get(`${baseUrl}/movie/${movie.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
+            return {
+              ...movie, providers: providerRes.data.results["KR"]?.flatrate || []
+            }
+          })
+        )
+        setters[target]?.(moviesWithProviders);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function findTrending() {
+    try {
+      const result = await axios.get(`${baseUrl}/trending/movie/week?language=ko-KR&region=KR&sort_by=popularity.desc&page=1&api_key=${process.env.REACT_APP_KEY}`);
+      const movieDatas = result.data.results;
+      if (movieDatas.length > 0) {
+        const moviesWithProviders = await Promise.all(
+          movieDatas.map(async (movie) => {
+            const providerRes = await axios.get(`${baseUrl}/movie/${movie.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
+            return {
+              ...movie, providers: providerRes.data.results["KR"]?.flatrate || []
+            }
+          })
+        )
+        setTrending?.(moviesWithProviders);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   useEffect(
     ()=>{
-      findMovies("popular");
       findMovies("now_playing");
+      
+      findTrending();
+
+      findMovies("popular");
+      findMovies("top_rated");
       findMovies("upcoming");
+
+      findGenres("28") // 액션
+      findGenres("12") // 모험
+      findGenres("35") // 코미디
+      findGenres("10749") // 로맨스
+      findGenres("18") // 드라마
+      findGenres("99") // 다큐멘터리
+      findGenres("27") // 공포
+      findGenres("53") // 스릴러
+      findGenres("878") // SF
+      findGenres("10402") // 음악
     },[]
   )
 
   return (
     <div>
-      <Slider {...mainSettings} className="lists popular">
+      <Slider {...settings} className="lists popular">
         {
-          popular.map((item, idx)=>{
+          now.map((item, idx)=>{
             return (
               <div className="list">
-                <a href={`/movie/Detail/${item.id}`} key={idx}>
+                <a href={`/movie/detail/${item.id}`} key={idx}>
                   <div>
                     <h4>{item.title}</h4>
                     <p>{item.overview}</p>
@@ -102,81 +172,47 @@ function Main() {
         }
       </Slider>
 
-      <h3>상영중인 영화</h3>
-      <Slider {...settings} className="lists">
-        {
-          now.map((item, idx)=>{
-            return (
-              <div className="list" key={idx}>
-                <div className="cover">
-                  <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`} />
-                  <a href={`/movie/Detail/${item.id}`}>
-                    <div>
-                      <button><FontAwesomeIcon icon={faBookmark} /></button>
-                      <button><FontAwesomeIcon icon={faThumbsUp} /></button>
-                    </div>
-                    {
-                      item.providers ? (
-                        <ul>
-                          {item.providers.map((provider, pidx)=>{
-                            const ott = ottInfos.find(info => info.key === provider.provider_id);
-                            if (!ott) return null;
-                            
-                            return (
-                              <li key={pidx}>
-                                <img src={`/images/${ott.label}.jpeg`} alt={`${ott.label} 로고`} />
-                              </li>
-                            )
-                          })}
-                        </ul>
-                      )
-                      : null
-                    }
-                  </a>
-                </div>
-              </div>
-            )
-          })
-        }
-      </Slider>
+      <h3>주간 인기 급상승 영화</h3>
+      <ListCard lists={trending} target="movie" />
+
+      <h3>인기 영화</h3>
+      <ListCard lists={popular} target="movie" />
+
+      <h3>액션 영화</h3>
+      <ListCard lists={action} target="movie" />
+
+      <h3>모험 영화</h3>
+      <ListCard lists={adventure} target="movie" />
+
+      <h3>코미디 영화</h3>
+      <ListCard lists={comedy} target="movie" />
+
+      <h3>로맨스 영화</h3>
+      <ListCard lists={romance} target="movie" />
+
+      <h3>드라마 영화</h3>
+      <ListCard lists={drama} target="movie" />
+
+      <h3>다큐멘터리 영화</h3>
+      <ListCard lists={documentary} target="movie" />
+
+      <h3>공포 영화</h3>
+      <ListCard lists={horror} target="movie" />
+
+      <h3>스릴러 영화</h3>
+      <ListCard lists={thriller} target="movie" />
+
+      <h3>SF 영화</h3>
+      <ListCard lists={SF} target="movie" />
+
+      <h3>음악 영화</h3>
+      <ListCard lists={music} target="movie" />
+
+      <h3>평점 높은 영화</h3>
+      <ListCard lists={topRated} target="movie" />
 
       <h3>개봉 예정작</h3>
-      <Slider {...settings} className="lists">
-        {
-          coming.map((item, idx)=>{
-            return (
-              <div className="list" key={idx}>
-                <div className="cover">
-                  <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`} />
-                  <a href={`/movie/Detail/${item.id}`}>
-                    <div>
-                      <button><FontAwesomeIcon icon={faBookmark} /></button>
-                      <button><FontAwesomeIcon icon={faThumbsUp} /></button>
-                    </div>
-                    {
-                      item.providers ? (
-                        <ul>
-                          {item.providers.map((provider, pidx)=>{
-                            const ott = ottInfos.find(info => info.key === provider.provider_id);
-                            if (!ott) return null;
-                            
-                            return (
-                              <li key={pidx}>
-                                <img src={`/images/${ott.label}.jpeg`} alt={`${ott.label} 로고`} />
-                              </li>
-                            )
-                          })}
-                        </ul>
-                      )
-                      : null
-                    }
-                  </a>
-                </div>
-              </div>
-            )
-          })
-        }
-      </Slider>
+      <ListCard lists={coming} target="movie" />
     </div>
   )
 }

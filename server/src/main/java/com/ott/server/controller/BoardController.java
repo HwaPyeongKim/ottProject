@@ -3,6 +3,7 @@ package com.ott.server.controller;
 import com.ott.server.entity.BLikes;
 import com.ott.server.entity.Board;
 import com.ott.server.entity.FileEntity;
+import com.ott.server.repository.BoardRepository;
 import com.ott.server.service.BoardService;
 import com.ott.server.service.S3UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,11 @@ public class BoardController {
     @Autowired
     BoardService bs;
 
-    @GetMapping("/getBoardList")
-    public HashMap<String, Object> getBoardList(){
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("boardList", bs.getBoardList());
+    @GetMapping("/getBoardList/{page}")
+    public HashMap<String, Object> getBoardList(
+            @PathVariable("page") int page,
+            @RequestParam(value = "searchWord", required = false, defaultValue = "") String searchWord){
+        HashMap<String, Object> result = bs.getBoardList(page, searchWord);
         return result;
     }
 
@@ -70,7 +72,24 @@ public class BoardController {
     @GetMapping("/getBoard/{bidx}")
     public HashMap<String, Object> getBoard(@PathVariable int bidx){
         HashMap<String, Object> result = new HashMap<>();
-        result.put("board", bs.getBoard(bidx));
+        Board board =  bs.getBoard(bidx);
+        result.put("board", board);
+        return result;
+    }
+
+    @PostMapping("/updateBoard")
+    public HashMap<String, Object> updateBoard(@RequestBody Board board){
+        HashMap<String, Object> result = new HashMap<>();
+        bs.updateBoard(board);
+        result.put("msg","ok");
+        return result;
+    }
+
+    @DeleteMapping("/deleteBoard/{bidx}")
+    public HashMap<String, Object> deleteBoard(@PathVariable int bidx){
+        HashMap<String, Object> result = new HashMap<>();
+        bs.deleteBoard(bidx);
+        result.put("msg","ok");
         return result;
     }
 
