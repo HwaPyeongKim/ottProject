@@ -45,7 +45,7 @@ function WriteQna() {
                 <div className="qna-write-form">
                     <h2>문의 작성</h2>
                     
-                    <div className="field">
+                    <div className="qnafield">
                         <label>제목</label>
                         <input 
                             type="text" 
@@ -54,7 +54,7 @@ function WriteQna() {
                         />
                     </div>
 
-                    <div className="field">
+                    <div className="qnafield">
                         <label>비밀글 설정</label>
                         <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
                             <input type="checkbox" onChange={changeSecurity}/> 비밀글
@@ -68,7 +68,7 @@ function WriteQna() {
                         </div>
                     </div>
 
-                    <div className="field">
+                    <div className="qnafield">
                         <label>내용</label>
                         <textarea 
                             rows="7" 

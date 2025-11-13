@@ -4,7 +4,7 @@ import {Cookies, useCookies} from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAction, logoutAction } from '../../store/userSlice';
-import '../../style/mypageModal.css'
+// import '../../style/mypage.css'
 import jaxios from '../../util/JWTUtil';
 
 function MyList() {

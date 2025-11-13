@@ -73,21 +73,46 @@ function Header() {
         <input type="text" value={keyword} placeholder="영화 또는 TV 프로그램 검색" onChange={(e) => setKeyword(e.currentTarget.value)} onKeyDown={handleKeyDown} />
       </div>
       <div className="userinfo">
-        {
-          (loginUser && loginUser.midx)?(
-            <>
-            <img src={imgSrc} style={{width:'50px', height:'50px', cursor:'pointer'}} onClick={ ()=>{ setOpen(true) }}/>
-            {/* 모달 표시 */}
-            {open && <Mypage onClose={() => setOpen(false)} />}
-            </>
-          ):
-          (<FontAwesomeIcon icon={faUser} style={{color: "#FFD43B", fontSize: "20px"}} onClick={ ()=>{ navigate('/login') }}/>)
-        }
-      </div>
+  {
+    (loginUser && loginUser.midx)?(
+      <>
+        <img
+          src={imgSrc}
+          style={{
+            width: '50px',
+            height: '50px',
+            borderRadius: '50%',
+            cursor: 'pointer',
+            marginRight: '8px',
+            verticalAlign: 'middle'
+          }}
+          onClick={() => { setOpen(true) }}
+        />
+        <div style={{ verticalAlign: 'middle' }}>
+          {loginUser.nickname.length > 6
+            ? `${loginUser.nickname.slice(0, 6)}...`
+            : loginUser.nickname
+          } 님
+        </div>
+
+        {/* 모달 표시 */}
+        {open && <Mypage onClose={() => setOpen(false)} />}
+      </>
+    )
+    :
+    (
+      <FontAwesomeIcon
+        icon={faUser}
+        style={{ color: "#ffffffff", fontSize: "20px", cursor: 'pointer' }}
+        onClick={() => { navigate('/login') }}
+      />
+    )
+  }
+</div>
 
       <div className="menu">
         <button onClick={() => setMenuOpen(!menuOpen)}>
-          <FontAwesomeIcon icon={faBars} style={{color: "#FFD43B", fontSize: "20px"}}/>
+          <FontAwesomeIcon icon={faBars} style={{color: "#ffffffff", fontSize: "20px"}}/>
         </button>
       </div>
 
