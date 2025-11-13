@@ -236,16 +236,20 @@ public class MemberController {
     }
 
     @GetMapping("/getFollowings")
-    public HashMap<String, Object> getFollowings(@RequestParam("midx") int midx) {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("followings", ms.getFollowings(midx));
+    public HashMap<String, Object> getFollowings(@RequestParam(value = "page", required = false, defaultValue = "") int page, @RequestParam("midx") int midx) {
+        //HashMap<String, Object> result = new HashMap<>();
+        System.out.println("팔로잉 호출");
+        HashMap<String, Object> result = ms.getFollowings(page, midx);
+        //result.put("followings", ms.getFollowings(page, midx));
         return result;
     }
 
     @GetMapping("/getFollowers")
-    public HashMap<String, Object> getFollowers(@RequestParam("midx") int midx) {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("followers", ms.getFollowers(midx));
+    public HashMap<String, Object> getFollowers(@RequestParam(value = "page", required = false, defaultValue = "") int page, @RequestParam("midx") int midx) {
+        System.out.println("팔로워 호출");
+        //HashMap<String, Object> result = new HashMap<>();
+        HashMap<String, Object> result = ms.getFollowers(page, midx);
+        //result.put("followers", ms.getFollowers(page, midx));
         return result;
     }
 

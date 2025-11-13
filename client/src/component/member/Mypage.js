@@ -181,7 +181,8 @@ function Mypage({onClose}) {
                     </div>
                     <hr />
                     <div style={{display:"flex", justifyContent:'center'}}>
-                        <div onClick={()=>{ onClose(); navigate('/myfollow') }}>팔로우&nbsp;&nbsp;|&nbsp;&nbsp;팔로워</div>
+                        <div onClick={()=>{ onClose(); navigate('/myfollow') }}>팔로우</div>&nbsp;&nbsp;|&nbsp;&nbsp;
+                        <div onClick={()=>{ onClose(); navigate('/myfollower') }}>팔로워</div>
                     </div>
                     <hr />
                     <div style={{display:"flex", justifyContent:'center'}}>

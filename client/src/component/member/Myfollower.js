@@ -7,40 +7,42 @@ import jaxios from '../../util/JWTUtil';
 
 import '../../style/followlist.css';
 
-function Myfollow() {
+function Myfollower() {
 
     const loginUser = useSelector( state=>state.user );
     const navigate = useNavigate();
-    const [followingsImg, setFollowingsImg] = useState('')
-    const [followings, setFollowings] = useState([])
+    const [followersImg, setFollowersImg] = useState([])
+    const [followers, setFollowers] = useState([])
     const [paging, setPaging] = useState({})
-    const [followingsCount, setFollowingsCount] = useState('')
+    const [followersCount, setFollowersCount] = useState('')
 
     useEffect(
         ()=>{
-            jaxios.get(`/api/member/getFollowings`, {params:{page:'1', midx:loginUser.midx}} )
+            jaxios.get(`/api/member/getFollowers`, {params:{page:'1', midx:loginUser.midx}} )
             .then((result)=>{
-                setFollowings( [...result.data.followings] );
-                setPaging( result.data.paging )
-                setFollowingsCount( result.data.totalFollowingsCount)
+                console.log('팔로워 : ', result.data)
+                setFollowers( [...result.data.followers] );
+                setPaging( result.data.paging)
+                setFollowersCount( result.data.totalFollowersCount )
             }).catch((err)=>{console.error(err)})
         },[loginUser]
-    )
+    )    
     
     useEffect(()=>{
-            if(followings.length > 0){
-                getFollowingsImg();
-            }
-        }, [followings]
-    );
+        if(followers.length > 0){
+            const startIdx = followersImg.length;
+            const newFollowers = followers.slice(startIdx);
+            getFollowersImg(newFollowers);
+        }
+    }, [followers]);
 
-    function getFollowingsImg(){
-        followings.forEach((f, i) => {
-        jaxios.get(`/api/file/imgUrl/${f.toMember.profileimg}`)
+    function getFollowersImg(){
+        followers.forEach((f, i) => {
+        jaxios.get(`/api/file/imgUrl/${f.fromMember.profileimg}`)
             .then((result) => {
-                console.log('getFollowingsImg : ', result.data.image);
+                console.log('getFollowersImg : ', result.data.image);
                 const img = result.data.image;
-                setFollowingsImg(prev => {
+                setFollowersImg(prev => {
                     const copy = [...prev];
                     copy[i] = img;
                     return copy;
@@ -56,27 +58,26 @@ function Myfollow() {
             return () => {
                 window.removeEventListener("scroll", handleScroll);
             }
-        },[paging.page, followings]
+        },[paging.page, followers]
     )
     const handleScroll=()=>{
-        console.log('핸들스크롤입니다.')
         const scrollHeight = document.documentElement.scrollHeight - 100; 
         const scrollTop = document.documentElement.scrollTop;  
         const clientHeight = document.documentElement.clientHeight; 
         if( scrollTop + clientHeight >= scrollHeight ) {
-            if( Number(paging.page) >= Number(paging.totalPage) ){return}
+            if( Number(paging.page) >= Number(paging.totalPage)){return}
             onPageMove( Number(paging.page) + 1 );
         }
     }
 
     function onPageMove(p){
-        jaxios.get(`/api/member/getFollowings`, {params:{page:p, midx:loginUser.midx}} )
+        jaxios.get(`/api/member/getFollowers`, {params:{page:p, midx:loginUser.midx}} )
         .then((result)=>{
             setPaging( result.data.paging )
             let follows = [];
-            follows = [...followings]
-            follows = [...follows, ...result.data.followings]
-            setFollowings( [...follows] );
+            follows = [...followers]
+            follows = [...follows, ...result.data.followers]
+            setFollowers( [...follows] );
         }).catch((err)=>{console.error(err)})
     }
 
@@ -84,24 +85,24 @@ function Myfollow() {
         <div style={{display:'flex'}}>
             <div className="follower-container">
                 <div style={{display:'flex'}}>
-                    <div className="follower-title"style={{color:'white'}}>{loginUser.nickname} 님의 팔로잉</div>
+                    <div className="follower-title" style={{color:'white'}}>{loginUser.nickname} 님의 팔로워</div>
                     <div style={{fontSize:'25px', color:'coral', justifyContent:'center', alignItems:'center', paddingLeft:'10px'}}>
                         {
-                            (followings)?(followingsCount):(0)
+                            (followers)?(followersCount):(0)
                         }
                     </div>
                 </div>
                 <div className="follower-list" style={{color:'white'}}>
                     {
-                        followings.map((fiList, idx)=>{
+                        followers.map((frList, idx)=>{
                             return(
                                 <>  
-                                    <div className="follower-info" onClick={()=>{navigate(`/followMemberView/${fiList.toMember.midx}`)}}>
+                                    <div className="follower-info" onClick={()=>{navigate(`/followMemberView/${frList.fromMember.midx}`)}}>
                                         <div className="follow-image-container" key={idx} style={{display:'flex', margin:'5px 3px'}}>
-                                            <img src={followingsImg[idx]} />
+                                            <img src={followersImg[idx]} />
                                         </div>
                                         <div className="follower-text">
-                                            <div className='follower-name'>{fiList.toMember.nickname}</div>
+                                            <div className='follower-name'>{frList.fromMember.nickname}</div>
                                             <div className='follower-desc'>여러가지 정보</div>
                                         </div>
                                     </div>
@@ -115,4 +116,4 @@ function Myfollow() {
     )
 }
 
-export default Myfollow
+export default Myfollower
