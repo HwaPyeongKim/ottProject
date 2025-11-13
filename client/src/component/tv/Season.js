@@ -364,7 +364,7 @@ function Season() {
   return (
     <section className="content_info">
       <div className="top" style={{backgroundImage: `linear-gradient(to right, rgba(6, 13, 23, 1) 0%, rgba(6, 13, 23, 1) 58%, rgba(6, 13, 23, 0) 100%), url(https://image.tmdb.org/t/p/w780${item.backdrop_path})`}}>
-        <h2>{season.name} <span>[{season.air_date ? season.air_date.substr(0,4) : null}]</span></h2>
+        <h2>{item.name} - {season.name} <span>[{season.air_date ? season.air_date.substr(0,4) : null}]</span></h2>
         <p>원제 : {item.original_name}</p>
         <div>
           <span className="star">평점 : <AverageRating avgScore={average} /></span>
@@ -395,7 +395,7 @@ function Season() {
                   <ul>
                     {season.episodes.map((episode, eidx) => (
                       <li key={eidx}>
-                        <img src={`https://image.tmdb.org/t/p/w185${episode.still_path}`} alt={`${episode.episode_number} 스틸컷`} />
+                        <img src={`https://image.tmdb.org/t/p/w185${episode.still_path}`} alt={`${episode.episode_number} 스틸컷`} onError={(e)=>{e.target.src="/images/noStill.png"}} />
                         <div>
                           <p>시즌 {snum} {episode.episode_number}화 - {episode.name} <span>({formatRuntime(episode.runtime)})</span></p>
                           <p>{episode.overview}</p>

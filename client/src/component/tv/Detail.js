@@ -371,7 +371,7 @@ function Detail() {
         <div className="left">
           <div className="seasons">
             {
-              item.seasons && item.seasons.length > 1 && (
+              item.seasons && item.seasons.length > 0 && (
                 <>
                   <h3>{item.seasons.length}개의 시즌</h3>
                   <Swiper

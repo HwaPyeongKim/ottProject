@@ -15,6 +15,7 @@
 .content_info .top div .oneline {margin-top: 30px; color: #777; font-style: italic}
 .content_info .episodes li {padding: 20px; background: #111924; display: flex;}
 .content_info .episodes li:nth-child(2n) {background: #0c131e;}
+.content_info .episodes li img {display: inline-block; width: 185px; height: 104px;}
 .content_info .episodes li p {margin-bottom: 10px; margin-left: 20px;}
 .content_info .episodes li p:last-child {margin-bottom: 0;}
 .content_info .episodes li p span {color: #777; font-size: 0.9em;}
