@@ -6,17 +6,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginAction, logoutAction } from '../../store/userSlice';
 // import '../../style/mypage.css'
 import jaxios from '../../util/JWTUtil';
+import InsertList from './InsertList';
 
 function MyList() {
     
     const [myList, setMyList] = useState([])
     const [listTab, setListTab] = useState('tab1')
 
+    const [open, setOpen] = useState(false);
     const loginUser = useSelector(state=>state.user)
     const navigate = useNavigate()
 
     useEffect(
         ()=>{
+            setOpen(false);
             jaxios.get('/api/member/getList', {params:{midx:loginUser.midx}})
             .then((result)=>{
                 if(result.data.msg === 'ok'){
@@ -35,7 +38,13 @@ function MyList() {
                 <button onClick={()=>{setListTab('tab2')}}>나의 비밀 리스트</button>
             </div>
             <div>
-                <div style={{color:'white'}} onClick={()=>{navigate('/insertList')}}>새로 리스트 만들기</div>
+                {
+                    <>
+                    <div style={{color:'white'}} onClick={()=>{navigate('/insertList')}}>새로 리스트 만들기</div>
+                    {open && <InsertList onClose={() => setOpen(false)} />}
+                    </>
+                }
+                
             </div>
             <div style={{color:'white'}}>
                 {   
