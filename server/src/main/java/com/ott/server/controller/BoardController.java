@@ -43,7 +43,6 @@ public class BoardController {
         try {
             int fidx = sus.saveFile(file);
             FileEntity fileEntity = sus.getFile(fidx);
-
             result.put("fidx", fileEntity.getFidx());
             result.put("image", sus.getFileUrl(fileEntity.getPath()));
             result.put("filename", fileEntity.getOriginalname());
@@ -90,6 +89,14 @@ public class BoardController {
         HashMap<String, Object> result = new HashMap<>();
         bs.deleteBoard(bidx);
         result.put("msg","ok");
+        return result;
+    }
+
+    @GetMapping("/getReplyList/{bidx}")
+    public HashMap<String, Object> getReplyList(@PathVariable("bidx")int bidx){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("replyList", bs.getReplyList(bidx));
+        System.out.println("댓글 리스트: " + bs.getReplyList(bidx));
         return result;
     }
 

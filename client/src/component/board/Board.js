@@ -16,6 +16,7 @@ function Board(props) {
     const loginUser = useSelector(state => state.user);
     const [likeList, setLikeList] = useState([]);
     const [imgSrc, setImgSrc] = useState('');
+    const [profileImgSrc, setProfileImgSrc] = useState('');
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
     const updateButtonRef = useRef(null);
@@ -23,16 +24,16 @@ function Board(props) {
     const {bidx} = useParams();
 
     const customStyles = {
-        overlay: { backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", zIndex: 1000 },
+        overlay: { backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1000 },
         content: {
             left: "50%",
             top: "50%", 
             transform: "translate(-50%, -50%)", 
-            margin: "0", 
+            margin: 0, 
             width: "700px",
-            height: "600px",
-            padding: "0",
-            overflow: "hidden", 
+            height: "700px",
+            padding: 0,
+            overflow: "hidden", // 수정: 모달 밖 스크롤 방지
             zIndex: 1001,
             borderRadius: "35px",
             border: "none", 
@@ -56,35 +57,66 @@ function Board(props) {
         if (days < 365) return `${Math.floor(days / 30)}개월 전`;
         return `${Math.floor(days / 365)}년 전`;
     }
-    
+
+    useEffect(() => {
+        const preventScroll = (e) => {
+        if (isOpen) e.preventDefault();
+        };
+        if (isOpen) {
+        window.addEventListener('wheel', preventScroll, { passive: false });
+        window.addEventListener('touchmove', preventScroll, { passive: false });
+        } else {
+        window.removeEventListener('wheel', preventScroll);
+        window.removeEventListener('touchmove', preventScroll);
+        }
+        return () => {
+        window.removeEventListener('wheel', preventScroll);
+        window.removeEventListener('touchmove', preventScroll);
+        };
+    }, [isOpen]);
 
     useEffect(
         ()=>{
-            // console.log("Board props:", props);
+            console.log("Board props:", props);
             // console.log("board data:", props.board.member);          
             // console.log("board data:", props.board.boardMember);
             // console.log("현재 로그인 정보:", loginUser);
-            // console.log("🔍 쿠키 user:", cookies.get("user"));
+            // console.log(" 쿠키 user:", cookies.get("user"));
 
             jaxios.get(`/api/board/getLikeList`, {params: {boardid: props.board.bidx}})
             .then((result)=>{
                 setLikeList([...result.data.likeList]);
             }).catch((err)=>{console.error(err)})            
-        },[props.board]
+        },[]
+        // },[props.board]
     )
 
-    useEffect(() => {
-        if (!props.board.fidx) {
+    useEffect(
+        () => {
+            if (!props.board.fidx) {
+                setImgSrc('');
+                return;
+            }
             setImgSrc('');
-            return;
-        }
-        setImgSrc('');
-        axios.get(`/api/file/url/${props.board.fidx}`)
+            axios.get(`/api/file/url/${props.board.fidx}`)
+                .then((res) => {
+                    setImgSrc(res.data.image); // 실제 S3 URL
+                    // console.log(props)
+                    console.log(props.board.bidx);
+                }).catch((err) => console.error(err));
+        }, [props.board.fidx]
+    );
+
+    useEffect(
+        ()=>{
+            if (!props.board.boardMember.profileimg) return;
+
+            axios.get(`/api/file/url/${props.board.boardMember.profileimg}`)
             .then((res) => {
-                setImgSrc(res.data.image); // 실제 S3 URL
-            })
-            .catch((err) => console.error(err));
-    }, [props.board.fidx]);
+                setProfileImgSrc(res.data.image);    // 완성된 S3 URL 저장
+            }).catch(err => console.error(err));
+        },[props.board.boardMember.profileimg]
+    )
 
     async function onLike(){
         let result = await jaxios.post('/api/board/addlike', { bidx: props.board.bidx, midx: loginUser.midx })
@@ -111,7 +143,7 @@ function Board(props) {
         <div className="comment-section-container"> 
             <div className="comment-item">
                 <div className="comment-header">
-                    <img className="profile-image" src={props.board.boardMember.profileimg} alt="프로필 이미지" />
+                    <img className="profile-image" src={profileImgSrc} alt="프로필 이미지" />
                     <div className="user-info">
                         <span className="username">{props.board.boardMember.nickname}</span>
                         <span className="timestamp">
@@ -124,7 +156,7 @@ function Board(props) {
                     <div className="review-content">
                         <img className="review-image" src={imgSrc} alt="영화포스터 / 자유게시물 등" />
                         <div>
-                            <p className="review-text">{props.board.title}</p>
+                            <p className="review-text boardtitle">{props.board.title}</p>
                             <p className="review-text">{props.board.content}</p>
                         </div>
                     </div>
@@ -158,8 +190,8 @@ function Board(props) {
                 </div>
 
                 <div>
-                    <Modal isOpen={isOpen}  ariaHideApp={false}  style={customStyles} >
-                        <CommentModalContent onClose={closeModal} />
+                    <Modal isOpen={isOpen} onRequestClose={closeModal} style={customStyles} >
+                        <CommentModalContent onClose={closeModal} bidx={props.board.bidx}/>
                     </Modal>
                 </div>
             </div>

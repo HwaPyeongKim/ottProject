@@ -176,3 +176,50 @@
     color: #007bff; /* 활성화 색상 */
     cursor: pointer;
 }
+
+/* 대댓글 들여쓰기 & 애니메이션 */
+.modal-reply-item {
+  display: flex;
+  margin-left: 40px;
+  margin-top: 15px;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeIn 0.2s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* dropdown 메뉴 간단히 */
+.modal-more-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 5px;
+}
+.dropdown-menu button {
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  text-align: left;
+}
+.dropdown-menu button:hover {
+  background: #eee;
+}
+
+.modal-comments-list {
+    overflow-y: auto; /* 내부 스크롤 가능 */
+    max-height: 100%; /* 모달 안에서만 스크롤 */
+}

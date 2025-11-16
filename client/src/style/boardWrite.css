@@ -1,0 +1,287 @@
+.boardwriteform {
+    /* 전체 배경을 어둡게 설정 */
+    background-color: #242424; /* 커뮤니티 페이지 배경색과 유사하게 설정 */
+    color: #ffffff; /* 텍스트 색상을 흰색으로 */
+    padding: 40px;
+    max-width: 800px; /* 커뮤니티 게시글과 유사하게 최대 너비 설정 */
+    margin: 40px auto; /* 중앙 정렬 */
+    border-radius: 8px; /* 모서리를 둥글게 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* 그림자 효과 추가 */
+}
+
+.boardwriteform h2 {
+    font-size: 28px;
+    color: #ffd700; /* 강조색 (예: 금색) */
+    margin-bottom: 30px;
+    border-bottom: 2px solid #3a3a3a;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.boardwriteform .field {
+    margin-bottom: 25px;
+}
+
+.boardwriteform label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #cccccc;
+}
+
+/* 닉네임, 제목 입력 필드 스타일 */
+.boardwriteform input[type='text'],
+.boardwriteform input[type='file'] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #444444;
+    border-radius: 4px;
+    background-color: #333333; /* 어두운 배경에 대비되는 약간 밝은 색 */
+    color: #ffffff;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+}
+
+.boardwriteform input[type='text']:focus,
+.boardwriteform input[type='file']:focus {
+    border-color: #ffd700; /* 포커스 시 강조색 */
+    outline: none;
+}
+
+/* 읽기 전용 닉네임 필드 스타일 */
+.boardwriteform input[type='text'][readOnly] {
+    background-color: #3a3a3a;
+    color: #aaaaaa;
+    cursor: default;
+}
+
+/* CKEditor 전체 컨테이너 배경 및 테두리 */
+.ck-editor__editable_inline {
+    background-color: #333333;
+    color: #ffffff;
+    border: 1px solid #444444 !important;
+    border-radius: 4px !important;
+    padding: 15px !important;
+    min-height: 300px; /* 에디터 최소 높이 설정 */
+}
+
+/* CKEditor 툴바 스타일 */
+.ck-toolbar {
+    background-color: #fff !important;
+    border: 1px solid #444444 !important;
+    border-radius: 4px 4px 0 0 !important;
+    color: #ffffff;
+}
+
+/* 툴바 버튼 아이콘 색상 */
+.ck-button .ck-icon {
+    color: #cccccc;
+}
+
+/* 툴바 버튼 호버/활성화 색상 */
+.ck-button:hover:not(.ck-disabled),
+.ck-button.ck-on {
+    background-color: #555555 !important;
+}
+
+.ck-button.ck-on .ck-icon {
+    color: #ffd700; /* 활성화된 버튼 강조색 */
+}
+
+/* 이미지 미리보기 */
+.boardwriteform .field img {
+    border: 1px solid #444444;
+    border-radius: 4px;
+    max-width: 100%; /* 이미지가 필드 너비를 넘지 않도록 */
+    height: auto;
+    margin-top: 5px;
+}
+
+/* 버튼 컨테이너 */
+.boardwriteform .btns {
+    display: flex;
+    justify-content: flex-end; /* 버튼들을 오른쪽으로 정렬 */
+    gap: 15px;
+    margin-top: 40px;
+}
+
+/* 공통 버튼 스타일 */
+.boardwriteform .btns button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* 작성완료 버튼 (강조색) */
+.boardwriteform .btns button:first-child {
+    background-color: #ffd700; /* 강조색 */
+    color: #242424; /* 어두운 배경색 */
+}
+
+.boardwriteform .btns button:first-child:hover {
+    background-color: #e5c100;
+}
+
+/* 메인으로 버튼 (보조색) */
+.boardwriteform .btns button:last-child {
+    background-color: #555555;
+    color: #ffffff;
+}
+
+.boardwriteform .btns button:last-child:hover {
+    background-color: #666666;
+}
+
+.boardwriteform p{
+    color: #242424;
+}
+
+/* 2. 이미지 업로드 영역 (.image-upload-section) */
+.boardwriteform .image-upload-section {
+    width: 250px; /* 고정 너비 지정 */
+    flex-shrink: 0; /* 너비가 줄어들지 않도록 방지 */
+}
+
+.boardwriteform .upload-label {
+    /* 레이블 제목 스타일 */
+    margin-bottom: 10px;
+}
+
+.boardwriteform .upload-box {
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #333;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* 이미지가 없는 경우 표시되는 플레이스홀더 */
+.boardwriteform .no-image-placeholder {
+    width: 100%;
+    height: 150px;
+    background-color: #3a3a3a;
+    color: #aaaaaa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* 이미지 미리보기 컨테이너 */
+.boardwriteform .image-preview-wrapper {
+    max-width: 100%;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* 실제 이미지 스타일 */
+.boardwriteform .image-preview-wrapper img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* 파일 선택 버튼 (label) 디자인 */
+.boardwriteform .file-upload-button {
+    display: inline-flex;
+    justify-content: center;
+    width: 100%;
+    background-color: #ffd700; /* 강조색 */
+    color: #242424; 
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    /* label 기본 스타일 오버라이드 */
+    margin-bottom: 0;
+}
+
+.boardwriteform .file-upload-button:hover {
+    background-color: #e5c100;
+}
+/* ===================================== */
+/* II. 닉네임/제목 & 이미지업로드 2열 배치 (수정) */
+/* ===================================== */
+
+.boardwriteform .info-upload-container {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+/* 1. 왼쪽 정보 칼럼: 닉네임, 제목 */
+.boardwriteform .info-column {
+    flex-grow: 1; 
+    width: 60%;    
+    height: 180px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 내부 필드 간격을 균등하게 분배 */
+}
+
+/* 2. 오른쪽 이미지 업로드 칼럼 */
+.boardwriteform .image-column {
+    width: 250px; 
+    flex-shrink: 0;
+    margin-bottom: 0; 
+    height: 150px; 
+}
+
+/* 이미지 업로드 박스: 부모 칼럼 높이에 꽉 차도록 설정 */
+.boardwriteform .image-upload-section .upload-box {
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #333;
+    padding:  15px 15px 0 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    height: 100%; 
+    box-sizing: border-box; /* 패딩이 전체 높이에 포함되도록 */
+}
+
+/* 이미지 미리보기 영역 */
+.boardwriteform .image-preview-wrapper {
+    max-width: 100%;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    overflow: hidden;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.boardwriteform .no-image-placeholder {
+    width: 100%;
+    flex-grow: 1; 
+    background-color: #3a3a3a;
+    color: #aaaaaa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* 파일 선택 버튼 (label) 디자인 */
+.boardwriteform .file-upload-button {
+    /* 이 버튼은 고정된 높이를 가짐 */
+    flex-shrink: 0; 
+    /* ... (나머지 스타일 유지) ... */
+}
