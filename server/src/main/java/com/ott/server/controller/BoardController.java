@@ -22,8 +22,9 @@ public class BoardController {
     @GetMapping("/getBoardList/{page}")
     public HashMap<String, Object> getBoardList(
             @PathVariable("page") int page,
-            @RequestParam(value = "searchWord", required = false, defaultValue = "") String searchWord){
-        HashMap<String, Object> result = bs.getBoardList(page, searchWord);
+            @RequestParam(value = "searchWord", required = false, defaultValue = "") String searchWord,
+            @RequestParam(value = "sortType", required = false, defaultValue = "latest") String sortType){
+        HashMap<String, Object> result = bs.getBoardList(page, searchWord, sortType);
         return result;
     }
 

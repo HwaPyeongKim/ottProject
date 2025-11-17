@@ -28,31 +28,50 @@ public class BoardService {
     private final BLikesRepository blr;
     private final BCommentRepository bcr;
 
-    public HashMap<String, Object> getBoardList(int page, String searchWord) {
+    public HashMap<String, Object> getBoardList(int page, String searchWord, String sortType) {
         HashMap<String, Object> result = new HashMap<>();
 
         Paging paging = new Paging();
         paging.setPage(page);
         paging.setDisplayPage(5);
         paging.setDisplayRow(5);
-        if( searchWord.equals("") ) {
-            int count = br.findAll().size();
-            paging.setTotalCount(count);
+
+        long count; // 총 글 개수
+        Pageable pageable;
+
+        // 정렬 기준 결정
+        Sort sort;
+        if ("popular".equals(sortType)) {
+            // 좋아요 많은 순 → 작성일 내림차순
+            sort = Sort.by(Sort.Direction.DESC, "likecount").and(Sort.by(Sort.Direction.DESC, "writedate"));
+        } else {
+            // 최신순
+            sort = Sort.by(Sort.Direction.DESC, "writedate");
+        }
+
+        pageable = PageRequest.of(page - 1, paging.getDisplayRow(), sort);
+
+        // 검색어 처리
+        if (searchWord == null || searchWord.trim().isEmpty()) {
+            count = br.count(); // 전체 글 개수
+            paging.setTotalCount((int) count);
             paging.calPaging();
-            Pageable pageable = PageRequest.of(page-1, 5, Sort.by(Sort.Direction.DESC, "writedate"));
-            Page<Board> list = br.findAll( pageable );
+            Page<Board> list = br.findAll(pageable);
             result.put("boardList", list.getContent());
-        }else{
-            int count = br.findByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(searchWord,searchWord,searchWord).size();
-            paging.setTotalCount(count);
+        } else {
+            count = br.countByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(
+                    searchWord, searchWord, searchWord);
+            paging.setTotalCount((int) count);
             paging.calPaging();
-            Pageable pageable = PageRequest.of(page-1, 5, Sort.by(Sort.Direction.DESC, "writedate"));
-            Page<Board> list = br.findAllByTitleContainingOrContentContainingOrBoardMember_NicknameContaining( searchWord, searchWord, searchWord, pageable );
+            Page<Board> list = br.findAllByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(
+                    searchWord, searchWord, searchWord, pageable);
             result.put("boardList", list.getContent());
         }
+
         result.put("paging", paging);
         return result;
     }
+
 
     public Object insertBoard(Board board) {
         return br.save(board);
@@ -63,16 +82,33 @@ public class BoardService {
     }
 
     public void addlike(BLikes blikes) {
+
+//        System.out.println("==== addlike() 실행 ====");
+//        System.out.println("요청 데이터: bidx=" + blikes.getBidx() + ", midx=" + blikes.getMidx());
+
         BLikes existing = blr.findByBidxAndMidx(blikes.getBidx(), blikes.getMidx());
+//        System.out.println("existing = " + existing);
+
+        Board board = br.findById(blikes.getBidx())
+                .orElseThrow(() -> new RuntimeException("Board not found"));
+
+//        System.out.println("현재 board.likecount = " + board.getLikecount());
+
         if (existing == null) {
+//            System.out.println("➡ 좋아요 신규 추가!");
             blr.save(blikes);
-        }else {
-//            Optional<BLikes> delLikes = blr.findByBlidx(list.getBlidx());
-//            BLikes delList = delLikes.get();
-//            blr.save(delList);
+            board.setLikecount(board.getLikecount() + 1);
+        } else {
+//            System.out.println("➡ 좋아요 취소(삭제)!");
             blr.delete(existing);
+            board.setLikecount(board.getLikecount() - 1);
         }
+
+//        System.out.println("변경된 likecount = " + board.getLikecount());
+        br.save(board);
+//        System.out.println("board 저장 완료");
     }
+
 
     public Board getBoard(int bidx) {
         return br.findByBidx(bidx);

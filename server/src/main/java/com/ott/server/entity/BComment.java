@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 @Entity
 @Data
 public class BComment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bcidx;
@@ -31,5 +30,4 @@ public class BComment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "midx")
     private Member member;
-
 }
