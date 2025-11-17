@@ -15,6 +15,7 @@ function BoardMain() {
     const [sortType, setSortType] = useState('latest'); // 최신(latest) or 인기(popular)
 
     useEffect(() => {
+        setBoardList([]);
         onSearch(1); // 초기 데이터 로드
     }, [sortType]); // 정렬 기준 바뀌면 다시 로드
 
@@ -36,17 +37,42 @@ function BoardMain() {
         }
     }
 
+    // function onPageMove(p) {
+    //     jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
+    //         .then(result => {
+    //             setPaging(result.data.paging);
+    //             const newBoards = result.data.boardList
+    //                 .filter(board => !deletedIds.includes(board.bidx))
+    //                 .filter(board => !boardList.some(b => b.bidx === board.bidx));
+    //             setBoardList([...boardList, ...newBoards]);
+    //         })
+    //         .catch(err => console.error(err));
+    // }
+
     function onPageMove(p) {
-        jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
-            .then(result => {
-                setPaging(result.data.paging);
-                const newBoards = result.data.boardList
-                    .filter(board => !deletedIds.includes(board.bidx))
-                    .filter(board => !boardList.some(b => b.bidx === board.bidx));
-                setBoardList([...boardList, ...newBoards]);
-            })
-            .catch(err => console.error(err));
+    jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
+        .then(result => {
+
+            const merged = [
+                ...boardList,
+                ...result.data.boardList.filter(board => !deletedIds.includes(board.bidx))
+            ];
+
+            // 인기탭일 경우 프론트에서 한 번 더 정렬
+            const sorted = sortType === 'popular'
+                ? [...merged].sort((a, b) => {
+                    if (b.likecount !== a.likecount) return b.likecount - a.likecount;
+                    return new Date(b.writedate) - new Date(a.writedate);
+                })
+                : merged;
+
+            setBoardList(sorted);
+            setPaging(result.data.paging);
+        })
+        .catch(err => console.error(err));
     }
+
+
 
     function onSearch(p) {
         jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })

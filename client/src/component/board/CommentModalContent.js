@@ -67,11 +67,7 @@ const CommentModalContent = ({ onClose, bidx }) => {
         if (!replyContent.trim()) return;
 
         try {
-            await jaxios.post('/api/board/addComment', {
-                bidx: bidx,
-                midx: loginUser.midx,
-                content: replyContent
-            });
+            await jaxios.post('/api/board/addComment', { bidx: bidx, midx: loginUser.midx, content: replyContent});
             setReplyContent(""); // 입력창 초기화
             fetchComments();     // 댓글 리스트 갱신
         } catch (err) {

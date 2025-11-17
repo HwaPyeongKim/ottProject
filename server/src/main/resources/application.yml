@@ -21,6 +21,11 @@ spring:
       max-request-size: 5MB
       enabled: true
 
+  logging:
+    level:
+      org.hibernate.SQL: debug
+      org.hibernate.orm.jdbc.bind: trace
+
   mail:
     host: smtp.gmail.com
     port: 587
