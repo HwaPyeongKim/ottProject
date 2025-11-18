@@ -8,7 +8,7 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import "../../style/qna.css";
 
 
-function Qna() {
+function MyQna () {
   const [qnaList, setQnaList] = useState([]);
   const [paging, setPaging] = useState({});
   const [key, setKey] = useState('');
@@ -146,4 +146,4 @@ function Qna() {
   );
 }
 
-export default Qna;
+export default MyQna;

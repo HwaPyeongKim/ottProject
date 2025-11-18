@@ -6,7 +6,7 @@
   --card-bg: #1e1e1e;           /* 카드 / 컨테이너 배경 */
   --header-bg: #1b1b1b;         /* 헤더 영역 */
   --border-color: #2a2a2a;      /* 구분선 */
-  --text-color: #ececec;        /* 기본 텍스트 */
+  --text-color: #dfdfdf;        /* 기본 텍스트 */
   --subtext-color: #9e9e9e;     /* 보조 텍스트 */
   --highlight-color: #f5c518;   /* 포인트 (IMDb식 노랑 유지) */
   --primary-color: #3d82f0;     /* 버튼 / 링크용 블루 */
@@ -32,6 +32,12 @@ body {
   margin: 2rem auto;
   padding: 1rem;
 }
+
+/* .company-container {
+  max-width: 1000px;
+  margin: 40px;
+ 
+} */
 
 /* ============================
    섹션 타이틀
@@ -86,4 +92,14 @@ body {
 
 .btn-primary:hover {
   background-color: #5a95f7;
+}
+
+.btn-success {
+  background-color: var(--text-color);
+  color: #000;
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #ffffff;
 }

@@ -29,7 +29,7 @@ header .gnb li {flex: 1; color: #999c9f; text-align: center; line-height: 40px;}
 header .gnb li.on {color: #f5c518; font-weight: bold;}
 header .search {flex: 10; display: flex; color: #fff; height: 40px;}
 header .search input {width: 100%; margin-left: 5px; padding:0 10px; background: #10161d; border: 0; border-radius: 5px; color: #fff; font-size: 1.1em; line-height: 40px;}
-header .userinfo {flex: 2.5; color: #fff; text-align: center; line-height: 40px;}
+header .userinfo {flex: 2.5; color: #dfdfdf; text-align: center; line-height: 40px;}
 header .menu {flex: 1; color: #fff; text-align: right; line-height: 40px;}
 header .menu button {border: 0; background: transparent; color: #fff; line-height: 40px;}
 

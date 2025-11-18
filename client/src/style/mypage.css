@@ -280,10 +280,10 @@
   display: flex;                /* 가로로 정렬 */
   align-items: center;          /* 수직 가운데 정렬 */
   gap: 10px;                    /* 이미지와 닉네임 사이 간격 */
-  color: var(--highlight-color, #f5c518);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
+  padding-left: 50px;
 }
 
 /* 프로필 이미지 (원형) */
