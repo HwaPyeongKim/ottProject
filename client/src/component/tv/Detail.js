@@ -172,9 +172,9 @@ function Detail() {
         
       }
       
-      // const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.external_ids.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
-      // const ratingData = omdbData.data?.Ratings || [];
-      // setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
+      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.external_ids.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
+      const ratingData = omdbData.data?.Ratings || [];
+      setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
       
 
       data.seasons.sort((a, b) => b.season_number - a.season_number);

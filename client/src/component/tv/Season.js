@@ -178,9 +178,9 @@ function Season() {
         }
       });
 
-      // const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.external_ids.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
-      // const ratingData = omdbData.data?.Ratings || [];
-      // setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
+      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.external_ids.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
+      const ratingData = omdbData.data?.Ratings || [];
+      setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
 
       // 연령 등급
       data.age = "Unknown"

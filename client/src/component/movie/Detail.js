@@ -179,11 +179,11 @@ function Detail() {
         }
       });
       
-      // const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
-      // const ratingData = omdbData.data?.Ratings || [];
-      // setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
-      // setRotten(ratingData.find(r => r.Source === "Rotten Tomatoes")?.Value || "Unknown");
-      // setMetacritic(ratingData.find(r => r.Source === "Metacritic")?.Value || "Unknown");
+      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
+      const ratingData = omdbData.data?.Ratings || [];
+      setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
+      setRotten(ratingData.find(r => r.Source === "Rotten Tomatoes")?.Value || "Unknown");
+      setMetacritic(ratingData.find(r => r.Source === "Metacritic")?.Value || "Unknown");
 
       // 성인 여부 체크
       if (data.adult === true) {

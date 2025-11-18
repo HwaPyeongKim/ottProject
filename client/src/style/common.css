@@ -52,3 +52,5 @@ header .menu button {border: 0; background: transparent; color: #fff; line-heigh
 /* 검색창 스타일 */
 .search {display: flex; align-items: center; gap: 5px; background: #111; border-radius: 8px; padding: 5px 10px;}
 .search input {background: transparent;border: none;outline: none; color: #fff;}
+
+.grid-8 {display: grid; grid-template-columns: repeat(8, 1fr); gap: 16px;}
