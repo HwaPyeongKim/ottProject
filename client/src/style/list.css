@@ -6,6 +6,7 @@
 .lists .list div.cover:hover a {display: flex; justify-content: space-between; flex-direction: column;}
 .lists .list div.cover a div {display: flex; justify-content: space-around; padding: 10px;}
 .lists .list div.cover a div button {border: 0; background: transparent; color: #fff; font-size: 1.2em;}
+.lists .list div.cover a div button.on {color: #f5c518;}
 .lists .list div.cover a ul {padding: 20px 5px;}
 .lists .list div.cover a ul li {color: #fff; margin-top: 5px; text-align: center;}
 .lists .list div.cover a ul li img {display: inline-block; width: 40%;}

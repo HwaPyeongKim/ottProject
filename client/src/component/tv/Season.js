@@ -37,134 +37,135 @@ function Season() {
   
   const [score, setScore] = useState(0);
   const [hover, setHover] = useState(0);
+  const [expanded, setExpanded] = useState(false);
 
   const handleClick = (starIndex, isHalf) => {
       const newScore = isHalf ? starIndex - 0.5 : starIndex;
       setScore(newScore);
-    };
-  
-    const getStarIcon = (starIndex) => {
-      const current = hover || score;
-      if (current >= starIndex) return solidStar;
-      if (current >= starIndex - 0.5) return faStarHalfAlt;
-      return regularStar;
-    };
-  
-    function StarRating() {
-      return (
-        <div style={{ display: "flex", flexDirection: "row", fontSize: "24px" }}>
-          {[1,2,3,4,5].map((star) => (
-            <div key={star} style={{ position: "relative", marginRight: "4px" }}>
-              <div
-                onMouseEnter={() => setHover(star - 0.5)}
-                onMouseLeave={() => setHover(0)}
-                onClick={() => handleClick(star, true)}
-                style={{
-                  position: "absolute",
-                  width: "50%",
-                  height: "100%",
-                  left: 0,
-                  top: 0,
-                  cursor: "pointer",
-                  zIndex: 1,
-                }}
-              />
-  
-              <div
-                onMouseEnter={() => setHover(star)}
-                onMouseLeave={() => setHover(0)}
-                onClick={() => handleClick(star, false)}
-                style={{
-                  position: "absolute",
-                  width: "50%",
-                  height: "100%",
-                  right: 0,
-                  top: 0,
-                  cursor: "pointer",
-                  zIndex: 1,
-                }}
-              />
-              <FontAwesomeIcon icon={getStarIcon(star)} style={{ color: "#f39c12" }} />
-            </div>
-          ))}
-        </div>
-      );
-    };
-  
-    function AverageRating({ avgScore }) {
-      const stars = [1, 2, 3, 4, 5];
-  
-      // 별 아이콘 결정 함수
-      const getStarIcon = (star) => {
-        if (avgScore >= star) return solidStar;
-        else if (avgScore >= star - 0.5) return faStarHalfAlt;
-        else return regularStar;
-      };
-  
-      return (
-        <>
-          {stars.map((star) => (
-            <FontAwesomeIcon key={star} icon={getStarIcon(star)} />
-          ))}
-          <small> ({avgScore.toFixed(1)} / 5)</small>
-        </>
-      );
-    };
-  
-    const countryMap = {
-      "KR": "한국",
-      "JP": "일본",
-      "US": "미국",
-      "GB": "영국",
-      "FR": "프랑스",
-      "DE": "독일",
-      "CN": "중국",
-      "IT": "이탈리아",
-      "CA": "캐나다",
-      "AU": "호주",
-      "ES": "스페인",
-      "IN": "인도",
-      "RU": "러시아",
-      "BR": "브라질",
-      "MX": "멕시코",
-      "SE": "스웨덴",
-      "NL": "네덜란드",
-      "BE": "벨기에",
-      "DK": "덴마크",
-      "FI": "핀란드",
-      "NO": "노르웨이",
-      "NZ": "뉴질랜드",
-      "AR": "아르헨티나",
-      "TR": "터키",
-      "TH": "태국",
-      "SG": "싱가포르"
-    };
-  
-    const YouTubeVideo = ({videoKey}) => (
-      <iframe
-        height="180"
-        src={`https://www.youtube.com/embed/${videoKey}`}
-        title="YouTube video player"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
+  };
+
+  const getStarIcon = (starIndex) => {
+    const current = hover || score;
+    if (current >= starIndex) return solidStar;
+    if (current >= starIndex - 0.5) return faStarHalfAlt;
+    return regularStar;
+  };
+
+  function StarRating() {
+    return (
+      <div style={{ display: "flex", flexDirection: "row", fontSize: "24px" }}>
+        {[1,2,3,4,5].map((star) => (
+          <div key={star} style={{ position: "relative", marginRight: "4px" }}>
+            <div
+              onMouseEnter={() => setHover(star - 0.5)}
+              onMouseLeave={() => setHover(0)}
+              onClick={() => handleClick(star, true)}
+              style={{
+                position: "absolute",
+                width: "50%",
+                height: "100%",
+                left: 0,
+                top: 0,
+                cursor: "pointer",
+                zIndex: 1,
+              }}
+            />
+
+            <div
+              onMouseEnter={() => setHover(star)}
+              onMouseLeave={() => setHover(0)}
+              onClick={() => handleClick(star, false)}
+              style={{
+                position: "absolute",
+                width: "50%",
+                height: "100%",
+                right: 0,
+                top: 0,
+                cursor: "pointer",
+                zIndex: 1,
+              }}
+            />
+            <FontAwesomeIcon icon={getStarIcon(star)} style={{ color: "#f39c12" }} />
+          </div>
+        ))}
+      </div>
     );
+  };
 
-    function formatRuntime(minutes) {
-      const hours = Math.floor(minutes / 60);
-      const mins = minutes % 60;
+  function AverageRating({ avgScore }) {
+    const stars = [1, 2, 3, 4, 5];
 
-      if (hours === 0) return `${mins}분`;
-      if (mins === 0) return `${hours}시간`;
-      return `${hours}시간 ${mins}분`;
-    }
-  
-    function getOttUrl(link, title) {
-      if (!link) return null;
-      const query = encodeURIComponent(title);
-      return `${link}${query}`;
+    // 별 아이콘 결정 함수
+    const getStarIcon = (star) => {
+      if (avgScore >= star) return solidStar;
+      else if (avgScore >= star - 0.5) return faStarHalfAlt;
+      else return regularStar;
     };
+
+    return (
+      <>
+        {stars.map((star) => (
+          <FontAwesomeIcon key={star} icon={getStarIcon(star)} />
+        ))}
+        <small> ({avgScore.toFixed(1)} / 5)</small>
+      </>
+    );
+  };
+
+  const countryMap = {
+    "KR": "한국",
+    "JP": "일본",
+    "US": "미국",
+    "GB": "영국",
+    "FR": "프랑스",
+    "DE": "독일",
+    "CN": "중국",
+    "IT": "이탈리아",
+    "CA": "캐나다",
+    "AU": "호주",
+    "ES": "스페인",
+    "IN": "인도",
+    "RU": "러시아",
+    "BR": "브라질",
+    "MX": "멕시코",
+    "SE": "스웨덴",
+    "NL": "네덜란드",
+    "BE": "벨기에",
+    "DK": "덴마크",
+    "FI": "핀란드",
+    "NO": "노르웨이",
+    "NZ": "뉴질랜드",
+    "AR": "아르헨티나",
+    "TR": "터키",
+    "TH": "태국",
+    "SG": "싱가포르"
+  };
+
+  const YouTubeVideo = ({videoKey}) => (
+    <iframe
+      height="180"
+      src={`https://www.youtube.com/embed/${videoKey}`}
+      title="YouTube video player"
+      frameBorder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+    />
+  );
+
+  function formatRuntime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+
+    if (hours === 0) return `${mins}분`;
+    if (mins === 0) return `${hours}시간`;
+    return `${hours}시간 ${mins}분`;
+  }
+
+  function getOttUrl(link, title) {
+    if (!link) return null;
+    const query = encodeURIComponent(title);
+    return `${link}${query}`;
+  };
 
   async function findItem() {
     try {
@@ -177,9 +178,9 @@ function Season() {
         }
       });
 
-      const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.external_ids.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
-      const ratingData = omdbData.data?.Ratings || [];
-      setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
+      // const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.external_ids.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
+      // const ratingData = omdbData.data?.Ratings || [];
+      // setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
 
       // 연령 등급
       data.age = "Unknown"
@@ -247,14 +248,14 @@ function Season() {
   }
 
   function saveReview() {
-    jaxios.post("/api/review/saveReview", {midx:loginUser.midx, content, dbidx:id, score})
+    jaxios.post("/api/review/saveReview", {midx:loginUser.midx, content, dbidx:id, score, season: snum})
     .then((result)=>{
       if (result.data.msg === "ok") {
         alert("후기가 등록되었습니다");
         setScore(0);
         setHover(0);
         setContent("");
-        getReviews(1,true);
+        getReviews(1, snum, true);
       } else {
         alert("후기 등록이 실패했습니다");
       }
@@ -268,16 +269,16 @@ function Season() {
       .then((result)=>{
         if (result.data.msg === "ok") {
           alert("댓글을 삭제했습니다");
-          getReviews(1,true);
+          getReviews(1, snum, true);
         }
       })
       .catch((err)=>{console.error(err);})
     }
   }
 
-  async function getReviews(p, reset=false) {
+  async function getReviews(p, snum, reset=false) {
     try {
-      const result = await axios.get(`/api/review/getReviews/${p}`, {params: {dbidx: id, displayRow}});
+      const result = await axios.get(`/api/review/getReviews/${p}`, {params: {dbidx: id, season: snum, displayRow}});
       const newList = [...reviewList, ...result.data.list];
 
       if (reset) {
@@ -300,7 +301,7 @@ function Season() {
 
   async function getAverage() {
     try {
-      const result = await axios.get("/api/review/getAverage", {params: {dbidx: id}});
+      const result = await axios.get("/api/review/getAverage", {params: {dbidx: id, season: snum}});
       if (result.data !== undefined && result.data.average !== undefined) {
         setAverage(result.data.average);
       }
@@ -323,7 +324,7 @@ function Season() {
       return;
     }
 
-    jaxios.post("/api/main/like", {midx: loginUser.midx, dbidx: id})
+    jaxios.post("/api/main/like", {midx: loginUser.midx, dbidx: id, season: snum})
     .then((result)=>{
       getLikes();
     })
@@ -333,10 +334,10 @@ function Season() {
   async function getLikes() {
     try {
       if (!loginUser || loginUser.midx === undefined) {
-        const likes = await axios.get("/api/main/getLikes", {params: {dbidx: id}});
+        const likes = await axios.get("/api/main/getLikes", {params: {dbidx: id, season: snum}});
         setLikeCount(likes.data.count);
       } else {
-        const likes = await axios.get("/api/main/getLikes", {params: {dbidx: id, midx: loginUser.midx}});
+        const likes = await axios.get("/api/main/getLikes", {params: {dbidx: id, midx: loginUser.midx, season: snum}});
         setLikeCount(likes.data.count);
         if (likes.data.likes) {
           setLikeOn(true);
@@ -355,7 +356,7 @@ function Season() {
       findItem();
       findSeason();
 
-      getReviews(1);
+      getReviews(1, snum);
       getAverage();
       getLikes();
     },[]
@@ -421,36 +422,53 @@ function Season() {
                       {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
                     ]
 
-                    const available = types.filter(
-                      (type) => season.providers[type.key]?.length > 0
-                    );
+                    const providerMap = {};
 
-                    if (available.length === 0) {
+                    types.forEach((type) => {
+                      const list = season.providers[type.key] ?? [];
+                      list.forEach((provider) => {
+                        const id = provider.provider_id;
+
+                        if (!providerMap[id]) {
+                          providerMap[id] = {
+                            provider,
+                            types: []
+                          };
+                        }
+
+                        providerMap[id].types.push(type.label); // 구매/대여/구독 추가
+                      });
+                    });
+
+                    const providerList = Object.values(providerMap);
+
+                    if (providerList.length === 0) {
                       return <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>;
                     }
 
-                    return available.map((type) => (
-                      <div key={type.key}>
-                        <h4>{type.label}</h4>
-                        <ul>
-                          {season.providers[type.key].map((provider, idx) => {
-                            const ottInfo = ottInfos.find((l) => l.key === provider.provider_id);
-                            const url = getOttUrl(ottInfo.link, season.title);
+                    return (
+                      <ul className="providerList">
+                        {providerList.map((entry, idx) => {
+                          const provider = entry.provider;
+                          const typesText = entry.types.join(" / ");
 
-                            return (
-                              <li key={`${type.key}-${idx}`}>
-                                {ottInfo ? (
-                                  <img src={`/images/${ottInfo.label}.jpeg`} alt={`${provider.provider_name} 로고`} />
-                                ) : (
-                                  <span>{provider.provider_name}</span>
-                                )}
-                                <a href={url} target="_blank" className="mainButton"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    ));
+                          const ottInfo = ottInfos.find((o) => o.key === provider.provider_id);
+                          const url = ottInfo ? getOttUrl(ottInfo.link, item.title) : "#";
+
+                          return (
+                            <li key={idx} className="providerItem">
+                              {ottInfo ? (
+                                <img src={`/images/${ottInfo.label}.jpeg`} alt={`${provider.provider_name} 로고`} />
+                              ) : (
+                                <span>{provider.provider_name}</span>
+                              )}
+                              <span className="types">{typesText}</span>
+                              <a href={url} target="_blank" className="mainButton"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    );
                   })()
                 ) : (
                   <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>
@@ -465,17 +483,23 @@ function Season() {
               {
                 season.episodes && season.episodes.length > 0 ?
                 (
-                  <ul>
-                    {season.episodes.map((episode, eidx) => (
-                      <li key={eidx}>
-                        <img src={`https://image.tmdb.org/t/p/w185${episode.still_path}`} alt={`${episode.episode_number} 스틸컷`} onError={(e)=>{e.target.src="/images/noStill.png"}} />
-                        <div>
-                          <p>시즌 {snum} {episode.episode_number}화 - {episode.name} <span>({formatRuntime(episode.runtime)})</span></p>
-                          <p>{episode.overview}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                  <>
+                    {!expanded && (
+                      <p className="episodeCount">총 {season.episodes.length}개의 에피소드가 있습니다.</p>
+                    )}
+                     <ul className={`${expanded ? "show" : "hide"}`}>
+                      {season.episodes.map((episode, eidx) => (
+                        <li key={eidx}>
+                          <img src={`https://image.tmdb.org/t/p/w185${episode.still_path}`} alt={`${episode.episode_number} 스틸컷`} onError={(e)=>{e.target.src="/images/noStill.png"}} />
+                          <div>
+                            <p>시즌 {snum} {episode.episode_number}화 - {episode.name} <span>({formatRuntime(episode.runtime)})</span></p>
+                            <p>{episode.overview}</p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="expand mainButton" onClick={()=>setExpanded(prev => !prev)}>{expanded ? "접기" : "펼쳐보기"}</div>
+                  </>
                 ) : (
                   <div className="noFind">관련 영상이 없습니다.</div>
                 )

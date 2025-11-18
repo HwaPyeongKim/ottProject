@@ -16,20 +16,23 @@
 .content_info .bottom .synop_pro {display: flex; justify-content: space-between;}
 .content_info .bottom .synop_pro .synopsis {flex: 1; margin-right: 20px; overflow: hidden;}
 .content_info .bottom .synop_pro .providers {flex: 1;}
+.content_info .episodes .episodeCount {padding: 30px; background: #0c131e; font-weight: bold; text-align: center;}
+.content_info .episodes ul.hide {display: none;}
+.content_info .episodes ul.show {display: block;}
 .content_info .episodes li {padding: 20px; background: #111924; display: flex;}
 .content_info .episodes li:nth-child(2n) {background: #0c131e;}
 .content_info .episodes li img {display: inline-block; width: 185px; height: 104px;}
 .content_info .episodes li p {margin-bottom: 10px; margin-left: 20px;}
 .content_info .episodes li p:last-child {margin-bottom: 0;}
 .content_info .episodes li p span {color: #777; font-size: 0.9em;}
+.content_info .episodes .expand {text-align: center; padding: 10px 0; border-radius: 0;}
 .content_info .providers {}
-.content_info .providers > div {background: #0c131e; padding-top: 20px;}
-.content_info .providers > div h4 {padding: 0 20px; font-size: 1.1em;}
-.content_info .providers > div ul {margin-top: 20px;}
-.content_info .providers > div ul li {display: flex; justify-content: space-between; align-items: center; padding: 20px;}
-.content_info .providers > div ul li:nth-child(2n-1) {background: #111924;}
-.content_info .providers > div ul li img {width: 100px;}
-.content_info .providers > div ul li a {padding: 0 15px; line-height: 40px; border-radius: 10px;}
+.content_info .providers > ul {margin-top: 20px; background: #0c131e;}
+.content_info .providers > ul li {display: flex; justify-content: space-between; align-items: center; padding: 20px;}
+.content_info .providers > ul li:nth-child(2n-1) {background: #111924;}
+.content_info .providers > ul li img {width: 100px;}
+.content_info .providers > ul li span {margin: 0; line-height: 40px;}
+.content_info .providers > ul li a {padding: 0 15px; line-height: 40px; border-radius: 10px;}
 .content_info .synopsis p {background: #0c131e; padding: 20px; height: 100%; line-height: 1.5em;}
 .content_info .video > div, .content_info .seasons > div, .content_info .video > div, .content_info .cast > div, .content_info .similar > div, .content_info .recommendations > div {max-width: 1215px;}
 .content_info .cast .profile {background: #0c131e; text-align: center;}

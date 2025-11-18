@@ -24,9 +24,9 @@ public class ReviewController {
     }
 
     @GetMapping("/getReviews/{page}")
-    public HashMap<String,Object> getReviews(@RequestParam("dbidx") int dbidx, @RequestParam(value="deleteyn", required = false, defaultValue="N") String deleteyn, @RequestParam(value="displayRow", required = false, defaultValue="5") int displayRow, @PathVariable("page") int page) {
+    public HashMap<String,Object> getReviews(@RequestParam("dbidx") int dbidx, @RequestParam(value="season", required=false, defaultValue="0") int season, @RequestParam(value="deleteyn", required = false, defaultValue="N") String deleteyn, @RequestParam(value="displayRow", required = false, defaultValue="5") int displayRow, @PathVariable("page") int page) {
         HashMap<String,Object> result = new HashMap<>();
-        HashMap<String,Object> reviews = rs.getReviews(dbidx, deleteyn, page, displayRow);
+        HashMap<String,Object> reviews = rs.getReviews(dbidx, season, deleteyn, page, displayRow);
         result.put("list", reviews.get("list"));
         result.put("paging", reviews.get("paging"));
         result.put("totalCount", reviews.get("totalCount"));
@@ -35,9 +35,9 @@ public class ReviewController {
     }
 
     @GetMapping("/getAverage")
-    public HashMap<String,Object> getAverage(@RequestParam("dbidx") int dbidx) {
+    public HashMap<String,Object> getAverage(@RequestParam("dbidx") int dbidx, @RequestParam(value = "season", required = false, defaultValue = "0") int season) {
         HashMap<String,Object> result = new HashMap<>();
-        result.put("average", rs.getAverage(dbidx));
+        result.put("average", rs.getAverage(dbidx, season));
         return result;
     }
 

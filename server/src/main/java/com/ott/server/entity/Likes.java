@@ -9,11 +9,10 @@ import lombok.Data;
 @Entity
 @Data
 public class Likes {
-
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int lidx;
     private int dbidx;
     private int midx;
-
+    private int season;
 }

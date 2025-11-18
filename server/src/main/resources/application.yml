@@ -7,7 +7,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ottdb
     username: root
-    password: adminuser
+    password: fugitive89!
   jpa:
     hibernate:
       ddl-auto: update
@@ -24,8 +24,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: aucu2005@gmail.com
-    password: ilel htbm ioye yjte
+    username: sideliner89@gmail.com
+    password: ioln tomk lymk fpxv
     properties:
       mail:
         smtp:
@@ -39,16 +39,16 @@ spring:
         max-request-size: 10MB
 
 kakao:
-  client_id: 52c265fce2ca8dde2b8caebed750d33d
+  client_id: 2d28f949ac248915fcf112c68bb03bfb
   redirect_uri: http://localhost:8070/member/kakaoLogin
 
 cloud:
   aws:
     s3:
-      bucket: kdg-file
+      bucket: mu2play
     credentials:
-      access-key: AKIAWYVILJLH6MY3MIHM
-      secret-key: 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
+      access-key: AKIAZCJB3XA7K7D7KHRW
+      secret-key: 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
     region:
       static: ap-northeast-2
       auto: false

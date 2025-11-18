@@ -18,7 +18,7 @@ span {margin-bottom: 20px;}
 
 .container {width: 95%; max-width:1640px; margin: 0 auto;}
 .noFind {padding: 100px !important; background: #0c131e; color: #fff; font-weight: bold; text-align: center;}
-.mainButton {background: #f5c518; font-size: 1.1em; font-weight: bold; color: #060d17; border: none; border-radius: 10px;}
+.mainButton {background: #f5c518; font-size: 1.1em; font-weight: bold; color: #060d17; border: none; border-radius: 10px; cursor: pointer;}
 .buttonHover:hover {background: #f5c518 !important; color: #060d17 !important;}
 
 header {display: flex; justify-content: space-between; align-items: center; padding: 15px 0;}
