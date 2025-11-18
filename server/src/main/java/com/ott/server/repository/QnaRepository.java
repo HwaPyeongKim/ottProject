@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Collection;
 
 public interface QnaRepository extends JpaRepository<Qna, Integer> {
-    Collection<Qna> findByTitleContainingOrContentContaining(String key, String key1);
-    Page<Qna> findAllByTitleContainingOrContentContaining(String key, String key1, Pageable pageable);
+    Collection<Qna> findByTitleContaining(String key);
+    Page<Qna> findAllByTitleContaining(String key, Pageable pageable);
 
     Qna findByQidx(int qidx);
 }

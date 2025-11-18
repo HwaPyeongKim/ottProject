@@ -60,7 +60,7 @@ function Company() {
 
   return (
   <div className="main-container">
-      <h2 className="section-title">회사소개</h2>
+      <div className="section-title">회사소개</div>
 
       <div className="company-wrapper">
         <div id="map" className="company-map"></div>
