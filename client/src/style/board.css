@@ -15,12 +15,12 @@
     color: #1a1a1a;
 }
 
-.section-title {
-  /* text-align: center; */
+/* .section-title {
+  text-align: center;
   margin-bottom: 20px;
   font-size: 1.5rem;
-  font-weight: 800; /* 더 굵게 */
-}
+  font-weight: 800; 
+} */
 
 /* 탭 버튼 스타일 */
 .tab-buttons {
@@ -255,4 +255,39 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+}
+
+/* 게시글 더보기 */
+.review-text.clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 최대 4줄 */
+  -webkit-box-orient: vertical;
+  line-clamp: 3; 
+  overflow: hidden;
+}
+
+/* 더보기 버튼 */
+.show-more-button {
+    background: none;
+    border: none;
+    color: #9c9c9c;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 5px;
+    font-size: 14px; /* 필요하면 폰트 크기 조절 */
+}
+
+.spoiler-warning {
+  padding: 20px;
+  background-color: #f7d9db;
+  color: #b30000;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }

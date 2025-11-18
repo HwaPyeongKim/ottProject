@@ -1,12 +1,11 @@
 package com.ott.server.service;
 
 import com.ott.server.dto.Paging;
-import com.ott.server.entity.BComment;
-import com.ott.server.entity.BLikes;
-import com.ott.server.entity.Board;
+import com.ott.server.entity.*;
 import com.ott.server.repository.BCommentRepository;
 import com.ott.server.repository.BLikesRepository;
 import com.ott.server.repository.BoardRepository;
+import com.ott.server.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +26,7 @@ public class BoardService {
     private final BoardRepository br;
     private final BLikesRepository blr;
     private final BCommentRepository bcr;
+    private final ReportRepository rr;
 
     public HashMap<String, Object> getBoardList(int page, String searchWord, String sortType) {
         HashMap<String, Object> result = new HashMap<>();
@@ -127,8 +127,38 @@ public class BoardService {
         br.delete(board);
     }
 
-    public Object getReplyList(int bidx) {
-        List<BComment> list = bcr.findByBoard_BidxOrderByBcidxDesc(bidx);
-        return list;
+//    public Object getReplyList(int bidx) {
+//        List<BComment> list = bcr.findByBoard_BidxOrderByBcidxDesc(bidx);
+//        return list;
+//    }
+
+    public void reportBoard(int bidx, int midx) {
+        Board board = br.findByBidx(bidx);
+        if(board == null) {
+            throw new RuntimeException("게시글이 존재하지 않습니다");
+        }
+
+        // 중복 신고 방지
+        if(rr.existsByBidxAndMidx(bidx, midx)) {
+            throw new RuntimeException("이미 신고한 게시글입니다");
+        }
+
+        // 신고 정보 저장
+        Report report = new Report();
+        report.setBidx(bidx);
+        report.setMidx(midx);
+        rr.save(report);
+
+        board.setReportcount(board.getReportcount() + 1);
+
+        if(board.getReportcount() >= 5 && board.getStatus() == BoardStatus.NORMAL) {
+            board.setStatus(BoardStatus.BLURRED);
+        }
+
+        br.save(board);
+    }
+
+    public boolean isReported(int bidx, int midx) {
+        return rr.existsByBidxAndMidx(bidx, midx);
     }
 }

@@ -55,7 +55,15 @@ function UpdateForm() {
         if( !title ){ return alert('제목을 입력하세요')}
         if( !content ){ return alert('제목을 입력하세요')}
 
-        jaxios.post('/api/board/updateBoard', {bidx: bidx, title, content, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
+        // ckeditor5-react 사용으로 인한 html태그 제거
+        const cleanContent = content
+        .replace(/<p>/g, '')           
+        .replace(/<\/p>/g, '\n')       
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/ +/g, ' ');     
+
+        jaxios.post('/api/board/updateBoard', {bidx: bidx, title, content: cleanContent, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
         .then((result)=>{
             alert('게시글 작성이 완료되었습니다');
             navigate('/community');

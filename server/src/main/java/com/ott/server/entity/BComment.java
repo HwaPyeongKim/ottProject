@@ -16,7 +16,7 @@ public class BComment {
     private int bcidx;
     @Column(length = 1000, nullable = false)
     private String content;
-    @Column( columnDefinition="DATETIME default now()" )
+//    @Column( columnDefinition="DATETIME default now()" )
     @CreationTimestamp
     private Timestamp writedate;
     private Integer pcidx;
