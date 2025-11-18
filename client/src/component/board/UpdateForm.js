@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux';
 import jaxios from '../../util/JWTUtil';
 import axios from 'axios';
 
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
 function UpdateForm() {
     const loginUser = useSelector(state=>state.user);
     const navigate = useNavigate();
@@ -13,10 +16,7 @@ function UpdateForm() {
 
     const [fidx, setFidx] = useState('');
     const [imgSrc, setImgSrc] = useState('');
-    const [imgStyle, setImgStyle] = useState({display:"none"});
-    
-    const [newImgSrc, setNewImgSrc] = useState('');
-    const [newImgStyle, setNewImgStyle] = useState({display: 'none'});
+    const [imgStyle, setImgStyle] = useState({display:"none"});    
 
     const { bidx } = useParams();
 
@@ -68,8 +68,8 @@ function UpdateForm() {
         formData.append('image', e.target.files[0])
         jaxios.post( '/api/board/upload', formData)
         .then((result)=>{
-            setNewImgSrc(result.data.image);
-            setNewImgStyle({display:"block", width:"200px"});
+            setImgSrc(result.data.image);
+            setImgStyle({display:"block", width:"200px"});
             setFidx(result.data.fidx);
         }).catch((err)=>{console.error(err)})
     }
@@ -87,19 +87,20 @@ function UpdateForm() {
             </div>
             <div className='field'>
                 <label>게시글 수정</label>
-                <textarea rows="7" value={content} onChange={(e)=>{setContent(e.currentTarget.value)}}></textarea>
+                <CKEditor
+                    editor={ClassicEditor}
+                    data={content}
+                    onChange={(event, editor) => {
+                        const data = editor.getData();
+                        setContent(data);
+                    }}
+                />
             </div>
             <div className='field'>
                 <label>기존이미지</label>
                 <div><img src={imgSrc} style={imgStyle} /></div>
-            </div>            
-            <div className='field'>
-                <label>수정이미지</label>
-                <div>
-                    <img src={newImgSrc} style={newImgStyle} alt=""/><br />
-                    <input type='file' onChange={(e)=>{ fileUpload(e); }} />
-                </div>
-            </div>
+                <div> <input type='file' onChange={(e)=>{ fileUpload(e); }} /></div>
+            </div>       
             <div className='btns'>
                 <button onClick={()=>{onSubmit()}}>작성완료</button>
                 <button onClick={()=>{navigate('/community')}}>메인으로</button>

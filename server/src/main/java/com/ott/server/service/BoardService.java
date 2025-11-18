@@ -1,8 +1,10 @@
 package com.ott.server.service;
 
 import com.ott.server.dto.Paging;
+import com.ott.server.entity.BComment;
 import com.ott.server.entity.BLikes;
 import com.ott.server.entity.Board;
+import com.ott.server.repository.BCommentRepository;
 import com.ott.server.repository.BLikesRepository;
 import com.ott.server.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class BoardService {
 
     private final BoardRepository br;
     private final BLikesRepository blr;
+    private final BCommentRepository bcr;
 
     public HashMap<String, Object> getBoardList(int page, String searchWord) {
         HashMap<String, Object> result = new HashMap<>();
@@ -40,11 +43,11 @@ public class BoardService {
             Page<Board> list = br.findAll( pageable );
             result.put("boardList", list.getContent());
         }else{
-            int count = br.findByTitleContainingOrContentContaining(searchWord,searchWord).size();
+            int count = br.findByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(searchWord,searchWord,searchWord).size();
             paging.setTotalCount(count);
             paging.calPaging();
             Pageable pageable = PageRequest.of(page-1, 5, Sort.by(Sort.Direction.DESC, "writedate"));
-            Page<Board> list = br.findAllByTitleContainingOrContentContaining( searchWord, searchWord, pageable );
+            Page<Board> list = br.findAllByTitleContainingOrContentContainingOrBoardMember_NicknameContaining( searchWord, searchWord, searchWord, pageable );
             result.put("boardList", list.getContent());
         }
         result.put("paging", paging);
@@ -86,5 +89,10 @@ public class BoardService {
     public void deleteBoard(int bidx) {
         Board board = br.findByBidx(bidx);
         br.delete(board);
+    }
+
+    public Object getReplyList(int bidx) {
+        List<BComment> list = bcr.findByBoard_BidxOrderByBcidxDesc(bidx);
+        return list;
     }
 }

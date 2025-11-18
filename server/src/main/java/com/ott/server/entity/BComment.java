@@ -15,18 +15,21 @@ public class BComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bcidx;
-    private int bidx;
-    private int midx;
+    @Column(length = 1000, nullable = false)
     private String content;
     @Column( columnDefinition="DATETIME default now()" )
     @CreationTimestamp
     private Timestamp writedate;
-    private int pcidx;
+    private Integer pcidx;
     @ColumnDefault("'N'")
     private String deleteyn;
 
-    @ManyToOne
-    @JoinColumn(name = "member_midx")
-    Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bidx")
+    private Board board;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "midx")
+    private Member member;
 
 }
