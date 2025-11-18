@@ -43,7 +43,7 @@ function WriteQna() {
         <article>
             <div className='subPage'>
                 <div className="qna-write-form">
-                    <h2>문의 작성</h2>
+                    <div className="section-title" style={{fontSize: "1.5rem"}}>문의 작성</div>
                     
                     <div className="qnafield">
                         <label>제목</label>

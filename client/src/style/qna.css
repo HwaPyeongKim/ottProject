@@ -258,13 +258,13 @@
 }
 
 .qna-write-form .btn-primary {
-  background-color: var(--highlight-color);
+  background-color: var(--text-color);
   color: #000;
   border: none;
 }
 
 .qna-write-form .btn-primary:hover {
-  background-color: #ffd700;
+  background-color: #ffffff;
 }
 
 .qna-write-form .btn-secondary {

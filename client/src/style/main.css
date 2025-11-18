@@ -1,0 +1,152 @@
+/* ----------------------------
+   slick 관련: 넘치는 부분을 보이게
+   ---------------------------- */
+.slick-list,
+.slick-track,
+.slick-slide {
+  overflow: hidden; /* 숫자가 슬라이드 밖으로 나와도 안잘리게 */
+}
+
+/* 전체 슬라이더(각 카테고리)마다 왼쪽 여유를 줄 수 있게 */
+.top10-slider {
+  /* 숫자가 왼쪽으로 얼마나 튀어나올지 정의 (숫자 반쯤 나올 여유) */
+  --rank-overflow: 0px;    /* 필요하면 조정 (기본값) */
+  padding-left: var(--rank-overflow);
+}
+
+/* ----------------------------
+   카드 공통 설정
+   --poster-w : 포스터 너비(숫자/포지션 계산에 사용)
+   --rank-scale: 숫자 폰트 크기 비율 (포스터 크기의 몇 배)
+   ---------------------------- */
+
+/* 각 카드의 구조 변경: 내부 레이어 분리 */
+.top10-card {
+  position: relative;
+  padding-left: 40px;
+  padding-top: 20px; 
+  padding-bottom: 20px;
+  height: 300px;  /* 숫자가 들어갈 공간 확보 */
+}
+
+/* 숫자: 포스터 기준이 아니라 "카드 기준 좌측 0px" */
+.rank-number {
+  position: absolute;
+  left: 0;              /* 항상 카드 왼쪽에 고정 */
+  top: 55%;             /* 카드의 수직 중앙 기준 */
+  transform: translateY(-50%); /* 정확히 중앙 */
+  
+  width: 1px;
+  height: 1px;
+  
+  font-size: 150px;     /* 고정 크기 */
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  opacity: 0.5;
+  line-height: 0.9;
+
+  pointer-events: none;
+  z-index: 1;
+
+  transition: opacity 200ms ease, transform 200ms ease;
+  font-family: 
+  "Helvetica Rounded",
+  "Arial Rounded MT Bold",
+  "Tahoma Rounded",
+  "Verdana",
+  sans-serif;
+}
+
+
+
+/* 포스터 */
+.top10-poster {
+  width: var(--poster-w);
+  border-radius: 10px;
+  z-index: 2; /* 숫자보다 앞에 보이게 */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+  transition: transform 220ms cubic-bezier(.2,.8,.2,1), box-shadow 220ms;
+  display: block;
+}
+
+/* Hover 효과: 포스터 확대 + 숫자 약간 이동/불투명 증가 */
+.top10-card a:hover .top10-poster {
+  transform: translateY(-6px) scale(1.08);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.6);
+  z-index: 10;
+}
+.top10-card a:hover .rank-number {
+  transform: translateY(-6px); /* 숫자도 같이 약간 올라옴 느낌 */
+  opacity: 0.7;
+  color: #f5c518; 
+}
+
+/* 좌/우 화살표나 화면 끝에서 숫자가 잘려 보일 경우
+   .top10-slider의 --rank-overflow 값을 늘려주면 해결 가능 */
+
+/* 반응형: 화면 좁아지면 포스터 줄이고 숫자도 자동 스케일 */
+@media (max-width: 1200px) {
+  .top10-card { --poster-w: 150px; --rank-scale: 0.95; }
+  .top10-slider { --rank-overflow: 62px; }
+}
+@media (max-width: 900px) {
+  .top10-card { --poster-w: 120px; --rank-scale: 0.95; }
+  .top10-slider { --rank-overflow: 56px; }
+}
+@media (max-width: 600px) {
+  /* 모바일에서는 숫자 크기 줄이거나 숨기기 권장 */
+  .top10-card { --poster-w: 100px; --rank-scale: 0.8; }
+  .rank-number { opacity: 0.18;}
+}
+
+
+/* -------------------------------------------------------
+   JustWatch 스타일 2-Column Layout
+------------------------------------------------------- */
+
+.top10-textrow {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 20px;
+}
+
+.top10-textrow h2 {
+  font-size: 40px;
+  font-weight: 700;
+  color: --text-color;
+  margin-bottom: 10px;
+}
+
+.top10-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  margin: 80px 0;
+}
+
+/* 왼쪽 텍스트 */
+.top10-text {
+  width: 280px; /* JustWatch와 비슷한 너비 */
+  flex-shrink: 0;
+}
+
+.top10-text h2 {
+  font-size: 27px;
+  font-weight: 700;
+  color: --highlight-color;
+  margin-bottom: 10px;
+}
+
+.top10-text p {
+  color: #cfcfcf;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+/* 오른쪽(슬라이더 영역) */
+/* 슬라이더 폭 줄이기 */
+.top10-slider-wrap {
+  width: 80%;   /* 기본 100% → 900px로 축소 */
+  max-width: 100%;
+
+}
