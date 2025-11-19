@@ -54,3 +54,4 @@ header .menu button {border: 0; background: transparent; color: #fff; line-heigh
 .search input {background: transparent;border: none;outline: none; color: #fff;}
 
 .grid-8 {display: grid; grid-template-columns: repeat(8, 1fr); gap: 16px;}
+.grid-2 {display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;}
