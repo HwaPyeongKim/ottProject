@@ -39,15 +39,15 @@ header .menu button {border: 0; background: transparent; color: #fff; line-heigh
 .header {position: relative; display: flex; align-items: center; justify-content: space-between; background: #000; color: #fff; padding: 10px 20px;}
 .header .menu button {background: none; border: none; color: white; font-size: 22px; cursor: pointer; transition: transform 0.2s ease;}
 .header .menu button:hover {transform: scale(1.1);}
-.dropdown-menu {position: absolute; right: 10px; top: 80px; background: #111; border: 1px solid #333; border-radius: 10px; width: 140px; overflow: hidden; max-height: 0; opacity: 0; transition: all 0.4s ease; z-index: 100;}
+.dropdown-submenu {position: absolute; right: 128px; top: 100px; background: #111; border: 1px solid #333; border-radius: 10px; width: 140px; overflow: hidden; max-height: 0; opacity: 0; transition: all 0.4s ease; z-index: 100;}
 
 /* 메뉴 열릴 때 */
-.dropdown-menu.open {max-height: 300px; /* 메뉴 길이에 맞게 충분히 크게 설정 */ opacity: 1; box-shadow: 0 4px 12px rgba(0,0,0,0.3);}
-.dropdown-menu ul {list-style: none; padding: 10px 0; margin: 0;}
-.dropdown-menu li {padding: 10px 15px; transition: all 0.3s ease;}
-.dropdown-menu li:hover {background: #222;}
-.dropdown-menu a {color: #ccc; text-decoration: none; display: block; transition: all 0.3s ease;}
-.dropdown-menu a:hover {color: #f5c518; font-weight: bold;}
+.dropdown-submenu.open {max-height: 300px; /* 메뉴 길이에 맞게 충분히 크게 설정 */ opacity: 1; box-shadow: 0 4px 12px rgba(0,0,0,0.3);}
+.dropdown-submenu ul {list-style: none; padding: 10px 0; margin: 0;}
+.dropdown-submenu li {padding: 10px 15px; transition: all 0.3s ease;}
+.dropdown-submenu li:hover {background: #222;}
+.dropdown-submenu a {color: #ccc; text-decoration: none; display: block; transition: all 0.3s ease;}
+.dropdown-submenu a:hover {color: #f5c518; font-weight: bold;}
 
 /* 검색창 스타일 */
 .search {display: flex; align-items: center; gap: 5px; background: #111; border-radius: 8px; padding: 5px 10px;}

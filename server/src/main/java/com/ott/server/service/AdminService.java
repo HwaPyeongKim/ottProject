@@ -56,4 +56,40 @@ public class AdminService {
     public Qna getQna(int qidx) {
         return qr.findByQidx(qidx);
     }
+
+    public HashMap<String, Object> getMyQnaList(int midx, int page, String key) {
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "qidx"));
+
+        if (key.equals("")) {
+            // 🔹 내가 작성한 모든 QnA 개수
+            int count = qr.findByMember_Midx(midx).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+
+            // 🔹 내가 작성한 QnA 목록
+            Page<Qna> list = qr.findAllByMember_Midx(midx, pageable);
+            result.put("qnaList", list.getContent());
+
+        } else {
+            // 🔹 내가 작성한 QnA 중 검색 결과 개수
+            int count = qr.findByMember_MidxAndTitleContaining(midx, key).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+
+            // 🔹 내가 작성한 QnA + 검색 키워드 적용
+            Page<Qna> list = qr.findAllByMember_MidxAndTitleContaining(midx, key, pageable);
+            result.put("qnaList", list.getContent());
+        }
+
+        result.put("paging", paging);
+        result.put("key", key);
+        return result;
+    }
+
 }

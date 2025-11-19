@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import jaxios from '../../util/JWTUtil';
+import { useSelector } from 'react-redux';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
@@ -14,10 +16,12 @@ function MyQna () {
   const [key, setKey] = useState('');
   const [beginEnd, setBeginEnd] = useState([]);
   const navigate = useNavigate();
+  const loginUser = useSelector(state => state.user);
 
   useEffect(() => {
-    axios
-      .get('/api/admin/getQnaList', { params: { page: 1, key } })
+
+    jaxios
+      .get('/api/admin/getMyQnaList', { params: { page: 1, key, midx:loginUser.midx } })
       .then((result) => {
         setQnaList(result.data.qnaList);
         setPaging(result.data.paging);
@@ -33,8 +37,8 @@ function MyQna () {
   }, []);
 
   function onPageMove(page) {
-    axios
-      .get(`/api/admin/getQnaList`, { params: { page, key } })
+    jaxios
+      .get(`/api/admin/getMyQnaList`, { params: { page, key } })
       .then((result) => {
         setQnaList([...result.data.qnaList]);
         setPaging(result.data.paging);
