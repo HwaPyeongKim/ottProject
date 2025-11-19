@@ -40,7 +40,6 @@ function Header() {
     axios.get(`/api/file/url/${loginUser.profileimg}`)
     .then((result) => {
         setImgSrc(result.data.image); // 미리보기 이미지 URL
-        console.log("아녕", loginUser);
     })
     .catch((err) => console.error(err));
     }, [loginUser.profileimg]

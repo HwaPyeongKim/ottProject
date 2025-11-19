@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import axios from "axios";
 import jaxios from "../../util/JWTUtil";
-import dayjs from "dayjs";
+import Review from "../Review";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar, faStarHalfAlt } from "@fortawesome/free-solid-svg-icons";
@@ -18,77 +18,15 @@ function Detail() {
   const baseUrl = "https://api.themoviedb.org/3/tv";
 
   const loginUser = useSelector(state=>state.user);
-  const [page, setPage] = useState(1);
   const {id} = useParams();
   const [item, setItem] = useState({});
   const [average, setAverage] = useState(0);
-  const [content, setContent] = useState("");
-  const [reviewList, setReviewList] = useState([]);
-  const [displayRow, setDisplayRow] = useState(5);
-  const [totalCount, setTotalCount] = useState(0);
-  const [view, setView] = useState(false);
   const [imdb, setImdb] = useState("");
   const [likeCount , setLikeCount] = useState(0);
   const [likeOn, setLikeOn] = useState(false);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const [likes, setLikes] = useState([]);
-  
-  const [score, setScore] = useState(0);
-  const [hover, setHover] = useState(0);
-
-  const handleClick = (starIndex, isHalf) => {
-    const newScore = isHalf ? starIndex - 0.5 : starIndex;
-    setScore(newScore);
-  };
-
-  const getStarIcon = (starIndex) => {
-    const current = hover || score;
-    if (current >= starIndex) return solidStar;
-    if (current >= starIndex - 0.5) return faStarHalfAlt;
-    return regularStar;
-  };
-
-  function StarRating() {
-    return (
-      <div style={{ display: "flex", flexDirection: "row", fontSize: "24px" }}>
-        {[1,2,3,4,5].map((star) => (
-          <div key={star} style={{ position: "relative", marginRight: "4px" }}>
-            <div
-              onMouseEnter={() => setHover(star - 0.5)}
-              onMouseLeave={() => setHover(0)}
-              onClick={() => handleClick(star, true)}
-              style={{
-                position: "absolute",
-                width: "50%",
-                height: "100%",
-                left: 0,
-                top: 0,
-                cursor: "pointer",
-                zIndex: 1,
-              }}
-            />
-
-            <div
-              onMouseEnter={() => setHover(star)}
-              onMouseLeave={() => setHover(0)}
-              onClick={() => handleClick(star, false)}
-              style={{
-                position: "absolute",
-                width: "50%",
-                height: "100%",
-                right: 0,
-                top: 0,
-                cursor: "pointer",
-                zIndex: 1,
-              }}
-            />
-            <FontAwesomeIcon icon={getStarIcon(star)} style={{ color: "#f39c12" }} />
-          </div>
-        ))}
-      </div>
-    );
-  };
 
   function AverageRating({ avgScore }) {
     const stars = [1, 2, 3, 4, 5];
@@ -236,58 +174,6 @@ function Detail() {
     }
   }
 
-  function saveReview() {
-    jaxios.post("/api/review/saveReview", {midx:loginUser.midx, content, dbidx:id, score})
-    .then((result)=>{
-      if (result.data.msg === "ok") {
-        alert("후기가 등록되었습니다");
-        setScore(0);
-        setHover(0);
-        setContent("");
-        getReviews(1,true);
-      } else {
-        alert("후기 등록이 실패했습니다");
-      }
-    })
-    .catch((err)=>{console.error(err);})
-  }
-
-  function deleteReview(ridx) {
-    if (window.confirm("해당 댓글을 삭제하시겠습니까?")) {
-      jaxios.delete(`/api/review/delete/${ridx}`)
-      .then((result)=>{
-        if (result.data.msg === "ok") {
-          alert("댓글을 삭제했습니다");
-          getReviews(1,true);
-        }
-      })
-      .catch((err)=>{console.error(err);})
-    }
-  }
-
-  async function getReviews(p, reset=false) {
-    try {
-      const result = await axios.get(`/api/review/getReviews/${p}`, {params: {dbidx: id, season: 0, displayRow}});
-      const newList = [...reviewList, ...result.data.list];
-
-      if (reset) {
-        setReviewList(result.data.list);
-      } else {
-        setReviewList(prev => [...prev, ...result.data.list]);
-      }
-      setTotalCount(result.data.totalCount);
-      setPage(prev => prev + 1);
-      if ((p * displayRow) < result.data.totalCount) {
-        setView(true);
-      } else {
-        setView(false);
-      }
-      getAverage();
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   async function getAverage() {
     try {
       const result = await axios.get("/api/review/getAverage", {params: {dbidx: id}});
@@ -357,7 +243,6 @@ function Detail() {
   useEffect(
     ()=>{
       findItem();
-      getReviews(1);
       getAverage();
       getLikes();
     },[]
@@ -673,44 +558,7 @@ function Detail() {
           </div>
 
           <div className="review">
-            <h3>후기 {totalCount ? <small>({totalCount.toLocaleString()})</small> : null}</h3>
-            <div className="write">
-              <h4>내 별점</h4>
-              <div className="rating">
-                <StarRating score={score} setScore={setScore} />
-              </div>
-              <div className="textBox">
-                <textarea value={content} onChange={(e)=>{setContent(e.currentTarget.value)}} placeholder="리뷰를 입력해주세요" ></textarea>
-                <button onClick={()=>{saveReview()}} className="mainButton">작성완료</button>
-              </div>
-            </div>
-            <ul className="reviewList">
-              {
-                reviewList && reviewList.length > 0 ?
-                reviewList.map((review, idx)=>{
-                  const formattedDate = review.writedate ? dayjs(review.writedate).format("YYYY-MM-DD HH:mm") : null;
-                  
-                  return (
-                    <li key={idx}>
-                      <p><span>{review.member.nickname}</span> <span><FontAwesomeIcon icon={faStar} /> {review.score}</span> <small>({formattedDate})</small></p>
-                      <div>
-                        <pre>{review.content}</pre>
-                        {
-                          review.member.midx == loginUser.midx ?
-                          <>
-                            <button onClick={()=>{deleteReview(review.ridx)}} className="mainButton">삭제하기</button>
-                          </>
-                          : null
-                        }
-                      </div>
-                    </li>
-                  )
-                })
-                :
-                <li className="noFind">작성된 리뷰가 없습니다</li>
-              }
-              {view ? <div className="more"><button className="mainButton" onClick={()=>{getReviews(page)}}>더보기</button></div> : null}
-            </ul>
+            <Review dbidx={id} season="0" refreshAverage={getAverage} />
           </div>
         </div>
 

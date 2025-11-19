@@ -11,6 +11,9 @@ span {margin-bottom: 20px;}
 
 .slick-dots li button:before {color: #fff !important;}
 
+.grid-8 {display: grid; grid-template-columns: repeat(8, 1fr); gap: 16px;}
+.grid-2 {display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;}
+
 .swiper-button-prev, .swiper-button-next {position: absolute; top: 50%; height: 100%; transform: translateY(-50%); z-index: 10; transform-origin: center center; opacity: 0;}
 .swiper-button-prev:hover, .swiper-button-next:hover {opacity: 1;}
 .swiper-button-next {right: 0;}
@@ -52,6 +55,3 @@ header .menu button {border: 0; background: transparent; color: #fff; line-heigh
 /* 검색창 스타일 */
 .search {display: flex; align-items: center; gap: 5px; background: #111; border-radius: 8px; padding: 5px 10px;}
 .search input {background: transparent;border: none;outline: none; color: #fff;}
-
-.grid-8 {display: grid; grid-template-columns: repeat(8, 1fr); gap: 16px;}
-.grid-2 {display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;}
