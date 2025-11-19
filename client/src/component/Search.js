@@ -21,6 +21,11 @@ function Search() {
   const [activeIndex, setActiveIndex] = useState(null);
   const [likes, setLikes] = useState([]);
 
+  const [pageMovie, setPageMovie] = useState(1);
+  const [pageTV, setPageTV] = useState(1);
+  const [hasMoreMovie, setHasMoreMovie] = useState(true);
+  const [hasMoreTV, setHasMoreTV] = useState(true);
+
   const isFiltering = filters.genre !== "" || filters.year !== "" || filters.certification !== "" || filters.sortBy !== "popularity.desc";
   
   const ottInfos = [
@@ -39,39 +44,43 @@ function Search() {
     {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
   ]
 
-  useEffect(
-    () => {
-      if (!keyword) return;
-      const fetchSearchMovie = async () => {
-        try {
-          const res = await fetch(`https://api.themoviedb.org/3/search/movie?language=ko-KR&page=1&region=KR&query=${keyword}&api_key=${process.env.REACT_APP_KEY}`);
-          const data = await res.json();
-          const resultsWithType = (data.results || []).map((item) => ({...item, media_type: "movie"}));
-          setSearchResultsMovie(resultsWithType);
-        } catch (err) {
-          console.error("영화 검색 실패:", err);
-        }
-      };
-      fetchSearchMovie();
-    }, [keyword]
-  );
+  useEffect(() => {
+    if (!keyword) return;
 
-  useEffect(
-    () => {
-      if (!keyword) return;
-      const fetchSearchTV = async () => {
-        try {
-          const res = await fetch(`https://api.themoviedb.org/3/search/tv?language=ko-KR&page=1&query=${keyword}&api_key=${process.env.REACT_APP_KEY}`);
-          const data = await res.json();
-          const resultsWithType = (data.results || []).map((item) => ({...item, media_type: "tv"}));
-          setSearchResultsTV(resultsWithType);
-        } catch (err) {
-          console.error("TV 검색 실패:", err);
-        }
-      };
-      fetchSearchTV();
-    }, [keyword]
-  );
+    const fetchMovie = async () => {
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/search/movie?language=ko-KR&page=${pageMovie}&region=KR&query=${keyword}&api_key=${process.env.REACT_APP_KEY}`);
+        const data = await res.json();
+        if (data.results?.length === 0) setHasMoreMovie(false);
+
+        const resultsWithType = (data.results || []).map((item) => ({ ...item, media_type: "movie" }));
+        setSearchResultsMovie(prev => pageMovie === 1 ? resultsWithType : [...prev, ...resultsWithType]);
+      } catch (err) {
+        console.error("영화 검색 실패:", err);
+      }
+    };
+
+    fetchMovie();
+  }, [keyword, pageMovie]);
+
+  useEffect(() => {
+    if (!keyword) return;
+
+    const fetchTV = async () => {
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/search/tv?language=ko-KR&page=${pageTV}&query=${keyword}&api_key=${process.env.REACT_APP_KEY}`);
+        const data = await res.json();
+        if (data.results?.length === 0) setHasMoreTV(false);
+
+        const resultsWithType = (data.results || []).map((item) => ({ ...item, media_type: "tv" }));
+        setSearchResultsTV(prev => pageTV === 1 ? resultsWithType : [...prev, ...resultsWithType]);
+      } catch (err) {
+        console.error("TV 검색 실패:", err);
+      }
+    };
+
+    fetchTV();
+  }, [keyword, pageTV]);
 
   useEffect(
     () => {
@@ -147,6 +156,18 @@ function Search() {
     }, [searchResultsMovie, searchResultsTV, discoverResultsMovie, discoverResultsTV, filters, keyword, isFiltering]
   );
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        if (hasMoreMovie) setPageMovie(prev => prev + 1);
+        if (hasMoreTV) setPageTV(prev => prev + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasMoreMovie, hasMoreTV]);
+
   async function like(id) {
     if (!loginUser || loginUser.midx === undefined) {
       alert("로그인 후 이용해주세요");
@@ -212,6 +233,11 @@ function Search() {
       getMyLikes();
     },[]
   )
+
+  useEffect(() => {
+    setPageMovie(1);
+    setPageTV(1);
+  }, [keyword, filters]);
 
   return (
     <div>
