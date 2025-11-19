@@ -64,19 +64,6 @@ function MyQna () {
           나의 Q&A 조회&nbsp; &gt;
         </button>
       </div>
-      {/* 검색 바 */}
-      <div className="filter-bar">
-        <input
-          className="search-input"
-          type="text"
-          placeholder="검색어를 입력하세요"
-          value={key}
-          onChange={(e) => setKey(e.currentTarget.value)}
-        />
-        <button className="btn btn-primary" onClick={() => onPageMove(1)}>
-          검색
-        </button>
-      </div>
 
       {/* Q&A 리스트 테이블 */}
       <div className="qna-table">
