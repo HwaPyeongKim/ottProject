@@ -54,16 +54,8 @@ function UpdateForm() {
 
         if( !title ){ return alert('제목을 입력하세요')}
         if( !content ){ return alert('제목을 입력하세요')}
-
-        // ckeditor5-react 사용으로 인한 html태그 제거
-        const cleanContent = content
-        .replace(/<p>/g, '')           
-        .replace(/<\/p>/g, '\n')       
-        .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/&nbsp;/g, ' ')
-        .replace(/ +/g, ' ');     
-
-        jaxios.post('/api/board/updateBoard', {bidx: bidx, title, content: cleanContent, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
+  
+        jaxios.post('/api/board/updateBoard', {bidx: bidx, title, content, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
         .then((result)=>{
             alert('게시글 작성이 완료되었습니다');
             navigate('/community');
@@ -84,7 +76,7 @@ function UpdateForm() {
 
     return (
          <div className='boardwriteform'>
-            <h2>게시물 작성</h2>
+            <h2>게시물 수정</h2>
             <div className='field info-upload-container'>
                 <div className="info-column">
                     <div className='field'>

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/JWTUtil';
 import "../../style/boardWrite.css";
+import parse from 'html-react-parser';
 
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -38,16 +39,8 @@ function WriteForm() {
 
         if( !title ){ return alert('제목을 입력하세요')}
         if( !content ){ return alert('제목을 입력하세요')}
-
-        // <p> 제거하고 줄바꿈 살리기
-        const cleanContent = content
-        .replace(/<p>/g, '')           
-        .replace(/<\/p>/g, '\n')       
-        .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/&nbsp;/g, ' ')
-        .replace(/ +/g, ' ');        
-
-        jaxios.post('/api/board/writeForm', {title, content: cleanContent, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
+    
+        jaxios.post('/api/board/writeForm', {title, content, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
         .then((result)=>{
             alert('게시글 작성이 완료되었습니다');
             navigate('/community');

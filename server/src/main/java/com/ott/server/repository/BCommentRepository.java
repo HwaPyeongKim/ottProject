@@ -9,6 +9,6 @@ public interface BCommentRepository extends JpaRepository<BComment, Integer> {
 
 //    List<BComment> findByBoard_BidxOrderByBcidxDesc(int bidx);
 
-    List<BComment> findByBoardBidxAndDeleteynOrderByBcidxDesc(int bidx, String n);
+    List<BComment> findByBoard_BidxAndDeleteynOrderByBcidxDesc(int bidx, String deleteyn);
 
 }

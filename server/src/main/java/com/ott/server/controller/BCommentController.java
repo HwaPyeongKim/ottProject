@@ -15,11 +15,13 @@ public class BCommentController {
     @Autowired
     BCommentService cs;
 
-    @GetMapping("/getCommentList")
+    @GetMapping("/getCommentList/{bidx}")
     public HashMap<String, Object> getCommentList(@PathVariable int bidx) {
         HashMap<String, Object> result = new HashMap<>();
         List<BComment> commentList = cs.getCommentList(bidx);
-        result.put("commentlist",  commentList);
+        result.put("commentList",  commentList);
+        System.out.println("받은 bidx = " + bidx);
+
         return result;
     }
 

@@ -1,6 +1,7 @@
 package com.ott.server.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
@@ -21,13 +22,15 @@ public class BComment {
     private Timestamp writedate;
     private Integer pcidx;
     @ColumnDefault("'N'")
-    private String deleteyn;
+    private String deleteyn = "N";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bidx")
+    @JsonIgnore
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "midx")
+    @JsonIgnore
     private Member member;
 }
