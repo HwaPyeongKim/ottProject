@@ -1,8 +1,10 @@
 package com.ott.server.controller;
 
+import com.ott.server.entity.Member;
 import com.ott.server.entity.Qna;
 import com.ott.server.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -19,6 +21,14 @@ public class AdminController {
                                               @RequestParam(value="key", required = false, defaultValue = "") String key){
         System.out.println("✅ getQnaList 호출됨");
         return as.getQnaList(page, key);
+    }
+
+    @GetMapping("/getMyQnaList")
+    public HashMap<String, Object> getMyQnaList(@RequestParam("midx") int midx,
+                                                @RequestParam("page") int page,
+                                                @RequestParam(value="key", defaultValue = "") String key){
+        System.out.println("🔥 getMyQnaList 호출됨 / midx=" + midx);
+        return as.getMyQnaList(midx, page, key);
     }
 
     @PostMapping("/qnaWrite")
