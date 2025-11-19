@@ -33,14 +33,17 @@ const CommentModal = ({ onClose, bidx }) => {
     //-----------------------
     //  댓글 리스트 가져오기
     //-----------------------
-    const fetchComments = async () => {
+
+    async function fetchComments(){
         try {
             const res = await jaxios.get(`/api/bcomment/getCommentList/${bidx}`);
+            console.log(res);
+            // console.log("서버 응답:", res.data);
             setCommentList(res.data.commentList);   // 서버에서 대댓글로 묶어서 보내주는 것을 추천
         } catch (err) {
             console.error(err);
         }
-    };
+    }
 
     useEffect(() => {
         if (bidx) fetchComments();
@@ -50,16 +53,16 @@ const CommentModal = ({ onClose, bidx }) => {
     //-----------------------
     //  댓글 작성
     //-----------------------
-    const addComment = async () => {
+    async function addComment() {
         if (!content.trim()) return;
 
-        await jaxios.post("/api/bcomment/addComment", {bidx, midx: loginUser.midx, content, pcidx: null})
+        await jaxios.post("/api/bcomment/addComment", {board: {bidx}, member: {midx: loginUser.midx}, content, pcidx: null})
         .then((result)=>{
             setContent("");
             fetchComments();
         })
         .catch((err)=>{console.error(err)})
-    };
+    }    
 
 
     //-----------------------
@@ -111,13 +114,13 @@ const CommentModal = ({ onClose, bidx }) => {
 
                         {/* 프로필 */}
                         <img className="modal-profile-image" 
-                             src={comment.member.profileimgUrl || "/default.png"} 
+                             src={comment.member?.profileimgUrl || "/default.png"} 
                              alt="profile" />
 
                         <div className="modal-comment-info">
 
                             <div className="modal-comment-header">
-                                <span className="modal-username">{comment.member.nickname}</span>
+                                <span className="modal-username">{comment.member?.nickname}</span>
                                 <span className="modal-timestamp">{timeAgo(comment.writedate)}</span>
                             </div>
 
@@ -151,13 +154,13 @@ const CommentModal = ({ onClose, bidx }) => {
                                         <div key={reply.bcidx} className="modal-reply-item">
                                             
                                             <img className="modal-profile-image"
-                                                 src={reply.member.profileimgUrl || "/default.png"}
+                                                 src={reply.member?.profileimgUrl || "/default.png"}
                                                  alt="profile" />
 
                                             <div className="modal-comment-info">
 
                                                 <div className="modal-comment-header">
-                                                    <span className="modal-username">{reply.member.nickname}</span>
+                                                    <span className="modal-username">{reply.member?.nickname}</span>
                                                     <span className="modal-timestamp">{timeAgo(reply.writedate)}</span>
                                                 </div>
 

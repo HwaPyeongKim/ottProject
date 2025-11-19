@@ -7,6 +7,7 @@ import axios from 'axios';
 import jaxios from '../../util/JWTUtil';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Cookies } from 'react-cookie';
+import parse from 'html-react-parser';
 
 Modal.setAppElement('#root');
 
@@ -201,12 +202,12 @@ function Board(props) {
                             <div>
                             <p className="review-text boardtitle">{props.board.title}</p>
                             <p className={`review-text ${!showFullContent ? 'clamp' : ''}`} style={{ whiteSpace: "pre-wrap" }}>
-                                {props.board.content}
+                                {parse(props.board.content || '')}
                             </p>
 
-                            {props.board.content.split("\n").length > 4 && (
+                            {props.board.content.length > 100 && (
                                 <button className="show-more-button" onClick={() => setShowFullContent(prev => !prev)}>
-                                {showFullContent ? "접기" : "더보기"}
+                                    {showFullContent ? "접기" : "더보기"}
                                 </button>
                             )}
                             </div>
@@ -229,7 +230,7 @@ function Board(props) {
                                     <button className="icon-button" onClick={() => onLike()}>🤍 {likeList.length}</button>
                                 )
                             }
-                            <button className="icon-button" onClick={()=>{setIsOpen(true)}}>💬</button>
+                            <button className="icon-button" onClick={()=>{setIsOpen(true)}}>💬 1</button>
                         </div>
                         <div className="update-button" ref={updateButtonRef}>
                             <button className="icon-button" onClick={() => setMenuOpen(prev => !prev)}>⋯</button>
