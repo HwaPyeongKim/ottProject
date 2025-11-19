@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import axios from "axios";
+import jaxios from "../util/JWTUtil";
 import Slider from "react-slick";
+import ListCard from "./ListCard";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
@@ -10,10 +13,12 @@ import "../style/list.css";
 
 function Search() {
   const {keyword} = useParams();
+  const loginUser = useSelector(state=>state.user);
 
   const [sliderShow, setSliderShow] = useState(8);
   const [movieList, setMovieList] = useState([]);
   const [tvList, setTvList] = useState([]);
+  const [likes, setLikes] = useState([]);
 
   const settings = {
     dots: true,
@@ -85,10 +90,25 @@ function Search() {
     }
   }
 
+  async function getMyLikes() {
+    try {
+      const result = await jaxios.get("/api/main/getMyLikes", {params: {midx: loginUser.midx}});
+      if (result.data !== undefined && result.data.list !== undefined) {
+        const dbidxList = result.data.list.map(like => like.dbidx);
+        setLikes(dbidxList);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   useEffect(
     ()=>{
       findMovies(keyword);
       findTvs(keyword);
+      if (loginUser && loginUser.midx > 0) {
+        getMyLikes();
+      }
     },[keyword]
   )
 
@@ -97,100 +117,12 @@ function Search() {
       <h2>{keyword} 검색 결과</h2>
       <div className="movie_wrapper">
         <h3>영화</h3>
-        {
-          movieList && movieList.length > 0 ? (
-            <Slider {...settings} className="lists">
-              {movieList.map((item, idx) => (
-                <div className="list" key={idx}>
-                  <div className="cover">
-                    <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`}/>
-                    <a href={`/movie/detail/${item.id}`}>
-                      <div>
-                        <button><FontAwesomeIcon icon={faBookmark} /></button>
-                        <button><FontAwesomeIcon icon={faThumbsUp} /></button>
-                      </div>
-                      {item.providers && (
-                        <ul>
-                          {item.providers.map((provider, pidx) => {
-                            const ott = ottInfos.find(info => info.key === provider.provider_id);
-                            if (!ott) return null;
-
-                            return (
-                              <li key={pidx}>
-                                <img src={`/images/${ott.label}.jpeg`} alt={`${ott.label} 로고`} />
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      )}
-                    </a>
-                  </div>
-                </div>
-              ))}
-
-              {/* 빈 슬롯 채우기 */}
-              {
-                movieList.length < sliderShow &&
-                Array(sliderShow - movieList.length).fill(null).map((_, i) => (
-                  <div className="list empty" key={`empty-${i}`}>
-                    <div className="cover empty-cover"></div>
-                  </div>
-                ))
-              }
-            </Slider>
-          ) : (
-            <div className="lists noFind">검색 결과가 없습니다.</div>
-          )
-        }
+        <ListCard lists={movieList} target="movie" likes={likes} setLikes={setLikes} />
       </div>
 
       <div className="tv_wrapper">
         <h3>TV 프로그램</h3>
-        {
-          tvList && tvList.length > 0 ? (
-            <Slider {...settings} className="lists">
-              {tvList.map((item, idx) => (
-                <div className="list" key={idx}>
-                  <div className="cover">
-                    <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`}/>
-                    <a href={`/tv/Detail/${item.id}`}>
-                      <div>
-                        <button><FontAwesomeIcon icon={faBookmark} /></button>
-                        <button><FontAwesomeIcon icon={faThumbsUp} /></button>
-                      </div>
-                      {item.providers && (
-                        <ul>
-                          {item.providers.map((provider, pidx) => {
-                            const ott = ottInfos.find(info => info.key === provider.provider_id);
-                            if (!ott) return null;
-
-                            return (
-                              <li key={pidx}>
-                                <img src={`/images/${ott.label}.jpeg`} alt={`${ott.label} 로고`} />
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      )}
-                    </a>
-                  </div>
-                </div>
-              ))}
-
-              {/* 빈 슬롯 채우기 */}
-              {
-                tvList.length < sliderShow &&
-                Array(sliderShow - tvList.length).fill(null).map((_, i) => (
-                  <div className="list empty" key={`empty-${i}`}>
-                    <div className="cover empty-cover"></div>
-                  </div>
-                ))
-              }
-            </Slider>
-          ) : (
-            <div className="lists noFind">검색 결과가 없습니다.</div>
-          )
-        }
+        <ListCard lists={tvList} target="tv" likes={likes} setLikes={setLikes} />
       </div>
     </div>
   )

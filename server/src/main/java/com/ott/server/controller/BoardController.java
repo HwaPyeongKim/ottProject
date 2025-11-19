@@ -3,6 +3,7 @@ package com.ott.server.controller;
 import com.ott.server.entity.BLikes;
 import com.ott.server.entity.Board;
 import com.ott.server.entity.FileEntity;
+import com.ott.server.entity.Member;
 import com.ott.server.repository.BoardRepository;
 import com.ott.server.service.BoardService;
 import com.ott.server.service.S3UploadService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/board")
@@ -22,8 +24,9 @@ public class BoardController {
     @GetMapping("/getBoardList/{page}")
     public HashMap<String, Object> getBoardList(
             @PathVariable("page") int page,
-            @RequestParam(value = "searchWord", required = false, defaultValue = "") String searchWord){
-        HashMap<String, Object> result = bs.getBoardList(page, searchWord);
+            @RequestParam(value = "searchWord", required = false, defaultValue = "") String searchWord,
+            @RequestParam(value = "sortType", required = false, defaultValue = "latest") String sortType){
+        HashMap<String, Object> result = bs.getBoardList(page, searchWord, sortType);
         return result;
     }
 
@@ -92,11 +95,42 @@ public class BoardController {
         return result;
     }
 
-    @GetMapping("/getReplyList/{bidx}")
-    public HashMap<String, Object> getReplyList(@PathVariable("bidx")int bidx){
+//    @GetMapping("/getReplyList/{bidx}")
+//    public HashMap<String, Object> getReplyList(@PathVariable("bidx")int bidx){
+//        HashMap<String, Object> result = new HashMap<>();
+//        result.put("replyList", bs.getReplyList(bidx));
+//        System.out.println("댓글 리스트: " + bs.getReplyList(bidx));
+//        return result;
+//    }
+
+    @PostMapping("/reportBoard/{bidx}")
+    public HashMap<String, Object> reportBoard(
+            @PathVariable("bidx")int bidx,
+            @RequestBody Map<String, Integer> body){
+        int midx = body.get("midx");
         HashMap<String, Object> result = new HashMap<>();
-        result.put("replyList", bs.getReplyList(bidx));
-        System.out.println("댓글 리스트: " + bs.getReplyList(bidx));
+        try {
+            bs.reportBoard(bidx,midx);
+            result.put("msg","ok");
+        } catch (RuntimeException e) {
+            // 이미 신고한 경우에도 에러가 아닌 메시지로 처리
+            // axios에서  catch가 아닌 then으로감
+            result.put("msg", e.getMessage()); 
+        } catch (Exception e){
+            e.printStackTrace();
+            result.put("msg", "fail");
+        }
+        return result;
+    }
+
+    @GetMapping("/isReported/{bidx}")
+    public Map<String, Object> isReported(
+            @PathVariable int bidx,
+            @RequestParam int midx) {
+        boolean reported = bs.isReported(bidx, midx);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("reported", reported);
         return result;
     }
 

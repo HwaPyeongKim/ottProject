@@ -1,0 +1,4 @@
+.filter {display: flex; margin-bottom: 20px;}
+.filter li {margin-right: 20px;}
+.filter li.reset button {background: transparent; border: none; outline: none; color: #fff;}
+.lists.searchList {}

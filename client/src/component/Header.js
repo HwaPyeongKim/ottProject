@@ -54,7 +54,7 @@ function Header() {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && keyword.trim() !== "") {
-      navigate(`/search/${encodeURIComponent(keyword)}`);
+      navigate(`/discover/${encodeURIComponent(keyword)}`);
     }
   };
 

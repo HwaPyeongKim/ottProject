@@ -16,7 +16,9 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 
     Board findByBidx(int bidx);
 
-    List<Board> findByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(String searchWord, String searchWord1, String searchWord2);
-
     Page<Board> findAllByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(String searchWord, String searchWord1, String searchWord2, Pageable pageable);
+
+//    List<Board> findByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(String searchWord, String searchWord1, String searchWord2);
+
+    long countByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(String searchWord, String searchWord1, String searchWord2);
 }

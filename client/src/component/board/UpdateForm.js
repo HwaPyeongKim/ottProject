@@ -55,7 +55,15 @@ function UpdateForm() {
         if( !title ){ return alert('제목을 입력하세요')}
         if( !content ){ return alert('제목을 입력하세요')}
 
-        jaxios.post('/api/board/updateBoard', {bidx: bidx, title, content, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
+        // ckeditor5-react 사용으로 인한 html태그 제거
+        const cleanContent = content
+        .replace(/<p>/g, '')           
+        .replace(/<\/p>/g, '\n')       
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/ +/g, ' ');     
+
+        jaxios.post('/api/board/updateBoard', {bidx: bidx, title, content: cleanContent, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
         .then((result)=>{
             alert('게시글 작성이 완료되었습니다');
             navigate('/community');
@@ -77,14 +85,38 @@ function UpdateForm() {
     return (
          <div className='boardwriteform'>
             <h2>게시물 작성</h2>
-            <div className='field'>
-                <label>닉네임</label>
-                <input type='text' value={nickname} onChange={(e)=>{setNickname(e.currentTarget.value)}} readOnly/>
+            <div className='field info-upload-container'>
+                <div className="info-column">
+                    <div className='field'>
+                        <label>닉네임</label>
+                        <input type='text' value={nickname} onChange={(e)=>{setNickname(e.currentTarget.value)}} readOnly/>
+                    </div>
+                    <div className='field'>
+                        <label>제목</label>
+                        <input type='text' value={title} onChange={(e)=>{setTitle(e.currentTarget.value)}} />
+                    </div>                
+                </div>
+                <div className='image-upload-section image-column'>
+                    <label className='upload-label'>이미지 수정</label>
+                    <div className='upload-box'>
+                        {imgSrc ? (
+                            <div className="image-preview-wrapper">
+                                <img src={imgSrc} alt="미리보기 이미지" />
+                            </div>
+                        ) : (
+                            <div className="no-image-placeholder">
+                                첨부된 이미지가 없습니다
+                            </div>
+                        )}
+                        
+                        <label htmlFor="file-upload" className="file-upload-button">
+                            {imgSrc ? '이미지 변경' : '이미지 선택'}
+                        </label>
+                        <input id="file-upload" type="file" onChange={(e)=>{fileUpload(e)}} style={{display: 'none'}}/>
+                    </div>
+                </div>
             </div>
-            <div className='field'>
-                <label>제목</label>
-                <input type='text' value={title} onChange={(e)=>{setTitle(e.currentTarget.value)}} />
-            </div>
+
             <div className='field'>
                 <label>게시글 수정</label>
                 <CKEditor
@@ -96,11 +128,11 @@ function UpdateForm() {
                     }}
                 />
             </div>
-            <div className='field'>
+            {/* <div className='field'>
                 <label>기존이미지</label>
                 <div><img src={imgSrc} style={imgStyle} /></div>
                 <div> <input type='file' onChange={(e)=>{ fileUpload(e); }} /></div>
-            </div>       
+            </div> */}
             <div className='btns'>
                 <button onClick={()=>{onSubmit()}}>작성완료</button>
                 <button onClick={()=>{navigate('/community')}}>메인으로</button>

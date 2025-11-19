@@ -15,9 +15,9 @@ public class MainController {
     MainService ms;
 
     @GetMapping("/getLikes")
-    public HashMap<String, Object> getLikes(@RequestParam("dbidx") int dbidx, @RequestParam(value="midx", required = false, defaultValue = "0") int midx) {
+    public HashMap<String, Object> getLikes(@RequestParam("dbidx") int dbidx, @RequestParam(value="midx", required = false, defaultValue = "0") int midx, @RequestParam(value="season", required = false, defaultValue = "0") int season) {
         HashMap<String, Object> result = new HashMap<>();
-        HashMap<String, Object> likes = ms.getLikes(midx, dbidx);
+        HashMap<String, Object> likes = ms.getLikes(midx, dbidx, season);
         result.put("count", likes.get("count"));
         result.put("likes", likes.get("likes"));
         return result;
@@ -27,6 +27,13 @@ public class MainController {
     public HashMap<String, Object> like(@RequestBody Likes likes){
         HashMap<String,Object> result = new HashMap<>();
         HashMap<String,Object> like = ms.like(likes);
+        return result;
+    }
+
+    @GetMapping("/getMyLikes")
+    public HashMap<String, Object> getMyLikes(@RequestParam("midx") int midx) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("list", ms.getMyLikes(midx));
         return result;
     }
 

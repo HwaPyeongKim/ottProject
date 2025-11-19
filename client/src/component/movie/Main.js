@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import jaxios from "../../util/JWTUtil";
 import axios from "axios";
 import Slider from "react-slick";
 import ListCard from '../ListCard';
@@ -8,6 +10,8 @@ import { faBookmark, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
 function Main() {
   const baseUrl = "https://api.themoviedb.org/3";
+  const loginUser = useSelector(state=>state.user);
+  const [likes, setLikes] = useState([]);
 
   const [now, setNow] = useState([]);
   const [popular, setPopular] = useState([]);
@@ -157,6 +161,18 @@ function Main() {
     }
   }
 
+  async function getMyLikes() {
+    try {
+      const result = await jaxios.get("/api/main/getMyLikes", {params: {midx: loginUser.midx}});
+      if (result.data !== undefined && result.data.list !== undefined) {
+        const dbidxList = result.data.list.map(like => like.dbidx);
+        setLikes(dbidxList);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   useEffect(
     ()=>{
       findMovies("now_playing");
@@ -166,6 +182,10 @@ function Main() {
       // findMovies("upcoming"); // 메인으로 빠질것
 
       fetchAllGenres();
+
+      if (loginUser && loginUser.midx > 0) {
+        getMyLikes();
+      }
     },[]
   )
 
@@ -181,7 +201,7 @@ function Main() {
                     <h4>{item.title}</h4>
                     <p>{item.overview}</p>
                   </div>
-                  <img src={`https://image.tmdb.org/t/p/w342${item.poster_path}`} alt={`${item.title} 포스터`} />
+                  <img src={`https://image.tmdb.org/t/p/w342${item.poster_path}`} alt={`${item.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
                 </a>
               </div>
             )
@@ -190,46 +210,46 @@ function Main() {
       </Slider>
 
       <h3>주간 인기 급상승 영화</h3>
-      <ListCard lists={trending} target="movie" />
+      <ListCard lists={trending} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>인기 영화</h3>
-      <ListCard lists={popular} target="movie" />
+      <ListCard lists={popular} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>액션 영화</h3>
-      <ListCard lists={action} target="movie" />
+      <ListCard lists={action} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>모험 영화</h3>
-      <ListCard lists={adventure} target="movie" />
+      <ListCard lists={adventure} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>코미디 영화</h3>
-      <ListCard lists={comedy} target="movie" />
+      <ListCard lists={comedy} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>로맨스 영화</h3>
-      <ListCard lists={romance} target="movie" />
+      <ListCard lists={romance} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>드라마 영화</h3>
-      <ListCard lists={drama} target="movie" />
+      <ListCard lists={drama} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>다큐멘터리 영화</h3>
-      <ListCard lists={documentary} target="movie" />
+      <ListCard lists={documentary} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>공포 영화</h3>
-      <ListCard lists={horror} target="movie" />
+      <ListCard lists={horror} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>스릴러 영화</h3>
-      <ListCard lists={thriller} target="movie" />
+      <ListCard lists={thriller} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>SF 영화</h3>
-      <ListCard lists={SF} target="movie" />
+      <ListCard lists={SF} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>음악 영화</h3>
-      <ListCard lists={music} target="movie" />
+      <ListCard lists={music} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>평점 높은 영화</h3>
-      <ListCard lists={topRated} target="movie" />
+      <ListCard lists={topRated} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>개봉 예정작</h3>
-      <ListCard lists={coming} target="movie" />
+      <ListCard lists={coming} target="movie" likes={likes} setLikes={setLikes} />
     </div>
   )
 }

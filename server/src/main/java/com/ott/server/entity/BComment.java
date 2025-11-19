@@ -11,13 +11,12 @@ import java.sql.Timestamp;
 @Entity
 @Data
 public class BComment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bcidx;
     @Column(length = 1000, nullable = false)
     private String content;
-    @Column( columnDefinition="DATETIME default now()" )
+//    @Column( columnDefinition="DATETIME default now()" )
     @CreationTimestamp
     private Timestamp writedate;
     private Integer pcidx;
@@ -31,5 +30,4 @@ public class BComment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "midx")
     private Member member;
-
 }

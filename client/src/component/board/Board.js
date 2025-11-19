@@ -1,7 +1,7 @@
  import React, { useEffect, useRef, useState } from 'react'
 import Modal from 'react-modal'
 
-import CommentModalContent from './CommentModalContent';
+import CommentModal from './CommentModal';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import jaxios from '../../util/JWTUtil';
@@ -22,6 +22,14 @@ function Board(props) {
     const updateButtonRef = useRef(null);
     const cookies = new Cookies();
     const {bidx} = useParams();
+    // 신고 상태
+    const [reported, setReported] = useState(false);
+    // 스포일러 내용
+    const [showSpoiler, setShowSpoiler] = useState(false);
+    const isBlurred = props.board.status === "BLURRED";
+    // 글 더보기
+    const [showFullContent, setShowFullContent] = useState(false);
+    const [commentCount, setCommentCount] = useState(0);
 
     const customStyles = {
         overlay: { backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1000 },
@@ -137,6 +145,36 @@ function Board(props) {
         };
     }, []);
 
+
+    useEffect(
+        () => {
+        // 페이지 로드 시 신고 여부 확인
+        jaxios.get(`/api/board/isReported/${props.board.bidx}?midx=${loginUser.midx}`)
+        .then((res) => {
+            setReported(res.data.reported); // 서버에서 신고 여부 가져오기
+        })
+        .catch((err) => { console.error(err); });
+        }, [props.board.bidx, loginUser.midx]
+    ); 
+
+    function reportBoard(){
+        if(reported) return;
+
+        jaxios.post(`/api/board/reportBoard/${props.board.bidx}`, {midx: loginUser.midx} )
+        .then((res) => {
+            if (res.data.msg === 'ok'){
+                alert('신고가 접수되었습니다');
+                setReported(true);
+            } else if (res.data.msg === '이미 신고한 게시글입니다'){
+                alert(res.data.msg);
+                setReported(true);
+            } else {
+                alert('신고 처리 중 오류가 발생했습니다');
+            }
+        })
+        .catch((err)=>{console.error(err)});
+    }
+
    
 
     return (
@@ -154,35 +192,50 @@ function Board(props) {
 
                 <div className="comment-body">
                     <div className="review-content">
-                        <img className="review-image" src={imgSrc} alt="영화포스터 / 자유게시물 등" />
-                        <div>
+                        <img className="review-image" src={imgSrc} alt="영화포스터 / 자유게시물 등" />      
+                        {isBlurred && !showSpoiler ? (
+                            <div className="spoiler-warning" onClick={() => setShowSpoiler(true)} >
+                            ⚠️ 스포성 내용이 포함된 게시글입니다. (클릭하여 보기)
+                            </div>
+                        ) : (
+                            <div>
                             <p className="review-text boardtitle">{props.board.title}</p>
-                            <p className="review-text">{props.board.content}</p>
-                        </div>
+                            <p className={`review-text ${!showFullContent ? 'clamp' : ''}`} style={{ whiteSpace: "pre-wrap" }}>
+                                {props.board.content}
+                            </p>
+
+                            {props.board.content.split("\n").length > 4 && (
+                                <button className="show-more-button" onClick={() => setShowFullContent(prev => !prev)}>
+                                {showFullContent ? "접기" : "더보기"}
+                                </button>
+                            )}
+                            </div>
+                        )}
                     </div>
-                    <div className="likes-replies">
+      
+                    
+                    {/* <div className="likes-replies">
                         <span>좋아요 {likeList.length}</span>
                         <span>댓글 0</span>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="comment-actions">                    
                     <div className="action-buttons">
                         <div className='left-buttons'>
                             {
                                 likeList.some((like) => Number(like.midx) === Number(loginUser.midx))? (
-                                    <button className="icon-button" onClick={() => onLike()}>❤️</button>
+                                    <button className="icon-button" onClick={() => onLike()}>❤️ {likeList.length}</button>
                                 ) : (
-                                    <button className="icon-button" onClick={() => onLike()}>🤍</button>
+                                    <button className="icon-button" onClick={() => onLike()}>🤍 {likeList.length}</button>
                                 )
                             }
-                            {/* <button className="icon-button">👍</button> */}
                             <button className="icon-button" onClick={()=>{setIsOpen(true)}}>💬</button>
                         </div>
                         <div className="update-button" ref={updateButtonRef}>
                             <button className="icon-button" onClick={() => setMenuOpen(prev => !prev)}>⋯</button>
                             <div className={`dropdown_menu ${menuOpen ? 'open' : ''}`}>
                                 <button onClick={()=>{navigate(`/updateForm/${props.board.bidx}`)}}>수정</button>
-                                <button>스포일러 신고</button>
+                                <button onClick={()=>{reportBoard(); setMenuOpen(false);}} disabled={reported} >스포일러 신고</button>
                                 <button onClick={()=>{props.deleteBoard(props.board.bidx); setMenuOpen(false);}}>삭제</button>
                             </div>
                         </div>
@@ -191,7 +244,7 @@ function Board(props) {
 
                 <div>
                     <Modal isOpen={isOpen} onRequestClose={closeModal} style={customStyles} >
-                        <CommentModalContent onClose={closeModal} bidx={props.board.bidx}/>
+                        <CommentModal onClose={closeModal} bidx={props.board.bidx}/>
                     </Modal>
                 </div>
             </div>

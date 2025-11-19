@@ -27,19 +27,19 @@ public class ReviewService {
         rr.save(review);
     }
 
-    public HashMap<String,Object> getReviews(int dbidx, String deleteyn, int page, int displayRow) {
+    public HashMap<String,Object> getReviews(int dbidx, int season, String deleteyn, int page, int displayRow) {
         HashMap<String,Object> result = new HashMap<>();
 
         Paging paging = new Paging();
         paging.setDisplayRow(displayRow);
         paging.setPage(page);
 
-        int count = rr.countByDbidxAndDeleteyn(dbidx, deleteyn);
+        int count = rr.countByDbidxAndSeasonAndDeleteyn(dbidx, season, deleteyn);
         paging.setTotalCount(count);
         paging.calPaging();
 
         Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "writedate"));
-        Page<Review> list = rr.findAllByDbidxAndDeleteyn(dbidx, deleteyn, pageable);
+        Page<Review> list = rr.findAllByDbidxAndSeasonAndDeleteyn(dbidx, season, deleteyn, pageable);
 
         result.put("list", list.getContent());
         result.put("paging", paging);
@@ -47,8 +47,8 @@ public class ReviewService {
         return result;
     }
 
-    public double getAverage(int dbidx) {
-        return rr.findAverageScoreByDbidxAndDeleteyn(dbidx, "N");
+    public double getAverage(int dbidx, int season) {
+        return rr.findAverageScoreByDbidxAndSeasonAndDeleteyn(dbidx, season, "N");
     }
 
     public void delete(int ridx) {

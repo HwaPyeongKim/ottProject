@@ -32,6 +32,7 @@ function Detail() {
   const [likeOn, setLikeOn] = useState(false);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
+  const [likes, setLikes] = useState([]);
   
   const [score, setScore] = useState(0);
   const [hover, setHover] = useState(0);
@@ -166,14 +167,17 @@ function Detail() {
         }
       });
 
+      // 성인 여부 체크
+      if (data.adult === true) {
+        
+      }
+      
       const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.external_ids.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
       const ratingData = omdbData.data?.Ratings || [];
       setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
+      
 
-      // 성인 여부 체크
-      if (data.adult === true) {
-
-      }
+      data.seasons.sort((a, b) => b.season_number - a.season_number);
 
       // OTT 정보
       data.providers = [];
@@ -263,7 +267,7 @@ function Detail() {
 
   async function getReviews(p, reset=false) {
     try {
-      const result = await axios.get(`/api/review/getReviews/${p}`, {params: {dbidx: id, displayRow}});
+      const result = await axios.get(`/api/review/getReviews/${p}`, {params: {dbidx: id, season: 0, displayRow}});
       const newList = [...reviewList, ...result.data.list];
 
       if (reset) {
@@ -303,17 +307,31 @@ function Detail() {
 
   }
 
-  function like() {
+  async function like(id) {
     if (!loginUser || loginUser.midx === undefined) {
       alert("로그인 후 이용해주세요");
       return;
     }
+    
+    try {
+        await jaxios.post("/api/main/like", {midx: loginUser.midx, dbidx: id});
+        await getMyLikes(); 
+    } catch (err) {
+        console.error("좋아요 처리 중 에러 발생:", err);
+        alert("좋아요 처리 중 오류가 발생했습니다.");
+    }
+  }
 
-    jaxios.post("/api/main/like", {midx: loginUser.midx, dbidx: id})
-    .then((result)=>{
-      getLikes();
-    })
-    .catch((err)=>{console.error(err);})
+  async function getMyLikes() {
+    try {
+      const result = await jaxios.get("/api/main/getMyLikes", {params: {midx: loginUser.midx}});
+      if (result.data !== undefined && result.data.list !== undefined) {
+        const dbidxList = result.data.list.map(like => like.dbidx);
+        setLikes(dbidxList);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async function getLikes() {
@@ -404,36 +422,53 @@ function Detail() {
                       {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
                     ]
 
-                    const available = types.filter(
-                      (type) => item.providers[type.key]?.length > 0
-                    );
+                    const providerMap = {};
 
-                    if (available.length === 0) {
+                    types.forEach((type) => {
+                      const list = item.providers[type.key] ?? [];
+                      list.forEach((provider) => {
+                        const id = provider.provider_id;
+
+                        if (!providerMap[id]) {
+                          providerMap[id] = {
+                            provider,
+                            types: []
+                          };
+                        }
+
+                        providerMap[id].types.push(type.label); // 구매/대여/구독 추가
+                      });
+                    });
+
+                    const providerList = Object.values(providerMap);
+
+                    if (providerList.length === 0) {
                       return <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>;
                     }
 
-                    return available.map((type) => (
-                      <div key={type.key}>
-                        <h4>{type.label}</h4>
-                        <ul>
-                          {item.providers[type.key].map((provider, idx) => {
-                            const ottInfo = ottInfos.find((l) => l.key === provider.provider_id);
-                            const url = getOttUrl(ottInfo.link, item.title);
+                    return (
+                      <ul className="providerList">
+                        {providerList.map((entry, idx) => {
+                          const provider = entry.provider;
+                          const typesText = entry.types.join(" / ");
 
-                            return (
-                              <li key={`${type.key}-${idx}`}>
-                                {ottInfo ? (
-                                  <img src={`/images/${ottInfo.label}.jpeg`} alt={`${provider.provider_name} 로고`} />
-                                ) : (
-                                  <span>{provider.provider_name}</span>
-                                )}
-                                <a href={url} target="_blank" className="mainButton"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    ));
+                          const ottInfo = ottInfos.find((o) => o.key === provider.provider_id);
+                          const url = ottInfo ? getOttUrl(ottInfo.link, item.title) : "#";
+
+                          return (
+                            <li key={idx} className="providerItem">
+                              {ottInfo ? (
+                                <img src={`/images/${ottInfo.label}.jpeg`} alt={`${provider.provider_name} 로고`} />
+                              ) : (
+                                <span>{provider.provider_name}</span>
+                              )}
+                              <span className="types">{typesText}</span>
+                              <a href={url} target="_blank" className="mainButton"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    );
                   })()
                 ) : (
                   <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>
@@ -579,7 +614,7 @@ function Detail() {
                           <a href={`/movie/detail/${similar.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
-                              <button><FontAwesomeIcon icon={faThumbsUp} /></button>
+                              <button className={`like${likes.includes(similar.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(similar.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button>
                             </div>
                           </a>
                         </div>
@@ -621,7 +656,7 @@ function Detail() {
                           <a href={`/tv/detail/${recommendation.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
-                              <button><FontAwesomeIcon icon={faThumbsUp} /></button>
+                              <button className={`like${likes.includes(recommendation.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(recommendation.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button>
                             </div>
                           </a>
                         </div>
