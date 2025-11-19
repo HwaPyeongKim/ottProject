@@ -62,7 +62,7 @@ function App() {
         <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/search/:keyword" element={<Search />} />
-            <Route path="/discover/:keyword" element={<Discover />} />
+            <Route path="/discover" element={<Discover />} />
             <Route path="/movie" element={<Movie />} />
             <Route path="/movie/detail/:id" element={<MovieDetail />} />
             <Route path="/tv" element={<Tv />} />

@@ -7,23 +7,22 @@ import "../style/list.css";
 import "../style/search.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookmark, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark, faThumbsUp, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 function Discover() {
   const {keyword} = useParams();
   const loginUser = useSelector(state=>state.user);
-
-  const [filters, setFilters] = useState({sortBy: "popularity.desc", genre: "", year: ""});
+  const [filters, setFilters] = useState({sortBy: "popularity.desc", genre: "", year: "", certification: ""});
   const [searchResultsMovie, setSearchResultsMovie] = useState([]);
   const [searchResultsTV, setSearchResultsTV] = useState([]);
   const [discoverResultsMovie, setDiscoverResultsMovie] = useState([]);
   const [discoverResultsTV, setDiscoverResultsTV] = useState([]);
   const [combinedResults, setCombinedResults] = useState([]);
-
+  const [activeIndex, setActiveIndex] = useState(null);
   const [likes, setLikes] = useState([]);
 
-  const isFiltering = filters.genre !== "" || filters.year !== "" || filters.sortBy !== "popularity.desc";
-
+  const isFiltering = filters.genre !== "" || filters.year !== "" || filters.certification !== "" || filters.sortBy !== "popularity.desc";
+  
   const ottInfos = [
     {key: 8, label: "netflix", link: "https://www.netflix.com/search?q="},
     {key: 1796, label: "netflixbasicwithads", link: "https://www.netflix.com/search?q="},
@@ -44,10 +43,14 @@ function Discover() {
     () => {
       if (!keyword) return;
       const fetchSearchMovie = async () => {
-        const res = await fetch(`https://api.themoviedb.org/3/search/movie?language=ko-KR&page=1&region=KR&query=${keyword}&api_key=${process.env.REACT_APP_KEY}`);
-        const data = await res.json();
-        const resultsWithType = (data.results || []).map(item => ({ ...item, media_type: 'movie' }));
-        setSearchResultsMovie(resultsWithType);
+        try {
+          const res = await fetch(`https://api.themoviedb.org/3/search/movie?language=ko-KR&page=1&region=KR&query=${keyword}&api_key=${process.env.REACT_APP_KEY}`);
+          const data = await res.json();
+          const resultsWithType = (data.results || []).map((item) => ({...item, media_type: "movie"}));
+          setSearchResultsMovie(resultsWithType);
+        } catch (err) {
+          console.error("영화 검색 실패:", err);
+        }
       };
       fetchSearchMovie();
     }, [keyword]
@@ -57,10 +60,14 @@ function Discover() {
     () => {
       if (!keyword) return;
       const fetchSearchTV = async () => {
-        const res = await fetch(`https://api.themoviedb.org/3/search/tv?language=ko-KR&page=1&query=${keyword}&api_key=${process.env.REACT_APP_KEY}`);
-        const data = await res.json();
-        const resultsWithType = (data.results || []).map(item => ({ ...item, media_type: 'tv' }));
-        setSearchResultsTV(resultsWithType);
+        try {
+          const res = await fetch(`https://api.themoviedb.org/3/search/tv?language=ko-KR&page=1&query=${keyword}&api_key=${process.env.REACT_APP_KEY}`);
+          const data = await res.json();
+          const resultsWithType = (data.results || []).map((item) => ({...item, media_type: "tv"}));
+          setSearchResultsTV(resultsWithType);
+        } catch (err) {
+          console.error("TV 검색 실패:", err);
+        }
       };
       fetchSearchTV();
     }, [keyword]
@@ -69,13 +76,21 @@ function Discover() {
   useEffect(
     () => {
       const fetchDiscoverMovie = async () => {
-        const params = new URLSearchParams({api_key: process.env.REACT_APP_KEY, language: "ko-KR", region: "KR", sort_by: filters.sortBy});
-        if (filters.genre) params.append("with_genres", filters.genre);
-        if (filters.year) params.append("primary_release_year", filters.year);
-        const res = await fetch(`https://api.themoviedb.org/3/discover/movie?${params.toString()}`);
-        const data = await res.json();
-        const resultsWithType = (data.results || []).map(item => ({ ...item, media_type: 'movie' }));
-        setDiscoverResultsMovie(resultsWithType);
+        try {
+          const params = new URLSearchParams({api_key: process.env.REACT_APP_KEY, language: "ko-KR", region: "KR", sort_by: filters.sortBy});
+          if (filters.genre) params.append("with_genres", filters.genre);
+          if (filters.year) params.append("primary_release_year", filters.year);
+          if (filters.certification) {
+            params.append("certification_country", "KR");
+            params.append("certification.lte", filters.certification);
+          }
+          const res = await fetch(`https://api.themoviedb.org/3/discover/movie?${params.toString()}`);
+          const data = await res.json();
+          const resultsWithType = (data.results || []).map((item) => ({...item, media_type: "movie"}));
+          setDiscoverResultsMovie(resultsWithType);
+        } catch (err) {
+          console.error("Discover 영화 실패:", err);
+        }
       };
       fetchDiscoverMovie();
     }, [filters]
@@ -84,13 +99,17 @@ function Discover() {
   useEffect(
     () => {
       const fetchDiscoverTV = async () => {
-        const params = new URLSearchParams({api_key: process.env.REACT_APP_KEY, language: "ko-KR", sort_by: filters.sortBy});
-        if (filters.genre) params.append("with_genres", filters.genre);
-        if (filters.year) params.append("first_air_date_year", filters.year);
-        const res = await fetch(`https://api.themoviedb.org/3/discover/tv?${params.toString()}`);
-        const data = await res.json();
-        const resultsWithType = (data.results || []).map(item => ({ ...item, media_type: 'tv' }));
-        setDiscoverResultsTV(resultsWithType);
+        try {
+          const params = new URLSearchParams({api_key: process.env.REACT_APP_KEY, language: "ko-KR", sort_by: filters.sortBy});
+          if (filters.genre) params.append("with_genres", filters.genre);
+          if (filters.year) params.append("first_air_date_year", filters.year);
+          const res = await fetch(`https://api.themoviedb.org/3/discover/tv?${params.toString()}`);
+          const data = await res.json();
+          const resultsWithType = (data.results || []).map((item) => ({...item, media_type: "tv"}));
+          setDiscoverResultsTV(resultsWithType);
+        } catch (err) {
+          console.error("Discover TV 실패:", err);
+        }
       };
       fetchDiscoverTV();
     }, [filters]
@@ -98,20 +117,34 @@ function Discover() {
 
   useEffect(
     () => {
+      let results = [];
       if (!keyword) {
-        setCombinedResults([...discoverResultsMovie, ...discoverResultsTV]);
-        return;
+        results = [...discoverResultsMovie, ...discoverResultsTV];
+      } else {
+        results = [...searchResultsMovie, ...searchResultsTV];
+        if (isFiltering) {
+          results = results.filter((item) => {
+            // 장르 필터
+            if (filters.genre) {
+              const genres = filters.genre.split(",").map(Number);
+              if (!item.genre_ids?.some((g) => genres.includes(g))) return false;
+            }
+            // 연도 필터
+            if (filters.year) {
+              const year = item.release_date?.slice(0, 4) || item.first_air_date?.slice(0, 4);
+              if (year !== filters.year) return false;
+            }
+            // 인증 등급 필터
+            if (filters.certification && item.media_type === "movie") {
+              if (filters.certification === "19" && !item.adult) return false; // 청불 필터
+              if (filters.certification !== "19" && item.adult) return false; // 미청불 필터
+            }
+            return true;
+          });
+        }
       }
-      if (!isFiltering) {
-        setCombinedResults([...searchResultsMovie, ...searchResultsTV]);
-        return;
-      }
-      const movieIds = new Set(searchResultsMovie.map(m => m.id));
-      const tvIds = new Set(searchResultsTV.map(t => t.id));
-      const mergedMovie = discoverResultsMovie.filter(d => movieIds.has(d.id));
-      const mergedTV = discoverResultsTV.filter(d => tvIds.has(d.id));
-      setCombinedResults([...mergedMovie, ...mergedTV]);
-    }, [searchResultsMovie, searchResultsTV, discoverResultsMovie, discoverResultsTV, keyword, filters]
+      setCombinedResults(results);
+    }, [searchResultsMovie, searchResultsTV, discoverResultsMovie, discoverResultsTV, filters, keyword, isFiltering]
   );
 
   async function like(id) {
@@ -141,20 +174,119 @@ function Discover() {
     }
   }
 
+  const handleGenreChange = () => {
+    const genreCheckboxes = document.querySelectorAll(".genre:checked");
+
+    const genreValues = Array.from(genreCheckboxes)
+      .flatMap((checkbox) => checkbox.value.split(","))
+      .filter((v) => v !== "");
+    const uniqueGenres = [...new Set(genreValues)];
+    const genreString = uniqueGenres.join(",");
+
+    setFilters((prev) => ({ ...prev, genre: genreString }));
+  };
+
+  const handlePClick = (index) => {setActiveIndex(prev => (prev === index ? null : index));};
+
+  const resetFilters = () => {
+    setFilters({
+      sortBy: "popularity.desc",
+      genre: "",
+      year: "",
+      certification: "",
+      minRating: "",
+      maxRating: ""
+    });
+
+    // 체크박스 초기화
+    const checkboxes = document.querySelectorAll(".genre");
+    checkboxes.forEach(cb => cb.checked = false);
+
+    // 라디오 초기화
+    const radios = document.querySelectorAll('input[name="certification"]');
+    radios.forEach(radio => radio.checked = radio.value === "");
+  };
+
+  useEffect(
+    ()=>{
+      getMyLikes();
+    },[]
+  )
+
   return (
     <div>
       <ul className="filter">
-        <li>개봉 년도</li>
-        <li>장르</li>
-        <li>평점</li>
-        <li>연령 등급</li>
-        <li className="reset"><button>초기화</button></li>
+        <li>
+          <p className={activeIndex === 0 ? "on" : ""} onClick={() => handlePClick(0)}>개봉 년도</p>
+          <div className={`yearWrap ${activeIndex === 0 ? "on" : ""}`}>
+            <label htmlFor="yearFilter">개봉년도</label>
+            <input type="number" min="1900" max="2100" onChange={(e) =>setFilters(prev => ({ ...prev, year: e.target.value }))} id="yearFilter" />
+          </div>
+        </li>
+        <li>
+          <p className={activeIndex === 1 ? "on" : ""} onClick={() => handlePClick(1)}>장르</p>
+          <div className={activeIndex === 1 ? "on" : ""}>
+            <ul className="grid-2 genreWrap" onChange={handleGenreChange}>
+              {[
+                { id: "genre_ani", label: "애니메이션", value: "16" },
+                { id: "genre_comedy", label: "코미디", value: "35" },
+                { id: "genre_crime", label: "범죄", value: "80" },
+                { id: "genre_docu", label: "다큐멘터리", value: "99" },
+                { id: "genre_drama", label: "드라마", value: "18" },
+                { id: "genre_family", label: "가족", value: "10751" },
+                { id: "genre_mystery", label: "미스터리", value: "9648" },
+                { id: "genre_western", label: "서부", value: "37" },
+                { id: "genre_action", label: "액션", value: "28,12,10759" },
+                { id: "genre_fantasy", label: "판타지", value: "14,10765" },
+                { id: "genre_history", label: "역사", value: "36" },
+                { id: "genre_horror", label: "호러", value: "27" },
+                { id: "genre_music", label: "음악", value: "10402" },
+                { id: "genre_romance", label: "로맨스", value: "10749" },
+                { id: "genre_sf", label: "SF", value: "878" },
+                { id: "genre_thriller", label: "스릴러", value: "53" },
+                { id: "genre_war", label: "전쟁", value: "10752,10768" },
+                { id: "genre_kids", label: "키즈", value: "10762" },
+                { id: "genre_news", label: "뉴스", value: "10763" },
+                { id: "genre_reality", label: "리얼리티", value: "10764" },
+                { id: "genre_talk", label: "토크쇼", value: "10767" }
+              ].map((genre) => (
+                <li key={genre.id}>
+                  <input type="checkbox" className="genre" id={genre.id} value={genre.value} />
+                  <label htmlFor={genre.id}>{genre.label} <span><FontAwesomeIcon icon={faCheck} /></span></label>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </li>
+        <li>
+          <p className={activeIndex === 2 ? "on" : ""} onClick={() => handlePClick(2)}>연령 등급</p>
+          <div className={activeIndex === 2 ? "on" : ""}>
+            <ul className="certificationWrap">
+              {[
+                { id: "cert_all", label: "전체", value: "" },
+                { id: "cert_7", label: "7세 관람가", value: "7" },
+                { id: "cert_12", label: "12세 관람가", value: "12" },
+                { id: "cert_15", label: "15세 관람가", value: "15" },
+                { id: "cert_19", label: "청소년 관람불가", value: "19" }
+              ].map((cert) => (
+                <li key={cert.id}>
+                  <input type="radio" id={cert.id} name="certification" value={cert.value} checked={filters.certification === cert.value} onChange={(e) => setFilters((prev) => ({ ...prev, certification: e.target.value }))} />
+                  <label htmlFor={cert.id}>{cert.label} <span><FontAwesomeIcon icon={faCheck} /></span></label>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </li>
+        {/* <li>
+          <p className={activeIndex === 3 ? "on" : ""} onClick={() => handlePClick(3)}>평점</p>
+          <div className={activeIndex === 3 ? "on" : ""}></div>
+        </li> */}
+        <li className="reset"><button onClick={resetFilters}>초기화</button></li>
       </ul>
 
       <div className="lists searchList grid-8">
         {
           combinedResults.map((item,idx)=>{
-            console.log(item);
             return (
               <div className="list" key={idx}>
                 <div className="cover">

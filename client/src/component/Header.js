@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Cookies } from "react-cookie";
 import axios from "axios";
@@ -30,8 +30,8 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [imgSrc, setImgSrc] = useState("");
-  const [keyword, setKeyword] = useState("");
-
+  const {keyword: urlKeyword} = useParams();
+  const [keyword, setKeyword] = useState(urlKeyword || "");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -46,15 +46,13 @@ function Header() {
     }, [loginUser.profileimg]
   );
 
-  useEffect(
-    ()=>{
-
-    },[]
-  )
+  useEffect(() => {
+    setKeyword(urlKeyword || "");
+  }, [urlKeyword]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && keyword.trim() !== "") {
-      navigate(`/discover/${encodeURIComponent(keyword)}`);
+      navigate(`/search/${encodeURIComponent(keyword)}`);
     }
   };
 
