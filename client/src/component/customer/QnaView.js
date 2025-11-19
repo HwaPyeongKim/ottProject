@@ -52,7 +52,7 @@ function QnaView() {
                     </div>
                     )}
                     <div className="qna-btns">
-                    <button className="btn btn-secondary" onClick={() => navigate('/qna')}>
+                    <button className="btn btn-secondary" onClick={() => navigate(-1)}>
                         목록으로
                     </button>
                     </div>
