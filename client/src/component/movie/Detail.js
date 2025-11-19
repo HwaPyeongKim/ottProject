@@ -697,7 +697,7 @@ function Detail() {
                 </div>
                 <div>
                   <button className="buttonHover" onClick={()=>{favorite()}}><FontAwesomeIcon icon={faBookmark} /></button>
-                  <button className={`buttonHover ${likeOn ? "on" : ""}`} onClick={()=>{like()}}><FontAwesomeIcon icon={faThumbsUp} /><small>{likeCount}</small></button>
+                  <button className={`buttonHover ${likeOn ? "on" : ""}`} onClick={()=>{like(item.id)}}><FontAwesomeIcon icon={faThumbsUp} /><small>{likeCount}</small></button>
                 </div>
               </li>
               <li className="directors">
