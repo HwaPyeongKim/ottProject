@@ -1,10 +1,13 @@
 import React ,{useState, useEffect} from 'react'
 import axios from 'axios'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
 import Modal from 'react-modal'
+import '../../style/join.css'
 
 function Join() {
+
+    const {confirmemail} = useParams()
 
     const [name, setName] = useState('')
     const [nickname, setNickname] = useState('')
@@ -12,7 +15,10 @@ function Join() {
     const [reid, setReid]=useState('')
     const [pwd, setPwd] = useState('')
     const [pwdChk, setPwdChk] = useState('');
-    const [phone, setPhone] = useState('')
+    //const [phone, setPhone] = useState('')
+    const [phone1, setPhone1] = useState('010')
+    const [phone2, setPhone2] = useState('')
+    const [phone3, setPhone3] = useState('')
     const [zipnum, setZipnum] = useState('')
     const [address1, setAddress1] = useState('')
     const [address2, setAddress2] = useState('')
@@ -27,6 +33,12 @@ function Join() {
     const [isOpen, setIsOpen] = useState(false)
 
     const navigate = useNavigate()
+
+    useEffect(
+        ()=>{
+            setEmail(confirmemail);
+        },[]
+    )
 
     function fileUpload(e){
         const formData = new FormData()
@@ -72,18 +84,19 @@ function Join() {
         if(pwd !== pwdChk){ return alert('패스워드가 일치하지 않습니다')}
         if(!name){ return alert('이름을 입력하세요')}
         if(!nickname){ return alert('닉네임을 입력하세요')}
-        if(!phone){ return alert('전화번호를 입력하세요')}
+        if(!phone1 || !phone2 || !phone3){ return alert('전화번호를 입력하세요')}
         // 유효이메일 양식 체크
         let regix = email.match( /\w+@(\w+[.])+\w+/g );
         if( !regix ){  return alert('정확한 이메일을 입력하세요'); }
         try{
             // 이메일 중복체크
             let result = await axios.post('/api/member/emailcheck', null, {params:{email}})
-            if(result.data.msg == 'no' ){ return alert('이메일이 중복됩니다'); }
+            if(result.data.msg === 'no' ){ return alert('이메일이 중복됩니다'); }
             // 닉네임 중복체크
             result = await axios.post('/api/member/nicknamecheck', null, {params:{nickname}} );
-            if(result.data.msg == 'no' ){ return alert('닉네임이 중복됩니다'); }
+            if(result.data.msg === 'no' ){ return alert('닉네임이 중복됩니다'); }
             // 회원가입
+            const phone = `${phone1}-${phone2}-${phone3}`
             result = await axios.post('/api/member/join', {email, pwd, name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg});
             if(result.data.msg =='ok'){
                 alert('회원 가입이 완료되었습니다.');
@@ -95,68 +108,73 @@ function Join() {
     }
 
     return (
-        <div>
-            <div>
-                <label style={{color:'white'}}>E-MAIL</label>
+        <div className="profile-form">
+            <div className="mpfield">
+                <label>E-MAIL</label>
                 <input type='text' value={email} onChange={(e)=>{setEmail(e.currentTarget.value)}}/>
             </div>
-            <div>
-                <label style={{color:'white'}}>PASSWORD</label>
+            <div className="mpfield">
+                <label>PASSWORD</label>
                 <input type='password' value={pwd} onChange={(e)=>{setPwd(e.currentTarget.value)}}/>
             </div>
-            <div>
-                <label style={{color:'white'}}>RETYPE PW</label>
+            <div className="mpfield">
+                <label>RETYPE PW</label>
                 <input type="password"  value={pwdChk} onChange={(e)=>{ setPwdChk(e.currentTarget.value )}}/>
             </div>
-            <div>
-                <label style={{color:'white'}}>NAME</label>
+            <div className="mpfield">
+                <label>NAME</label>
                 <input type="text"  value={name} onChange={(e)=>{ setName(e.currentTarget.value )}}/>
             </div>
-            <div>
-                <label style={{color:'white'}}>NICKNAME</label>
+            <div className="mpfield">
+                <label>NICKNAME</label>
                 <input type="text"  value={nickname} onChange={(e)=>{ setNickname(e.currentTarget.value )}}/>
             </div>
-            <div>
-                <label style={{color:'white'}}>PHONE</label>
-                <input type="text"  value={phone} onChange={(e)=>{ setPhone(e.currentTarget.value )}}/>
+            <div className="mpfield">
+                <label>PHONE</label>
+                <input type="text"  value={phone1} maxLength='3' onChange={(e)=>{ setPhone1(e.currentTarget.value )}}/>
+                -
+                <input type="text"  value={phone2} maxLength='4' onChange={(e)=>{ setPhone2(e.currentTarget.value )}}/>
+                -
+                <input type="text"  value={phone3} maxLength='4' onChange={(e)=>{ setPhone3(e.currentTarget.value )}}/>
             </div>
-            <div>
-                <label style={{color:'white'}}>POST CODE</label>
+            <div className="mpfield">
+                <label>POST CODE</label>
                 <input type="text" value={zipnum} onChange={(e)=>{ setZipnum(e.currentTarget.value )}} readOnly/>
-                <button style={{flex:'1'}} onClick={ ()=>{ setIsOpen( !isOpen ) }}>SEARCH</button>
-                <div style={{flex:'2'}} ></div>
+                <button className="btn-highlight" onClick={ ()=>{ setIsOpen( !isOpen ) }}>SEARCH</button>
             </div>
 
-            <div>
+            <div className="mpfield">
                 <Modal isOpen={isOpen}  ariaHideApp={false}  style={customStyles} >
                     <DaumPostcode onComplete={completeHandler} /><br />
                     <button onClick={()=>{ setIsOpen(false) }}>CLOSE</button>
                 </Modal>
             </div>
-            <div>
-                <label style={{color:'white'}}>ADDRESS</label>
+            <div className="mpfield">
+                <label>ADDRESS</label>
                 <input type="text"  value={address1} onChange={(e)=>{ setAddress1(e.currentTarget.value )}}/>
             </div>
 
-            <div>
-                <label style={{color:'white'}}>DETAIL ADDRESS</label>
+            <div className="mpfield">
+                <label>DETAIL ADDRESS</label>
                 <input type="text"  value={address2} onChange={(e)=>{ setAddress2(e.currentTarget.value )}}/>
             </div>
-            <div>
-                <label style={{color:'white'}}>INTRO</label>
+            <div className="mpfield">
+                <label>INTRO</label>
                 <input type="text"  value={profilemsg} onChange={(e)=>{setProfilemsg(e.currentTarget.value)}}/>
             </div>
-            <div>
-                <label style={{color:'white'}}>PROFILE IMG</label>
+            <div className="mpfield">
+                <label>PROFILE IMG</label>
                 <input type="file" onChange={(e)=>{fileUpload(e)}}/>
             </div>
-            <div>
-                <label style={{color:'white'}}>PROFILE IMG PREVIEW</label>
-                <div><img src={imgSrc} style={imgStyle} /></div>
+            <div className="mpfield">
+                <label>PROFILE IMG PREVIEW</label>
+                {
+                    (imgSrc)?(<div><img src={imgSrc} style={imgStyle} /></div>):(<p>이미지 로딩 중...</p>)
+                }
             </div>
-            <div>
-                <button onClick={()=>{onSubmit()}}>JOIN</button>
-                <button onClick={()=>{ navigate('/')}}>BACK</button>
+            <div className="btn-group">
+                <button className="btn btn-primary" onClick={()=>{onSubmit()}}>JOIN</button>
+                <button className="btn btn-secondary" onClick={()=>{ navigate('/')}}>BACK</button>
             </div>
         </div>
     )

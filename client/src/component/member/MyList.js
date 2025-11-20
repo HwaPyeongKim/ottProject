@@ -1,12 +1,12 @@
 import React , {useState, useEffect} from 'react'
 import axios from 'axios'
-import {Cookies, useCookies} from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux';
-import { loginAction, logoutAction } from '../../store/userSlice';
-// import '../../style/mypage.css'
+import { useSelector } from 'react-redux';
+
 import jaxios from '../../util/JWTUtil';
 import InsertList from './InsertList';
+
+import '../../style/myList.css'
 
 function MyList() {
     
@@ -32,44 +32,32 @@ function MyList() {
     )
 
     return (
-        <div>
-            <div style={{display:'flex'}}>
-                <button onClick={()=>{setListTab('tab1')}}>나의 공개 리스트</button>
-                <button onClick={()=>{setListTab('tab2')}}>나의 비밀 리스트</button>
-            </div>
-            <div>
+        <div className="mylist-container">
+            <div className="mylisttabs">
+                <button className={listTab === 'tab1' ? "active" : ""}  
+                onClick={()=>{setListTab('tab1')}}>나의 공개 리스트</button>
+                <button className={listTab === 'tab2' ? "active" : ""} 
+                onClick={()=>{setListTab('tab2')}}>나의 비밀 리스트</button>
                 {
                     <>
-                    <div style={{color:'white'}} onClick={()=>{navigate('/insertList')}}>새로 리스트 만들기</div>
+                    <button style={{color:'#f5c518'}}
+                    onClick={()=>{navigate('/insertList')}}>리스트 추가</button>
                     {open && <InsertList onClose={() => setOpen(false)} />}
                     </>
                 }
-                
             </div>
-            <div style={{color:'white'}}>
-                {   
-                    listTab === 'tab1' &&
-                    myList.map((mList, idx)=>{
+
+            <div className="mylist-grid">
+                {  
+                    myList
+                    .filter(mList => 
+                        listTab === 'tab1' ? mList.security === 'N' : mList.security === 'Y'
+                    )
+                    .map((mList, idx)=>{
                         return(
-                            mList.security === 'N' && (
-                            <div key={idx} style={{display:'flex', margin:'5px 3px'}}>
-                                <div>{mList.title}</div>
+                            <div key={idx} className="mylist-card">
+                                <div className="mylist-info" onClick={()=>{navigate(`/myListView/${mList.listidx}`)}}>{mList.title}</div>      
                             </div>
-                            )
-                        )
-                    })
-                }
-            </div>
-            <div style={{color:'white'}}>
-                {   
-                    listTab === 'tab2' &&
-                    myList.map((mList, idx)=>{
-                        return(
-                            mList.security === 'Y' && (
-                            <div key={idx} style={{display:'flex', margin:'5px 3px'}}>
-                                <div>{mList.title}</div>
-                            </div>
-                            )
                         )
                     })
                 }

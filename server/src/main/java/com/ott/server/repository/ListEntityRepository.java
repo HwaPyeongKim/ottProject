@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ListEntityRepository extends JpaRepository<ListEntity, Integer> {
     List<ListEntity> findByMidx(int midx);
+
+    ListEntity findByListidx(int listidx);
 }
