@@ -39,20 +39,4 @@ public class MainController {
         return result;
     }
 
-//    @Data
-//    public static class AddRequest {
-//        private List<Integer> listidxs;
-//        private int dbidx;
-//    }
-//
-//    @PostMapping("/addLists")
-//    public HashMap<String, Object> addLists(@RequestBody AddRequest request) {
-//        HashMap<String, Object> result = new HashMap<>();
-//        for (int listidx : request.getListidxs()) {
-//            ms.addLists(listidx, request.getDbidx());
-//        }
-//        result.put("msg", "ok");
-//        return result;
-//    }
-
 }
