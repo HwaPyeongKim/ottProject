@@ -30,6 +30,7 @@ function Detail() {
   const nextRef = useRef(null);
   const [likes, setLikes] = useState([]);
   const [myList, setMyList] = useState([]);
+  const [selectedLists, setSelectedLists] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   function AverageRating({ avgScore }) {
@@ -198,6 +199,26 @@ function Detail() {
     }
 
     setIsModalOpen(true);
+  }
+
+  function addMyList() {
+    if (selectedLists.length === 0) {
+      alert("추가할 리스트를 선택해주세요.");
+      return;
+    }
+
+    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: id})
+    .then((result)=>{
+      if (result.data.msg === "ok") {
+        alert("리스트를 추가했습니다");
+      } else {
+        alert(result.data.msg);
+      }
+    })
+    .catch((err)=>{console.error(err);})
+
+    setIsModalOpen(false);
+    setSelectedLists([]);
   }
 
   async function getLikes() {
@@ -626,7 +647,7 @@ function Detail() {
                     return (
                       <li key={lidx}>
                         <label htmlFor={`mylist_${mylist.listidx}`}>{mylist.title}</label>
-                        <input type="checkbox" value={mylist.listidx} id={`mylist_${mylist.listidx}`} />
+                        <input type="checkbox" value={mylist.listidx} id={`mylist_${mylist.listidx}`} onChange={(e)=>{const value = parseInt(e.target.value); if (e.target.checked) {setSelectedLists(prev => [...prev, value]);} else {setSelectedLists(prev => prev.filter(id => id !== value));}}} />
                         {/* <b><FontAwesomeIcon icon={faCheck} /></b> */}
                       </li>
                     )
@@ -636,7 +657,7 @@ function Detail() {
               <li><p>리스트 새로 만들기</p><button>+</button></li>
             </ul>
             <div className="buttonWrap">
-              <button className="mainButton" onClick={() => {}}>추가하기</button>
+              <button className="mainButton" onClick={() => {addMyList()}}>추가하기</button>
               <button className="mainButton" onClick={() => setIsModalOpen(false)}>닫기</button>
             </div>
           </div>

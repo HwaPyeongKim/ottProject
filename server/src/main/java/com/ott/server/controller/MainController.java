@@ -2,10 +2,12 @@ package com.ott.server.controller;
 
 import com.ott.server.entity.Likes;
 import com.ott.server.service.MainService;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/main")
@@ -36,5 +38,21 @@ public class MainController {
         result.put("list", ms.getMyLikes(midx));
         return result;
     }
+
+//    @Data
+//    public static class AddRequest {
+//        private List<Integer> listidxs;
+//        private int dbidx;
+//    }
+//
+//    @PostMapping("/addLists")
+//    public HashMap<String, Object> addLists(@RequestBody AddRequest request) {
+//        HashMap<String, Object> result = new HashMap<>();
+//        for (int listidx : request.getListidxs()) {
+//            ms.addLists(listidx, request.getDbidx());
+//        }
+//        result.put("msg", "ok");
+//        return result;
+//    }
 
 }

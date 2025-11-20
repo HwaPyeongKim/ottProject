@@ -1,5 +1,6 @@
 package com.ott.server.service;
 
+import com.ott.server.entity.DbList;
 import com.ott.server.entity.Likes;
 import com.ott.server.repository.LikesRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 public class MainService {
 
     private final LikesRepository lr;
+    private final DbListRepository dr;
 
     public HashMap<String, Object> getLikes(int midx, int dbidx, int season) {
         HashMap<String, Object> result = new HashMap<>();
@@ -45,4 +47,8 @@ public class MainService {
         List<Likes> result = lr.findAllByMidx(midx);
         return result;
     }
+
+//    public void addLists(int listidx, int dbidx) {
+//        DbList dbList = dr.findBy
+//    }
 }

@@ -22,27 +22,35 @@ const Review = ({ dbidx, season, refreshAverage  }) => {
   const [displayRow, setDisplayRow] = useState(5);
   const [average, setAverage] = useState(0);
   const [score, setScore] = useState(0);
+  const [editScore, setEditScore] = useState(0); 
+  const [editContent, setEditContent] = useState("");
   const [content, setContent] = useState("");
 
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reviewObj, setReviewObj] = useState({});
+  const [openedSpoilId, setOpenedSpoilId] = useState(null);
 
-  const handleClick = (starIndex, isHalf) => {
-    const newScore = isHalf ? starIndex - 0.5 : starIndex;
-    setScore(newScore);
-  };
+  function StarRating({ score, setScore }) {
+    const [hover, setHover] = useState(0);
 
-  const getStarIcon = (starIndex) => {
-    const current = hover || score;
-    if (current >= starIndex) return solidStar;
-    if (current >= starIndex - 0.5) return faStarHalfAlt;
-    return regularStar;
-  };
+    const getStarIcon = (starIndex) => {
+      const current = hover || score;
+      if (current >= starIndex) return solidStar;
+      if (current >= starIndex - 0.5) return faStarHalfAlt;
+      return regularStar;
+    };
 
-  function StarRating() {
+    const handleClick = (starIndex, isHalf) => {
+      const newScore = isHalf ? starIndex - 0.5 : starIndex;
+      setScore(newScore);
+    };
+
     return (
       <div style={{ display: "flex", flexDirection: "row", fontSize: "24px" }}>
-        {[1,2,3,4,5].map((star) => (
+        {[1, 2, 3, 4, 5].map((star) => (
           <div key={star} style={{ position: "relative", marginRight: "4px" }}>
+            
             <div
               onMouseEnter={() => setHover(star - 0.5)}
               onMouseLeave={() => setHover(0)}
@@ -72,12 +80,13 @@ const Review = ({ dbidx, season, refreshAverage  }) => {
                 zIndex: 1,
               }}
             />
+
             <FontAwesomeIcon icon={getStarIcon(star)} style={{ color: "#f39c12" }} />
           </div>
         ))}
       </div>
     );
-  };
+  }
 
   async function getReviews(p, reset=false) {
     try {
@@ -103,6 +112,8 @@ const Review = ({ dbidx, season, refreshAverage  }) => {
   }
   
   function saveReview() {
+    if (!score) {return alert("별점을 체크해주세요")}
+
     jaxios.post("/api/review/saveReview", {midx:loginUser.midx, content, dbidx, score, season})
     .then((result)=>{
       if (result.data.msg === "ok") {
@@ -129,16 +140,45 @@ const Review = ({ dbidx, season, refreshAverage  }) => {
           if (refreshAverage) refreshAverage();
         }
       })
-      .catch((err)=>{console.error(err);})
+      .catch((err)=>{console.error(err);});
+      setOpenMenuId(null);
     }
   }
 
   function editReview(ridx) {
+    if (!editScore) {return alert("별점을 체크해주세요")}
 
+    jaxios.post("/api/review/editReview", {ridx, content: editContent, score: editScore})
+    .then((result)=>{
+      if (result.data.msg === "ok") {
+        alert("후기가 수정되었습니다");
+        setEditScore(0);
+        setEditContent("");
+        getReviews(1, true);
+        if (refreshAverage) refreshAverage();
+      } else {
+        alert("후기 수정이 실패했습니다");
+      }
+      setIsModalOpen(false);
+      setOpenMenuId(null);
+    })
+    .catch((err)=>{console.error(err);})
   }
 
   function spoilReview(ridx) {
-
+    if (window.confirm("해당 후기를 스포일러 신고하시겠습니까?")) {
+      jaxios.post("/api/review/spoilReview", null, {params: {ridx, midx:loginUser.midx}})
+      .then((result) => {
+        if (result.data.msg === "ok") {
+          alert("스포일러 신고가 되었습니다");
+          getReviews(1, true);
+        } else {
+          alert(result.data.msg);
+        }
+      })
+      .catch((err) => {console.error(err);});
+      setOpenMenuId(null);
+    }
   }
 
   async function getAverage() {
@@ -176,6 +216,9 @@ const Review = ({ dbidx, season, refreshAverage  }) => {
           reviewList && reviewList.length > 0 ?
           reviewList.map((review, idx)=>{
             const formattedDate = review.writedate ? dayjs(review.writedate).format("YYYY-MM-DD HH:mm") : null;
+            const toggleSpoilReview = (ridx) => {
+              setOpenedSpoilId(prev => (prev === ridx ? null : ridx));
+            };
             
             return (
               <li key={idx}>
@@ -187,7 +230,7 @@ const Review = ({ dbidx, season, refreshAverage  }) => {
                       {
                         review.member.midx == loginUser.midx ?
                         <>
-                          <li><button onClick={()=>{editReview(review.ridx)}}>수정하기</button></li>
+                          <li><button onClick={()=>{setIsModalOpen(true); setReviewObj(review); setEditScore(review.score); setEditContent(review.content);}}>수정하기</button></li>
                           <li><button onClick={()=>{deleteReview(review.ridx)}}>삭제하기</button></li>
                         </>
                         : null
@@ -198,7 +241,17 @@ const Review = ({ dbidx, season, refreshAverage  }) => {
                   </div>
                 </div>
                 <div>
-                  <pre>{review.content}</pre>
+                  {
+                    review.isspoil === "N" ? (
+                      <pre>{review.content}</pre>
+                    ) : (
+                      openedSpoilId === review.ridx ? (
+                        <pre onClick={()=>toggleSpoilReview(review.ridx)}>{review.content}</pre>
+                      ) : (
+                        <p onClick={()=>toggleSpoilReview(review.ridx)}>⚠️ 스포성 내용이 포함된 게시글입니다. (클릭하여 보기)</p>
+                      )
+                    )
+                  }
                 </div>
               </li>
             )
@@ -208,6 +261,23 @@ const Review = ({ dbidx, season, refreshAverage  }) => {
         }
         {view ? <div className="more"><button className="mainButton" onClick={()=>{getReviews(page)}}>더보기</button></div> : null}
       </ul>
+      {isModalOpen && reviewObj && (
+        <div className="modalOverlay" onClick={() => setIsModalOpen(false)}>
+          <div className="modalContent modalReview" onClick={(e) => e.stopPropagation()}>
+            <h3>수정하기</h3>
+            <div className="rating">
+              <StarRating score={editScore} setScore={setEditScore} />
+            </div>
+            <div className="textBox">
+              <textarea value={editContent} onChange={(e)=>setEditContent(e.target.value)}></textarea>
+            </div>
+            <div className="buttonWrap">
+              <button className="mainButton" onClick={() => {editReview(reviewObj.ridx)}}>수정하기</button>
+              <button className="mainButton" onClick={() => setIsModalOpen(false)}>닫기</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

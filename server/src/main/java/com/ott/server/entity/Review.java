@@ -24,7 +24,9 @@ public class Review {
     @CreationTimestamp
     private Timestamp writedate;
     @ColumnDefault("'N'")
-    private String deleteyn;
+    private String isspoil = "N";
+    @ColumnDefault("'N'")
+    private String deleteyn = "N";
 
     @ManyToOne
     @JoinColumn(name = "midx", insertable = false, updatable = false)
