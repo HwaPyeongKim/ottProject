@@ -10,10 +10,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
-    int countByDbidxAndSeasonAndDeleteyn(int dbidx, int season, String deleteyn);
-    Page<Review> findAllByDbidxAndSeasonAndDeleteyn(int dbidx, int season, String deleteyn, Pageable pageable);
+    int countByDbidxAndSeasonAndDeleteynAndContentIsNotNullAndContentNot(int dbidx, int season, String deleteyn, String s);
+    Page<Review> findAllByDbidxAndSeasonAndDeleteynAndContentIsNotNullAndContentNot(int dbidx, int season, String deleteyn, String s, Pageable pageable);
     Review findByRidx(int ridx);
 
     @Query("SELECT COALESCE(AVG(r.score), 0) FROM Review r WHERE r.dbidx = :dbidx AND r.season = :season AND r.deleteyn = :deleteyn")
     double findAverageScoreByDbidxAndSeasonAndDeleteyn(@Param("dbidx") int dbidx, @Param("season") int season, @Param("deleteyn") String deleteyn);
+
 }

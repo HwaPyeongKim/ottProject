@@ -49,4 +49,24 @@ public class ReviewController {
         return result;
     }
 
+    @PostMapping("/editReview")
+    public HashMap<String,Object> editReview(@RequestBody Review review) {
+        HashMap<String,Object> result = new HashMap<>();
+        rs.edit(review);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @PostMapping("/spoilReview")
+    public HashMap<String,Object> spoilReview(@RequestParam("ridx") int ridx, @RequestParam("midx") int midx) {
+        HashMap<String,Object> result = new HashMap<>();
+        int spoil = rs.spoil(ridx, midx);
+        if (spoil > 0) {
+            result.put("msg", "ok");
+        } else {
+            result.put("msg", "이미 신고한 리뷰입니다");
+        }
+        return result;
+    }
+
 }
