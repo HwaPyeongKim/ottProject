@@ -39,6 +39,7 @@ import MyQna from "./component/customer/MyQna";
 
 //---------------------------------------------------- dg
 import Login from "./component/member/Login";
+import KakaoIdLogin from "./component/member/KakaoIdLogin";
 import Join from "./component/member/Join";
 import MyList from "./component/member/MyList";
 import Myfollow from "./component/member/Myfollow";
@@ -46,6 +47,10 @@ import Myfollower from "./component/member/Myfollower";
 import InsertList from "./component/member/InsertList";
 import FollowMemberView from "./component/member/FollowMemberView";
 import SocialList from "./component/member/SocialList";
+import ConfirmEmailCode from "./component/member/ConfirmEmailCode";
+import AddTitle from "./component/member/AddTitle";
+import MyListView from "./component/member/MyListView";
+import MypageView from "./component/member/MypageView";
 //---------------------------------------------------- dg
 
 
@@ -84,13 +89,18 @@ function App() {
 
             {/* dg */}
             <Route path="/login" element={<Login />} />
-            <Route path="/join" element={<Join />} />
+            <Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
+            <Route path="/join/:confirmemail" element={<Join />} />
             <Route path="/mylist" element={<MyList />} />
             <Route path="/myfollow" element={<Myfollow />} />
             <Route path="/myfollower" element={<Myfollower />} />
             <Route path="/insertList" element={<InsertList />} />
             <Route path="/followMemberView/:followMemberId" element={<FollowMemberView />} />
             <Route path="/socialList/:socialId" element={<SocialList />} />
+            <Route path="/confirmEmailCode" element={<ConfirmEmailCode />} />
+            <Route path="/addTitle" element={<AddTitle />} />
+            <Route path="/myListView/:listidx" element={<MyListView />} />
+            <Route path="/mypageView" element={<MypageView />} />
             {/* dg */}
         </Routes>
       </div>

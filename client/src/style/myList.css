@@ -1,0 +1,50 @@
+.mylist-container {
+  padding: 40px;
+}
+
+.mylist-grid {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.mylist-card {
+  width: 320px;
+  background-color: #1a1a1d;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.mylist-card:hover {
+  transform: scale(1.05);
+}
+
+.mylist-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  filter: brightness(70%);
+}
+
+.mylist-info {
+  padding: 15px;
+}
+
+.mylisttabs {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.mylisttabs button {
+  background-color: transparent;
+  color: gray;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+.mylisttabs .active {
+  color: #f3d45c; /* 노란색 강조 */
+  border-bottom: 3px solid #f3d45c;
+}
