@@ -1,6 +1,7 @@
 package com.ott.server.controller;
 
 import com.ott.server.entity.Likes;
+import com.ott.server.entity.ListEntity;
 import com.ott.server.service.MainService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,37 @@ public class MainController {
     public HashMap<String, Object> getMyLikes(@RequestParam("midx") int midx) {
         HashMap<String, Object> result = new HashMap<>();
         result.put("list", ms.getMyLikes(midx));
+        return result;
+    }
+
+    @Data
+    public static class AddRequest {
+        private List<Integer> listidxs;
+        private int dbidx;
+    }
+
+    @PostMapping("/addLists")
+    public HashMap<String, Object> addLists(@RequestBody AddRequest request) {
+        HashMap<String, Object> result = new HashMap<>();
+        for (int listidx : request.getListidxs()) {
+            ms.addLists(listidx, request.getDbidx());
+        }
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @GetMapping("/getMyDblists")
+    public HashMap<String, Object> getMyDblists(@RequestParam("midx") int midx) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("list", ms.getMyDblists(midx));
+        return result;
+    }
+
+    @PostMapping("/addList")
+    public HashMap<String, Object> addList(@RequestBody ListEntity list) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.addList(list);
+        result.put("msg", "ok");
         return result;
     }
 

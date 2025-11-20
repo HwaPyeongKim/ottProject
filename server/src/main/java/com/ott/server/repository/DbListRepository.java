@@ -14,4 +14,6 @@ public interface DbListRepository extends JpaRepository<DbList, Integer> {
     int countByListidx(int listidx);
 
     Page<DbList> findByListidx(int listidx, Pageable pageable);
+
+    DbList findByListidxAndDbidx(int listidx, int dbidx);
 }

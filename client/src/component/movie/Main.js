@@ -12,6 +12,7 @@ function Main() {
   const baseUrl = "https://api.themoviedb.org/3";
   const loginUser = useSelector(state=>state.user);
   const [likes, setLikes] = useState([]);
+  const [favorites, setFavorites] = useState([]);
 
   const [now, setNow] = useState([]);
   const [popular, setPopular] = useState([]);
@@ -173,6 +174,18 @@ function Main() {
     }
   }
 
+  async function getMyDblists() {
+    try {
+      const result = await jaxios.get("/api/main/getMyDblists", {params: {midx: loginUser.midx}});
+      if (result.data !== undefined && result.data.list !== undefined) {
+        const dbidxList = result.data.list.map(favorite => favorite.dbidx);
+        setFavorites(dbidxList);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   useEffect(
     ()=>{
       findMovies("now_playing");
@@ -185,6 +198,7 @@ function Main() {
 
       if (loginUser && loginUser.midx > 0) {
         getMyLikes();
+        getMyDblists();
       }
     },[]
   )
@@ -210,46 +224,46 @@ function Main() {
       </Slider>
 
       <h3>주간 인기 급상승 영화</h3>
-      <ListCard lists={trending} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={trending} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>인기 영화</h3>
-      <ListCard lists={popular} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={popular} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>액션 영화</h3>
-      <ListCard lists={action} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={action} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>모험 영화</h3>
-      <ListCard lists={adventure} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={adventure} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>코미디 영화</h3>
-      <ListCard lists={comedy} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={comedy} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>로맨스 영화</h3>
-      <ListCard lists={romance} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={romance} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>드라마 영화</h3>
-      <ListCard lists={drama} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={drama} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>다큐멘터리 영화</h3>
-      <ListCard lists={documentary} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={documentary} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>공포 영화</h3>
-      <ListCard lists={horror} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={horror} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>스릴러 영화</h3>
-      <ListCard lists={thriller} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={thriller} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>SF 영화</h3>
-      <ListCard lists={SF} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={SF} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>음악 영화</h3>
-      <ListCard lists={music} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={music} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>평점 높은 영화</h3>
-      <ListCard lists={topRated} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={topRated} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>개봉 예정작</h3>
-      <ListCard lists={coming} target="movie" likes={likes} setLikes={setLikes} />
+      <ListCard lists={coming} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
     </div>
   )
 }
