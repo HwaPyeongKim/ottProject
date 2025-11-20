@@ -1,6 +1,7 @@
 package com.ott.server.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
@@ -11,22 +12,25 @@ import java.sql.Timestamp;
 @Entity
 @Data
 public class BComment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bcidx;
-    private int bidx;
-    private int midx;
+    @Column(length = 1000, nullable = false)
     private String content;
-    @Column( columnDefinition="DATETIME default now()" )
+//    @Column( columnDefinition="DATETIME default now()" )
     @CreationTimestamp
     private Timestamp writedate;
-    private int pcidx;
+    private Integer pcidx;
     @ColumnDefault("'N'")
-    private String deleteyn;
+    private String deleteyn = "N";
 
-    @ManyToOne
-    @JoinColumn(name = "member_midx")
-    Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bidx")
+    @JsonIgnore
+    private Board board;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "midx")
+    @JsonIgnore
+    private Member member;
 }

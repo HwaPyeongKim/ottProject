@@ -1,0 +1,20 @@
+.filter {display: flex; margin-bottom: 20px;}
+.filter > li {position: relative; margin-right: 20px;}
+.filter > li.reset button {background: transparent; border: none; outline: none; color: #999c9f;}
+.filter > li.reset button:hover {color: #f5c518;}
+.filter > li p {cursor: pointer;}
+.filter > li p.on {color: #f5c518;}
+.filter > li div {display: none; position: absolute; top: 120%; z-index: 10; background: #0c131e; border-radius: 10px; padding: 10px; word-break: keep-all;}
+.filter > li div.on {display: inline-block;}
+.filter > li div input[type=checkbox], .filter > li div input[type=radio] {display: none;}
+.filter > li div input+label {cursor: pointer;}
+.filter > li div span {margin-left: 5px;}
+.filter > li div input:checked+label span {color: #f5c518;}
+.filter > li .yearWrap {}
+.filter > li .yearWrap label {display: inline-block; margin-bottom: 10px;}
+.filter > li .genreWrap {width: 330px;}
+.filter > li .certificationWrap {width: 140px;}
+.filter > li .certificationWrap li {margin-bottom: 10px;}
+.filter > li .certificationWrap li:last-child {margin-bottom: 0;}
+
+.lists.searchList {}

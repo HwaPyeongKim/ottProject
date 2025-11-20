@@ -11,6 +11,9 @@ span {margin-bottom: 20px;}
 
 .slick-dots li button:before {color: #fff !important;}
 
+.grid-8 {display: grid; grid-template-columns: repeat(8, 1fr); gap: 16px;}
+.grid-2 {display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;}
+
 .swiper-button-prev, .swiper-button-next {position: absolute; top: 50%; height: 100%; transform: translateY(-50%); z-index: 10; transform-origin: center center; opacity: 0;}
 .swiper-button-prev:hover, .swiper-button-next:hover {opacity: 1;}
 .swiper-button-next {right: 0;}
@@ -18,7 +21,7 @@ span {margin-bottom: 20px;}
 
 .container {width: 95%; max-width:1640px; margin: 0 auto;}
 .noFind {padding: 100px !important; background: #0c131e; color: #fff; font-weight: bold; text-align: center;}
-.mainButton {background: #f5c518; font-size: 1.1em; font-weight: bold; color: #060d17; border: none; border-radius: 10px;}
+.mainButton {background: #f5c518; font-size: 1.1em; font-weight: bold; color: #060d17; border: none; border-radius: 10px; cursor: pointer;}
 .buttonHover:hover {background: #f5c518 !important; color: #060d17 !important;}
 
 header {display: flex; justify-content: space-between; align-items: center; padding: 15px 0;}
@@ -29,7 +32,7 @@ header .gnb li {flex: 1; color: #999c9f; text-align: center; line-height: 40px;}
 header .gnb li.on {color: #f5c518; font-weight: bold;}
 header .search {flex: 10; display: flex; color: #fff; height: 40px;}
 header .search input {width: 100%; margin-left: 5px; padding:0 10px; background: #10161d; border: 0; border-radius: 5px; color: #fff; font-size: 1.1em; line-height: 40px;}
-header .userinfo {flex: 2.5; color: #fff; text-align: center; line-height: 40px;}
+header .userinfo {flex: 2.5; color: #dfdfdf; text-align: center; line-height: 40px;}
 header .menu {flex: 1; color: #fff; text-align: right; line-height: 40px;}
 header .menu button {border: 0; background: transparent; color: #fff; line-height: 40px;}
 
@@ -39,15 +42,15 @@ header .menu button {border: 0; background: transparent; color: #fff; line-heigh
 .header {position: relative; display: flex; align-items: center; justify-content: space-between; background: #000; color: #fff; padding: 10px 20px;}
 .header .menu button {background: none; border: none; color: white; font-size: 22px; cursor: pointer; transition: transform 0.2s ease;}
 .header .menu button:hover {transform: scale(1.1);}
-.dropdown-menu {position: absolute; right: 10px; top: 80px; background: #111; border: 1px solid #333; border-radius: 10px; width: 140px; overflow: hidden; max-height: 0; opacity: 0; transition: all 0.4s ease; z-index: 100;}
+.dropdown-submenu {position: absolute; right: 128px; top: 100px; background: #111; border: 1px solid #333; border-radius: 10px; width: 140px; overflow: hidden; max-height: 0; opacity: 0; transition: all 0.4s ease; z-index: 100;}
 
 /* 메뉴 열릴 때 */
-.dropdown-menu.open {max-height: 300px; /* 메뉴 길이에 맞게 충분히 크게 설정 */ opacity: 1; box-shadow: 0 4px 12px rgba(0,0,0,0.3);}
-.dropdown-menu ul {list-style: none; padding: 10px 0; margin: 0;}
-.dropdown-menu li {padding: 10px 15px; transition: all 0.3s ease;}
-.dropdown-menu li:hover {background: #222;}
-.dropdown-menu a {color: #ccc; text-decoration: none; display: block; transition: all 0.3s ease;}
-.dropdown-menu a:hover {color: #f5c518; font-weight: bold;}
+.dropdown-submenu.open {max-height: 300px; /* 메뉴 길이에 맞게 충분히 크게 설정 */ opacity: 1; box-shadow: 0 4px 12px rgba(0,0,0,0.3);}
+.dropdown-submenu ul {list-style: none; padding: 10px 0; margin: 0;}
+.dropdown-submenu li {padding: 10px 15px; transition: all 0.3s ease;}
+.dropdown-submenu li:hover {background: #222;}
+.dropdown-submenu a {color: #ccc; text-decoration: none; display: block; transition: all 0.3s ease;}
+.dropdown-submenu a:hover {color: #f5c518; font-weight: bold;}
 
 /* 검색창 스타일 */
 .search {display: flex; align-items: center; gap: 5px; background: #111; border-radius: 8px; padding: 5px 10px;}

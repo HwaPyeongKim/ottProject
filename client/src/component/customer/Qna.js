@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
+
 import "../../style/qna.css";
 
 
@@ -47,8 +50,16 @@ function Qna() {
 
   return (
     <div className="main-container">
-      <h2 className="section-title">Q&A 게시판</h2>
+      <div className="section-title">Q&A 게시판</div>
 
+      <div className="filter-bar">
+        <button className="btn btn-success" onClick={() => navigate('/qnaWrite')}>
+          문의하기
+        </button>
+        <button className="btn btn-success" onClick={() => navigate(`/myQna`)}>
+          나의 Q&A 조회&nbsp; &gt;
+        </button>
+      </div>
       {/* 검색 바 */}
       <div className="filter-bar">
         <input
@@ -60,10 +71,6 @@ function Qna() {
         />
         <button className="btn btn-primary" onClick={() => onPageMove(1)}>
           검색
-        </button>
-        {/* 문의하기 버튼 추가 */}
-        <button className="btn btn-success" onClick={() => navigate('/qnaWrite')}>
-          문의하기
         </button>
       </div>
 
@@ -85,8 +92,19 @@ function Qna() {
               onClick={() => navigate(`/qnaView/${qna.qidx}`)}
             >
               <div className="col">{qna.qidx}</div>
-              <div className="col flex3 title" onClick={() => navigate(`/qnaView/${qna.qidx}`)}>{qna.title}</div>
-              <div className="col flex15 title">
+              <div className="col flex3 title"
+                onClick={() => navigate(`/qnaView/${qna.qidx}`)}>
+                {qna.security === 'Y'
+                    ? (
+                        <>
+                          <FontAwesomeIcon icon={faLock} />
+                          &nbsp;&nbsp;{qna.title}
+                        </>
+                      )
+                    : qna.title
+                }
+              </div>
+              <div className="col flex1.5 title">
                 {qna.member.nickname.length > 6
                   ? `${qna.member.nickname.slice(0, 6)}...`
                   : qna.member.nickname

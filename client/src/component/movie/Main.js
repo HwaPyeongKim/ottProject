@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import jaxios from "../../util/JWTUtil";
 import axios from "axios";
 import Slider from "react-slick";
 import ListCard from '../ListCard';
@@ -8,6 +10,8 @@ import { faBookmark, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
 function Main() {
   const baseUrl = "https://api.themoviedb.org/3";
+  const loginUser = useSelector(state=>state.user);
+  const [likes, setLikes] = useState([]);
 
   const [now, setNow] = useState([]);
   const [popular, setPopular] = useState([]);
@@ -69,6 +73,19 @@ function Main() {
     {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
   ]
 
+  const genreIds = [
+    "28", // 액션
+    "12", // 모험
+    "35", // 코미디
+    "10749", // 로맨스
+    "18", // 드라마
+    "99", // 다큐멘터리
+    "27", // 공포
+    "53", // 스릴러
+    "878", // SF
+    "10402" // 음악
+  ];
+
   async function findMovies(target) {
     try {
       const result = await axios.get(`${baseUrl}/movie/${target}?language=ko-KR&region=KR&page=1&api_key=${process.env.REACT_APP_KEY}`);
@@ -91,19 +108,34 @@ function Main() {
 
   async function findGenres(target) {
     try {
-      const result = await axios.get(`${baseUrl}/discover/movie?with_genres=${target}&language=ko-KR&region=KR&sort_by=popularity.desc&page=1&api_key=${process.env.REACT_APP_KEY}`);
+      const result = await axios.get(
+        `${baseUrl}/discover/movie?with_genres=${target}&language=ko-KR&region=KR&sort_by=popularity.desc&page=1&api_key=${process.env.REACT_APP_KEY}`
+      );
       const movieDatas = result.data.results;
+
       if (movieDatas.length > 0) {
         const moviesWithProviders = await Promise.all(
           movieDatas.map(async (movie) => {
-            const providerRes = await axios.get(`${baseUrl}/movie/${movie.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
+            const providerRes = await axios.get(
+              `${baseUrl}/movie/${movie.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`
+            );
             return {
-              ...movie, providers: providerRes.data.results["KR"]?.flatrate || []
-            }
+              ...movie,
+              providers: providerRes.data.results["KR"]?.flatrate || [],
+            };
           })
-        )
+        );
+
         setters[target]?.(moviesWithProviders);
       }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function fetchAllGenres() {
+    try {
+      await Promise.all(genreIds.map(id => findGenres(id)));
     } catch (err) {
       console.error(err);
     }
@@ -129,26 +161,31 @@ function Main() {
     }
   }
 
+  async function getMyLikes() {
+    try {
+      const result = await jaxios.get("/api/main/getMyLikes", {params: {midx: loginUser.midx}});
+      if (result.data !== undefined && result.data.list !== undefined) {
+        const dbidxList = result.data.list.map(like => like.dbidx);
+        setLikes(dbidxList);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   useEffect(
     ()=>{
       findMovies("now_playing");
-      
       findTrending();
-
       findMovies("popular");
       findMovies("top_rated");
-      findMovies("upcoming");
+      // findMovies("upcoming"); // 메인으로 빠질것
 
-      findGenres("28") // 액션
-      findGenres("12") // 모험
-      findGenres("35") // 코미디
-      findGenres("10749") // 로맨스
-      findGenres("18") // 드라마
-      findGenres("99") // 다큐멘터리
-      findGenres("27") // 공포
-      findGenres("53") // 스릴러
-      findGenres("878") // SF
-      findGenres("10402") // 음악
+      fetchAllGenres();
+
+      if (loginUser && loginUser.midx > 0) {
+        getMyLikes();
+      }
     },[]
   )
 
@@ -164,7 +201,7 @@ function Main() {
                     <h4>{item.title}</h4>
                     <p>{item.overview}</p>
                   </div>
-                  <img src={`https://image.tmdb.org/t/p/w342${item.poster_path}`} alt={`${item.title} 포스터`} />
+                  <img src={`https://image.tmdb.org/t/p/w342${item.poster_path}`} alt={`${item.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
                 </a>
               </div>
             )
@@ -173,46 +210,46 @@ function Main() {
       </Slider>
 
       <h3>주간 인기 급상승 영화</h3>
-      <ListCard lists={trending} target="movie" />
+      <ListCard lists={trending} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>인기 영화</h3>
-      <ListCard lists={popular} target="movie" />
+      <ListCard lists={popular} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>액션 영화</h3>
-      <ListCard lists={action} target="movie" />
+      <ListCard lists={action} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>모험 영화</h3>
-      <ListCard lists={adventure} target="movie" />
+      <ListCard lists={adventure} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>코미디 영화</h3>
-      <ListCard lists={comedy} target="movie" />
+      <ListCard lists={comedy} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>로맨스 영화</h3>
-      <ListCard lists={romance} target="movie" />
+      <ListCard lists={romance} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>드라마 영화</h3>
-      <ListCard lists={drama} target="movie" />
+      <ListCard lists={drama} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>다큐멘터리 영화</h3>
-      <ListCard lists={documentary} target="movie" />
+      <ListCard lists={documentary} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>공포 영화</h3>
-      <ListCard lists={horror} target="movie" />
+      <ListCard lists={horror} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>스릴러 영화</h3>
-      <ListCard lists={thriller} target="movie" />
+      <ListCard lists={thriller} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>SF 영화</h3>
-      <ListCard lists={SF} target="movie" />
+      <ListCard lists={SF} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>음악 영화</h3>
-      <ListCard lists={music} target="movie" />
+      <ListCard lists={music} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>평점 높은 영화</h3>
-      <ListCard lists={topRated} target="movie" />
+      <ListCard lists={topRated} target="movie" likes={likes} setLikes={setLikes} />
 
       <h3>개봉 예정작</h3>
-      <ListCard lists={coming} target="movie" />
+      <ListCard lists={coming} target="movie" likes={likes} setLikes={setLikes} />
     </div>
   )
 }

@@ -12,8 +12,8 @@ import 'swiper/css';
 import Header from "./component/Header";
 
 import Main from "./component/Main";
-
 import Search from "./component/Search";
+import Discover from "./component/Discover";
 
 import Movie from "./component/movie/Main";
 import MovieDetail from "./component/movie/Detail";
@@ -32,6 +32,9 @@ import Company from "./component/customer/Company";
 import Qna from "./component/customer/Qna";
 import QnaWrite from "./component/customer/QnaWrite";
 import QnaView from "./component/customer/QnaView";
+import MyQna from "./component/customer/MyQna";
+
+
 
 
 //---------------------------------------------------- dg
@@ -64,6 +67,7 @@ function App() {
         <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/search/:keyword" element={<Search />} />
+            <Route path="/discover" element={<Discover />} />
             <Route path="/movie" element={<Movie />} />
             <Route path="/movie/detail/:id" element={<MovieDetail />} />
             <Route path="/tv" element={<Tv />} />
@@ -81,6 +85,7 @@ function App() {
             <Route path="/qna" element={<Qna />} />
             <Route path="/qnaWrite" element={<QnaWrite />} />
             <Route path="/qnaView/:qidx" element={<QnaView />} />
+            <Route path="/myQna" element={<MyQna />} />
 
             {/* dg */}
             <Route path="/login" element={<Login />} />

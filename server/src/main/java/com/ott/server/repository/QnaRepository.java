@@ -6,10 +6,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface QnaRepository extends JpaRepository<Qna, Integer> {
-    Collection<Qna> findByTitleContainingOrContentContaining(String key, String key1);
-    Page<Qna> findAllByTitleContainingOrContentContaining(String key, String key1, Pageable pageable);
+    Collection<Qna> findByTitleContaining(String key);
+    Page<Qna> findAllByTitleContaining(String key, Pageable pageable);
 
     Qna findByQidx(int qidx);
+
+    List<Qna> findByMember_Midx(int midx);
+    Page<Qna> findAllByMember_Midx(int midx, Pageable pageable);
+
+    List<Qna> findByMember_MidxAndTitleContaining(int midx, String key);
+    Page<Qna> findAllByMember_MidxAndTitleContaining(int midx, String key, Pageable pageable);
+
+
 }

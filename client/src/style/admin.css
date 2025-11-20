@@ -1,0 +1,117 @@
+/* ============================
+   기본 Layout
+   ============================ */
+.admin-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  color: var(--text-color);
+}
+
+/* ============================
+   카드 & 박스
+   ============================ */
+.admin-card {
+  background-color: #1f1f1f;
+  border-radius: 8px;
+  padding: 1.2rem;
+  border: 1px solid #333;
+  margin-bottom: 1.5rem;
+}
+
+/* ============================
+   제목
+   ============================ */
+.admin-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--highlight-color);
+}
+
+/* ============================
+   테이블
+   ============================ */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #333;
+  background-color: #1b1b1b;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #333;
+  text-align: center;
+}
+
+.admin-table th {
+  background-color: #222;
+  font-weight: 600;
+  color: var(--highlight-color);
+}
+
+.admin-table tr:hover {
+  background-color: #2a2a2a;
+}
+
+/* ============================
+   버튼
+   ============================ */
+.admin-btn {
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-btn.primary {
+  background-color: var(--highlight-color);
+  color: #000;
+}
+
+.admin-btn.secondary {
+  background-color: #444;
+  color: #fff;
+}
+
+.admin-btn.secondary:hover {
+  background-color: #666;
+}
+
+/* ============================
+   입력 폼
+   ============================ */
+.admin-input,
+.admin-textarea {
+  width: 100%;
+  background-color: #1c1c1c;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: var(--text-color);
+  padding: 0.8rem;
+  margin-top: 0.4rem;
+}
+
+.admin-input:focus,
+.admin-textarea:focus {
+  outline: none;
+  border-color: var(--highlight-color);
+}
+
+/* ============================
+   반응형
+   ============================ */
+@media (max-width: 768px) {
+  .admin-title {
+    font-size: 1.2rem;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+}

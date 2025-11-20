@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import jaxios from "../../util/JWTUtil";
 import axios from "axios";
 import Slider from "react-slick";
 import ListCard from '../ListCard';
 
 function Main() {
   const baseUrl = "https://api.themoviedb.org/3";
+  const loginUser = useSelector(state=>state.user);
+  const [likes, setLikes] = useState([]);
 
   const [onAir, setOnAir] = useState([]);
   const [trending, setTrending] = useState([]);
@@ -60,6 +64,17 @@ function Main() {
     {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
   ]
 
+  const genreIds = [
+    "10759", // 액션
+    "16", // 애니메이션
+    "35", // 코미디
+    "80", // 범죄
+    "18", // 드라마
+    "10765", // SF
+    "10751", // 가족
+    "10762" // 키드
+  ];
+
   async function findTvs(target) {
     try {
       const result = await axios.get(`${baseUrl}/tv/${target}?language=ko-KR&region=KR&page=1&api_key=${process.env.REACT_APP_KEY}`);
@@ -100,6 +115,14 @@ function Main() {
     }
   }
 
+  async function fetchAllGenres() {
+    try {
+      await Promise.all(genreIds.map(id => findGenres(id)));
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async function findTrending() {
     try {
       const result = await axios.get(`${baseUrl}/trending/tv/week?language=ko-KR&region=KR&sort_by=popularity.desc&page=1&api_key=${process.env.REACT_APP_KEY}`);
@@ -120,6 +143,18 @@ function Main() {
     }
   }
 
+  async function getMyLikes() {
+    try {
+      const result = await jaxios.get("/api/main/getMyLikes", {params: {midx: loginUser.midx}});
+      if (result.data !== undefined && result.data.list !== undefined) {
+        const dbidxList = result.data.list.map(like => like.dbidx);
+        setLikes(dbidxList);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   useEffect(
     ()=>{
       findTvs("on_the_air");
@@ -127,15 +162,11 @@ function Main() {
       findTvs("popular");
       findTvs("top_rated");
 
-      findGenres("10759");
-      findGenres("16");
-      findGenres("35");
-      findGenres("80");
-      findGenres("18");
-      findGenres("10765");
-      findGenres("10751");
-      findGenres("10762");
+      fetchAllGenres();
 
+      if (loginUser && loginUser.midx > 0) {
+        getMyLikes();
+      }
     },[]
   )
 
@@ -151,7 +182,7 @@ function Main() {
                     <h4>{item.title}</h4>
                     <p>{item.overview}</p>
                   </div>
-                  <img src={`https://image.tmdb.org/t/p/w342${item.poster_path}`} alt={`${item.title} 포스터`} />
+                  <img src={`https://image.tmdb.org/t/p/w342${item.poster_path}`} alt={`${item.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
                 </a>
               </div>
             )
@@ -160,37 +191,37 @@ function Main() {
       </Slider>
   
       <h3>주간 인기 급상승 TV 시리즈</h3>
-      <ListCard lists={trending} target="tv" />
+      <ListCard lists={trending} target="tv" likes={likes} setLikes={setLikes} />
 
       <h3>인기 TV 시리즈</h3>
-      <ListCard lists={popular} target="tv" />
+      <ListCard lists={popular} target="tv" likes={likes} setLikes={setLikes} />
 
       <h3>평점 높은 TV 시리즈</h3>
-      <ListCard lists={topRated} target="tv" />
+      <ListCard lists={topRated} target="tv" likes={likes} setLikes={setLikes} />
 
       <h3>액션 & 어드밴쳐</h3>
-      <ListCard lists={action} target="tv" />
+      <ListCard lists={action} target="tv" likes={likes} setLikes={setLikes} />
 
       <h3>애니메이션</h3>
-      <ListCard lists={animation} target="tv" />
+      <ListCard lists={animation} target="tv" likes={likes} setLikes={setLikes} />
 
       <h3>코미디</h3>
-      <ListCard lists={comedy} target="tv" />
+      <ListCard lists={comedy} target="tv" likes={likes} setLikes={setLikes} />
 
       <h3>범죄</h3>
-      <ListCard lists={crime} target="tv" />
+      <ListCard lists={crime} target="tv" likes={likes} setLikes={setLikes} />
 
       <h3>드라마</h3>
-      <ListCard lists={drama} target="tv" />
+      <ListCard lists={drama} target="tv" likes={likes} setLikes={setLikes} />
 
       <h3>SF</h3>
-      <ListCard lists={SF} target="tv" />
+      <ListCard lists={SF} target="tv" likes={likes} setLikes={setLikes} />
 
       <h3>가족</h3>
-      <ListCard lists={family} target="tv" />
+      <ListCard lists={family} target="tv" likes={likes} setLikes={setLikes} />
 
       <h3>어린이</h3>
-      <ListCard lists={kids} target="tv" />
+      <ListCard lists={kids} target="tv" likes={likes} setLikes={setLikes} />
     </div>
   )
 }

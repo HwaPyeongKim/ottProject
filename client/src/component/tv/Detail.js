@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import axios from "axios";
 import jaxios from "../../util/JWTUtil";
-import dayjs from "dayjs";
+import Review from "../Review";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar, faStarHalfAlt } from "@fortawesome/free-solid-svg-icons";
@@ -18,76 +18,15 @@ function Detail() {
   const baseUrl = "https://api.themoviedb.org/3/tv";
 
   const loginUser = useSelector(state=>state.user);
-  const [page, setPage] = useState(1);
   const {id} = useParams();
   const [item, setItem] = useState({});
   const [average, setAverage] = useState(0);
-  const [content, setContent] = useState("");
-  const [reviewList, setReviewList] = useState([]);
-  const [displayRow, setDisplayRow] = useState(5);
-  const [totalCount, setTotalCount] = useState(0);
-  const [view, setView] = useState(false);
   const [imdb, setImdb] = useState("");
   const [likeCount , setLikeCount] = useState(0);
   const [likeOn, setLikeOn] = useState(false);
   const prevRef = useRef(null);
   const nextRef = useRef(null);
-  
-  const [score, setScore] = useState(0);
-  const [hover, setHover] = useState(0);
-
-  const handleClick = (starIndex, isHalf) => {
-    const newScore = isHalf ? starIndex - 0.5 : starIndex;
-    setScore(newScore);
-  };
-
-  const getStarIcon = (starIndex) => {
-    const current = hover || score;
-    if (current >= starIndex) return solidStar;
-    if (current >= starIndex - 0.5) return faStarHalfAlt;
-    return regularStar;
-  };
-
-  function StarRating() {
-    return (
-      <div style={{ display: "flex", flexDirection: "row", fontSize: "24px" }}>
-        {[1,2,3,4,5].map((star) => (
-          <div key={star} style={{ position: "relative", marginRight: "4px" }}>
-            <div
-              onMouseEnter={() => setHover(star - 0.5)}
-              onMouseLeave={() => setHover(0)}
-              onClick={() => handleClick(star, true)}
-              style={{
-                position: "absolute",
-                width: "50%",
-                height: "100%",
-                left: 0,
-                top: 0,
-                cursor: "pointer",
-                zIndex: 1,
-              }}
-            />
-
-            <div
-              onMouseEnter={() => setHover(star)}
-              onMouseLeave={() => setHover(0)}
-              onClick={() => handleClick(star, false)}
-              style={{
-                position: "absolute",
-                width: "50%",
-                height: "100%",
-                right: 0,
-                top: 0,
-                cursor: "pointer",
-                zIndex: 1,
-              }}
-            />
-            <FontAwesomeIcon icon={getStarIcon(star)} style={{ color: "#f39c12" }} />
-          </div>
-        ))}
-      </div>
-    );
-  };
+  const [likes, setLikes] = useState([]);
 
   function AverageRating({ avgScore }) {
     const stars = [1, 2, 3, 4, 5];
@@ -166,14 +105,17 @@ function Detail() {
         }
       });
 
+      // 성인 여부 체크
+      if (data.adult === true) {
+        
+      }
+      
       const omdbData = await axios.get(`http://www.omdbapi.com/?i=${data.external_ids.imdb_id}&apikey=${process.env.REACT_APP_OMDB_KEY}`);
       const ratingData = omdbData.data?.Ratings || [];
       setImdb(ratingData.find(r => r.Source === "Internet Movie Database")?.Value || "Unknown");
+      
 
-      // 성인 여부 체크
-      if (data.adult === true) {
-
-      }
+      data.seasons.sort((a, b) => b.season_number - a.season_number);
 
       // OTT 정보
       data.providers = [];
@@ -232,58 +174,6 @@ function Detail() {
     }
   }
 
-  function saveReview() {
-    jaxios.post("/api/review/saveReview", {midx:loginUser.midx, content, dbidx:id, score})
-    .then((result)=>{
-      if (result.data.msg === "ok") {
-        alert("후기가 등록되었습니다");
-        setScore(0);
-        setHover(0);
-        setContent("");
-        getReviews(1,true);
-      } else {
-        alert("후기 등록이 실패했습니다");
-      }
-    })
-    .catch((err)=>{console.error(err);})
-  }
-
-  function deleteReview(ridx) {
-    if (window.confirm("해당 댓글을 삭제하시겠습니까?")) {
-      jaxios.delete(`/api/review/delete/${ridx}`)
-      .then((result)=>{
-        if (result.data.msg === "ok") {
-          alert("댓글을 삭제했습니다");
-          getReviews(1,true);
-        }
-      })
-      .catch((err)=>{console.error(err);})
-    }
-  }
-
-  async function getReviews(p, reset=false) {
-    try {
-      const result = await axios.get(`/api/review/getReviews/${p}`, {params: {dbidx: id, displayRow}});
-      const newList = [...reviewList, ...result.data.list];
-
-      if (reset) {
-        setReviewList(result.data.list);
-      } else {
-        setReviewList(prev => [...prev, ...result.data.list]);
-      }
-      setTotalCount(result.data.totalCount);
-      setPage(prev => prev + 1);
-      if ((p * displayRow) < result.data.totalCount) {
-        setView(true);
-      } else {
-        setView(false);
-      }
-      getAverage();
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   async function getAverage() {
     try {
       const result = await axios.get("/api/review/getAverage", {params: {dbidx: id}});
@@ -303,17 +193,31 @@ function Detail() {
 
   }
 
-  function like() {
+  async function like(id) {
     if (!loginUser || loginUser.midx === undefined) {
       alert("로그인 후 이용해주세요");
       return;
     }
+    
+    try {
+        await jaxios.post("/api/main/like", {midx: loginUser.midx, dbidx: id});
+        await getMyLikes(); 
+    } catch (err) {
+        console.error("좋아요 처리 중 에러 발생:", err);
+        alert("좋아요 처리 중 오류가 발생했습니다.");
+    }
+  }
 
-    jaxios.post("/api/main/like", {midx: loginUser.midx, dbidx: id})
-    .then((result)=>{
-      getLikes();
-    })
-    .catch((err)=>{console.error(err);})
+  async function getMyLikes() {
+    try {
+      const result = await jaxios.get("/api/main/getMyLikes", {params: {midx: loginUser.midx}});
+      if (result.data !== undefined && result.data.list !== undefined) {
+        const dbidxList = result.data.list.map(like => like.dbidx);
+        setLikes(dbidxList);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async function getLikes() {
@@ -339,7 +243,6 @@ function Detail() {
   useEffect(
     ()=>{
       findItem();
-      getReviews(1);
       getAverage();
       getLikes();
     },[]
@@ -369,6 +272,96 @@ function Detail() {
 
       <div className="bottom">
         <div className="left">
+          <div className="synop_pro">
+            <div className="synopsis">
+              <h3>시놉시스</h3>
+              {
+                item.overview ? <p>{item.overview}</p> : <div className="noFind">시놉시스 정보를 찾을 수 없습니다.</div>
+              }
+            </div>
+
+            <div className="providers">
+              <h3>지금 시청하기</h3>
+              {
+                item.providers ? (
+                  (() => {
+                    const types = [
+                      { key: "buy", label: "구매" },
+                      { key: "rent", label: "대여" },
+                      { key: "flatrate", label: "구독" },
+                    ];
+
+                    const ottInfos = [
+                      {key: 8, label: "netflix", link: "https://www.netflix.com/search?q="},
+                      {key: 1796, label: "netflixbasicwithads", link: "https://www.netflix.com/search?q="},
+                      {key: 356, label: "wavve", link: "https://www.wavve.com/search?searchWord="},
+                      {key: 97, label: "watcha", link: "https://watcha.com/search?query="},
+                      {key: 337, label: "disneyplus", link: "https://www.disneyplus.com/ko-kr/search?q="}, // 디즈니는 검색이 안됨
+                      {key: 2, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
+                      {key: 350, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
+                      {key: 9, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+                      {key: 10, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+                      {key: 119, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
+                      {key: 3, label: "play", link: "https://play.google.com/store/search?q="}, // 구글플레이는 우리나라에서 안된다는데 다시 확인 필요
+                      {key: 1883, label: "tving", link: "https://www.tving.com/search?query="},
+                      {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
+                    ]
+
+                    const providerMap = {};
+
+                    types.forEach((type) => {
+                      const list = item.providers[type.key] ?? [];
+                      list.forEach((provider) => {
+                        const id = provider.provider_id;
+
+                        if (!providerMap[id]) {
+                          providerMap[id] = {
+                            provider,
+                            types: []
+                          };
+                        }
+
+                        providerMap[id].types.push(type.label); // 구매/대여/구독 추가
+                      });
+                    });
+
+                    const providerList = Object.values(providerMap);
+
+                    if (providerList.length === 0) {
+                      return <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>;
+                    }
+
+                    return (
+                      <ul className="providerList">
+                        {providerList.map((entry, idx) => {
+                          const provider = entry.provider;
+                          const typesText = entry.types.join(" / ");
+
+                          const ottInfo = ottInfos.find((o) => o.key === provider.provider_id);
+                          const url = ottInfo ? getOttUrl(ottInfo.link, item.title) : "#";
+
+                          return (
+                            <li key={idx} className="providerItem">
+                              {ottInfo ? (
+                                <img src={`/images/${ottInfo.label}.jpeg`} alt={`${provider.provider_name} 로고`} />
+                              ) : (
+                                <span>{provider.provider_name}</span>
+                              )}
+                              <span className="types">{typesText}</span>
+                              <a href={url} target="_blank" className="mainButton"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    );
+                  })()
+                ) : (
+                  <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>
+                )
+              }
+            </div>
+          </div>
+
           <div className="seasons">
             {
               item.seasons && item.seasons.length > 0 && (
@@ -405,78 +398,6 @@ function Detail() {
                   </Swiper>
                 </>
               )
-            }
-
-          </div>
-
-          <div className="providers">
-            <h3>지금 시청하기</h3>
-            {
-              item.providers ? (
-                (() => {
-                  const types = [
-                    { key: "buy", label: "구매" },
-                    { key: "rent", label: "대여" },
-                    { key: "flatrate", label: "구독" },
-                  ];
-
-                  const ottInfos = [
-                    {key: 8, label: "netflix", link: "https://www.netflix.com/search?q="},
-                    {key: 1796, label: "netflixbasicwithads", link: "https://www.netflix.com/search?q="},
-                    {key: 356, label: "wavve", link: "https://www.wavve.com/search?searchWord="},
-                    {key: 97, label: "watcha", link: "https://watcha.com/search?query="},
-                    {key: 337, label: "disneyplus", link: "https://www.disneyplus.com/ko-kr/search?q="}, // 디즈니는 검색이 안됨
-                    {key: 2, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
-                    {key: 350, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
-                    {key: 9, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-                    {key: 10, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-                    {key: 119, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-                    {key: 3, label: "play", link: "https://play.google.com/store/search?q="}, // 구글플레이는 우리나라에서 안된다는데 다시 확인 필요
-                    {key: 1883, label: "tving", link: "https://www.tving.com/search?query="},
-                    {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
-                  ]
-
-                  const available = types.filter(
-                    (type) => item.providers[type.key]?.length > 0
-                  );
-
-                  if (available.length === 0) {
-                    return <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>;
-                  }
-
-                  return available.map((type) => (
-                    <div key={type.key}>
-                      <h4>{type.label}</h4>
-                      <ul>
-                        {item.providers[type.key].map((provider, idx) => {
-                          const ottInfo = ottInfos.find((l) => l.key === provider.provider_id);
-                          const url = getOttUrl(ottInfo.link, item.title);
-
-                          return (
-                            <li key={`${type.key}-${idx}`}>
-                              {ottInfo ? (
-                                <img src={`/images/${ottInfo.label}.jpeg`} alt={`${provider.provider_name} 로고`} />
-                              ) : (
-                                <span>{provider.provider_name}</span>
-                              )}
-                              <a href={url} target="_blank" className="mainButton"><FontAwesomeIcon icon={faPlay} /> 지금 시청하기</a>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  ));
-                })()
-              ) : (
-                <div className="noFind">시청할 수 있는 OTT가 없습니다.</div>
-              )
-            }
-          </div>
-
-          <div className="synopsis">
-            <h3>시놉시스</h3>
-            {
-              item.overview ? <p>{item.overview}</p> : <div className="noFind">시놉시스 정보를 찾을 수 없습니다.</div>
             }
           </div>
 
@@ -578,7 +499,7 @@ function Detail() {
                           <a href={`/movie/detail/${similar.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
-                              <button><FontAwesomeIcon icon={faThumbsUp} /></button>
+                              <button className={`like${likes.includes(similar.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(similar.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button>
                             </div>
                           </a>
                         </div>
@@ -620,7 +541,7 @@ function Detail() {
                           <a href={`/tv/detail/${recommendation.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
-                              <button><FontAwesomeIcon icon={faThumbsUp} /></button>
+                              <button className={`like${likes.includes(recommendation.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(recommendation.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button>
                             </div>
                           </a>
                         </div>
@@ -637,44 +558,7 @@ function Detail() {
           </div>
 
           <div className="review">
-            <h3>후기 {totalCount ? <small>({totalCount.toLocaleString()})</small> : null}</h3>
-            <div className="write">
-              <h4>내 별점</h4>
-              <div className="rating">
-                <StarRating score={score} setScore={setScore} />
-              </div>
-              <div className="textBox">
-                <textarea value={content} onChange={(e)=>{setContent(e.currentTarget.value)}} placeholder="리뷰를 입력해주세요" ></textarea>
-                <button onClick={()=>{saveReview()}} className="mainButton">작성완료</button>
-              </div>
-            </div>
-            <ul className="reviewList">
-              {
-                reviewList && reviewList.length > 0 ?
-                reviewList.map((review, idx)=>{
-                  const formattedDate = review.writedate ? dayjs(review.writedate).format("YYYY-MM-DD HH:mm") : null;
-                  
-                  return (
-                    <li key={idx}>
-                      <p><span>{review.member.nickname}</span> <span><FontAwesomeIcon icon={faStar} /> {review.score}</span> <small>({formattedDate})</small></p>
-                      <div>
-                        <pre>{review.content}</pre>
-                        {
-                          review.member.midx == loginUser.midx ?
-                          <>
-                            <button onClick={()=>{deleteReview(review.ridx)}} className="mainButton">삭제하기</button>
-                          </>
-                          : null
-                        }
-                      </div>
-                    </li>
-                  )
-                })
-                :
-                <li className="noFind">작성된 리뷰가 없습니다</li>
-              }
-              {view ? <div className="more"><button className="mainButton" onClick={()=>{getReviews(page)}}>더보기</button></div> : null}
-            </ul>
+            <Review dbidx={id} season="0" refreshAverage={getAverage} />
           </div>
         </div>
 
@@ -682,9 +566,14 @@ function Detail() {
           <div className="movieInfo">
             <h3>영화 정보</h3>
             <ul>
-              <li>
+              <li className="poster">
                 <div>
                   <img src={`https://image.tmdb.org/t/p/w154${item.poster_path}`} alt={`${item.title} 포스터`} />
+                  <div className="ratings">
+                    <h4>평점</h4>
+                    <p><AverageRating avgScore={average} /></p>
+                    <p><img src="/images/imdb.png" alt="imdb 점수" /><small>{imdb}</small></p>
+                  </div>
                 </div>
                 <div>
                   <button className="buttonHover" onClick={()=>{favorite()}}><FontAwesomeIcon icon={faBookmark} /></button>
@@ -702,11 +591,6 @@ function Detail() {
                   })
                   : <p>Unknown</p>
                 }
-              </li>
-              <li className="ratings">
-                <h4>평점</h4>
-                <p><AverageRating avgScore={average} /></p>
-                <p><img src="/images/imdb.png" alt="imdb 점수" /><small>{imdb}</small></p>
               </li>
               <li>
                 <h4>장르</h4>

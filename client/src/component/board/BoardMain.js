@@ -5,18 +5,19 @@ import Board from './Board';
 
 import "../../style/board.css";
 import jaxios from '../../util/JWTUtil';
-
 function BoardMain() {
     const loginUser = useSelector(state => state.user);
     const navigate = useNavigate();
     const [boardList, setBoardList] = useState([]);
     const [paging, setPaging] = useState({});
     const [searchWord, setSearchWord] = useState('');
-    const [deletedIds, setDeletedIds] = useState([]); // 삭제된 게시글 ID 관리
+    const [deletedIds, setDeletedIds] = useState([]);
+    const [sortType, setSortType] = useState('latest'); // 최신(latest) or 인기(popular)
 
     useEffect(() => {
+        setBoardList([]);
         onSearch(1); // 초기 데이터 로드
-    }, []);
+    }, [sortType]); // 정렬 기준 바뀌면 다시 로드
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
@@ -32,25 +33,49 @@ function BoardMain() {
 
         if (scrollTop + clientHeight >= scrollHeight) {
             if (Number(paging.page) + 1 > Number(paging.totalPage)) return;
-            // console.log(paging.page);
             onPageMove(Number(paging.page) + 1);
         }
     }
 
+    // function onPageMove(p) {
+    //     jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
+    //         .then(result => {
+    //             setPaging(result.data.paging);
+    //             const newBoards = result.data.boardList
+    //                 .filter(board => !deletedIds.includes(board.bidx))
+    //                 .filter(board => !boardList.some(b => b.bidx === board.bidx));
+    //             setBoardList([...boardList, ...newBoards]);
+    //         })
+    //         .catch(err => console.error(err));
+    // }
+
     function onPageMove(p) {
-        jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord } })
-            .then(result => {
-                setPaging(result.data.paging);
-                const newBoards = result.data.boardList
-                    .filter(board => !deletedIds.includes(board.bidx)) // 삭제 글 제외
-                    .filter(board => !boardList.some(b => b.bidx === board.bidx)); // 중복 제외
-                setBoardList([...boardList, ...newBoards]);
-            })
-            .catch(err => console.error(err));
+    jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
+        .then(result => {
+
+            const merged = [
+                ...boardList,
+                ...result.data.boardList.filter(board => !deletedIds.includes(board.bidx))
+            ];
+
+            // 인기탭일 경우 프론트에서 한 번 더 정렬
+            const sorted = sortType === 'popular'
+                ? [...merged].sort((a, b) => {
+                    if (b.likecount !== a.likecount) return b.likecount - a.likecount;
+                    return new Date(b.writedate) - new Date(a.writedate);
+                })
+                : merged;
+
+            setBoardList(sorted);
+            setPaging(result.data.paging);
+        })
+        .catch(err => console.error(err));
     }
 
+
+
     function onSearch(p) {
-        jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord } })
+        jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
             .then(result => {
                 const filteredBoards = result.data.boardList.filter(board => !deletedIds.includes(board.bidx));
                 setBoardList(filteredBoards);
@@ -63,12 +88,21 @@ function BoardMain() {
         if (window.confirm('정말로 게시글을 삭제하시겠습니까?')) {
             jaxios.delete(`/api/board/deleteBoard/${bidx}`)
             .then(() => {
-                setDeletedIds(prev => [...prev, bidx]); // 삭제 ID 추가
-                setBoardList(prev => prev.filter(board => board.bidx !== bidx)); // 화면에서도 제거
-                onSearch(1); // 페이지 초기화 후 새로 로드
+                setDeletedIds(prev => [...prev, bidx]);
+                setBoardList(prev => prev.filter(board => board.bidx !== bidx));
+                onSearch(1);
             })
             .catch(err => console.error(err));
         }
+    }
+
+    // 탭 클릭 시 정렬 기준 변경
+    function Latest() {
+        setSortType('latest');
+    }
+
+    function Popular() {
+        setSortType('popular');
     }
 
     return (
@@ -76,8 +110,8 @@ function BoardMain() {
             <h2 className="section-title">지금 뜨는 토픽</h2>
             <div className="tab-buttons">
                 <div>
-                    <button className="tab-button active">최신</button>
-                    <button className="tab-button">인기</button>
+                    <button className={`tab-button ${sortType === 'latest' ? 'active' : ''}`} onClick={Latest}>최신</button>
+                    <button className={`tab-button ${sortType === 'popular' ? 'active' : ''}`} onClick={Popular}>인기</button>
                 </div>
             </div>
             <div className="search-bar">
@@ -102,5 +136,6 @@ function BoardMain() {
         </div>
     )
 }
+
 
 export default BoardMain;

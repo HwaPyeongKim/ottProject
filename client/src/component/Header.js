@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Cookies } from "react-cookie";
 import axios from "axios";
@@ -30,8 +30,8 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [imgSrc, setImgSrc] = useState("");
-  const [keyword, setKeyword] = useState("");
-
+  const {keyword: urlKeyword} = useParams();
+  const [keyword, setKeyword] = useState(urlKeyword || "");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -45,11 +45,9 @@ function Header() {
     }, [loginUser.profileimg]
   );
 
-  useEffect(
-    ()=>{
-
-    },[]
-  )
+  useEffect(() => {
+    setKeyword(urlKeyword || "");
+  }, [urlKeyword]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && keyword.trim() !== "") {
@@ -117,11 +115,16 @@ function Header() {
       </div>
 
       {/* 슬라이드 애니메이션 메뉴 */}
-      <div className={`dropdown-menu ${menuOpen ? "open" : ""}`}>
+      <div className={`dropdown-submenu ${menuOpen ? "open" : ""}`}>
         <ul>
-          <li><a href="/company">회사소개</a></li>
-          <li><a href="/qna">Q & A</a></li>
-        </ul>
+    <li><a href="/company">회사소개</a></li>
+    <li><a href="/qna">Q & A</a></li>
+    <li><a href="/admin">관리자 페이지</a></li>
+
+    {loginUser && loginUser.role == 2
+      ? <li><a href="/admin">관리자 페이지</a></li>
+      : null}
+  </ul>
       </div>
     </header>
   )

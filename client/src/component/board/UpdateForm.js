@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux';
 import jaxios from '../../util/JWTUtil';
 import axios from 'axios';
 
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
 function UpdateForm() {
     const loginUser = useSelector(state=>state.user);
     const navigate = useNavigate();
@@ -13,10 +16,7 @@ function UpdateForm() {
 
     const [fidx, setFidx] = useState('');
     const [imgSrc, setImgSrc] = useState('');
-    const [imgStyle, setImgStyle] = useState({display:"none"});
-    
-    const [newImgSrc, setNewImgSrc] = useState('');
-    const [newImgStyle, setNewImgStyle] = useState({display: 'none'});
+    const [imgStyle, setImgStyle] = useState({display:"none"});    
 
     const { bidx } = useParams();
 
@@ -54,7 +54,7 @@ function UpdateForm() {
 
         if( !title ){ return alert('제목을 입력하세요')}
         if( !content ){ return alert('제목을 입력하세요')}
-
+  
         jaxios.post('/api/board/updateBoard', {bidx: bidx, title, content, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
         .then((result)=>{
             alert('게시글 작성이 완료되었습니다');
@@ -68,38 +68,63 @@ function UpdateForm() {
         formData.append('image', e.target.files[0])
         jaxios.post( '/api/board/upload', formData)
         .then((result)=>{
-            setNewImgSrc(result.data.image);
-            setNewImgStyle({display:"block", width:"200px"});
+            setImgSrc(result.data.image);
+            setImgStyle({display:"block", width:"200px"});
             setFidx(result.data.fidx);
         }).catch((err)=>{console.error(err)})
     }
 
     return (
          <div className='boardwriteform'>
-            <h2>게시물 작성</h2>
-            <div className='field'>
-                <label>닉네임</label>
-                <input type='text' value={nickname} onChange={(e)=>{setNickname(e.currentTarget.value)}} readOnly/>
-            </div>
-            <div className='field'>
-                <label>제목</label>
-                <input type='text' value={title} onChange={(e)=>{setTitle(e.currentTarget.value)}} />
-            </div>
-            <div className='field'>
-                <label>게시글 수정</label>
-                <textarea rows="7" value={content} onChange={(e)=>{setContent(e.currentTarget.value)}}></textarea>
-            </div>
-            <div className='field'>
-                <label>기존이미지</label>
-                <div><img src={imgSrc} style={imgStyle} /></div>
-            </div>            
-            <div className='field'>
-                <label>수정이미지</label>
-                <div>
-                    <img src={newImgSrc} style={newImgStyle} alt=""/><br />
-                    <input type='file' onChange={(e)=>{ fileUpload(e); }} />
+            <h2>게시물 수정</h2>
+            <div className='field info-upload-container'>
+                <div className="info-column">
+                    <div className='field'>
+                        <label>닉네임</label>
+                        <input type='text' value={nickname} onChange={(e)=>{setNickname(e.currentTarget.value)}} readOnly/>
+                    </div>
+                    <div className='field'>
+                        <label>제목</label>
+                        <input type='text' value={title} onChange={(e)=>{setTitle(e.currentTarget.value)}} />
+                    </div>                
+                </div>
+                <div className='image-upload-section image-column'>
+                    <label className='upload-label'>이미지 수정</label>
+                    <div className='upload-box'>
+                        {imgSrc ? (
+                            <div className="image-preview-wrapper">
+                                <img src={imgSrc} alt="미리보기 이미지" />
+                            </div>
+                        ) : (
+                            <div className="no-image-placeholder">
+                                첨부된 이미지가 없습니다
+                            </div>
+                        )}
+                        
+                        <label htmlFor="file-upload" className="file-upload-button">
+                            {imgSrc ? '이미지 변경' : '이미지 선택'}
+                        </label>
+                        <input id="file-upload" type="file" onChange={(e)=>{fileUpload(e)}} style={{display: 'none'}}/>
+                    </div>
                 </div>
             </div>
+
+            <div className='field'>
+                <label>게시글 수정</label>
+                <CKEditor
+                    editor={ClassicEditor}
+                    data={content}
+                    onChange={(event, editor) => {
+                        const data = editor.getData();
+                        setContent(data);
+                    }}
+                />
+            </div>
+            {/* <div className='field'>
+                <label>기존이미지</label>
+                <div><img src={imgSrc} style={imgStyle} /></div>
+                <div> <input type='file' onChange={(e)=>{ fileUpload(e); }} /></div>
+            </div> */}
             <div className='btns'>
                 <button onClick={()=>{onSubmit()}}>작성완료</button>
                 <button onClick={()=>{navigate('/community')}}>메인으로</button>

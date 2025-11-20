@@ -47,11 +47,13 @@ function Login() {
           </div>
           <div className="btns">
             <button className="btn btn-primary" onClick={onLoginlocal}>
-              LOGIN
+              &nbsp;&nbsp;LOGIN&nbsp;&nbsp;
             </button>
+
             <button className="btn btn-secondary" onClick={() => navigate('/confirmEmailCode')}>
               JOIN
             </button>
+
           </div>
           <div className="sns-btns">
             <button
