@@ -204,8 +204,8 @@ function Season() {
   }
 
   function favorite() {
-    if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
 
@@ -273,8 +273,8 @@ function Season() {
   }
 
   function like() {
-    if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
 
@@ -311,12 +311,17 @@ function Season() {
       findSeason();
       getAverage();
       getLikes();
-      if (loginUser && loginUser.midx !== undefined) {
+    },[]
+  )
+
+  useEffect(
+    () => {
+      if (loginUser?.midx) {
         getMyLists();
         getMyDblists();
       }
-    },[]
-  )
+    }, [loginUser]
+  );
 
   return (
     <section className="content_info">

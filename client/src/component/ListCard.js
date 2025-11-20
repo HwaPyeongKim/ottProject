@@ -42,8 +42,8 @@ const ListCard = ({ lists, target, likes, setLikes, favorites, setFavorites }) =
   };
   
   async function like(id) {
-    if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
     
@@ -69,8 +69,8 @@ const ListCard = ({ lists, target, likes, setLikes, favorites, setFavorites }) =
   }
 
   function favorite() {
-    if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
     
@@ -144,13 +144,13 @@ const ListCard = ({ lists, target, likes, setLikes, favorites, setFavorites }) =
   }
 
   useEffect(
-    ()=>{
-      if (loginUser || loginUser.midx !== undefined) {
+    () => {
+      if (loginUser?.midx) {
         getMyLists();
         getMyDblists();
       }
-    },[]
-  )
+    }, [loginUser]
+  );
 
   return (
     <>

@@ -169,8 +169,8 @@ function Search() {
   }, [hasMoreMovie, hasMoreTV]);
 
   async function like(id) {
-    if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
     
@@ -229,10 +229,12 @@ function Search() {
   };
 
   useEffect(
-    ()=>{
-      getMyLikes();
-    },[]
-  )
+    () => {
+      if (loginUser?.midx) {
+        getMyLikes();
+      }
+    }, [loginUser]
+  );
 
   useEffect(() => {
     setPageMovie(1);

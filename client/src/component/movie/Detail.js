@@ -197,8 +197,8 @@ function Detail() {
   }
 
   function favorite() {
-    if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
 
@@ -275,8 +275,8 @@ function Detail() {
   }
 
   async function like(id) {
-    if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
     
@@ -318,12 +318,17 @@ function Detail() {
       findItem(id);
       getAverage();
       getLikes();
-      if (loginUser && loginUser.midx !== undefined) {
+    },[]
+  )
+
+  useEffect(
+    () => {
+      if (loginUser?.midx) {
         getMyLists();
         getMyDblists();
       }
-    },[]
-  )
+    }, [loginUser]
+  );
 
   return (
     <section className="content_info">
