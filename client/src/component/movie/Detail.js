@@ -29,8 +29,13 @@ function Detail() {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const [likes, setLikes] = useState([]);
+  const [isIncludeList, setIsIncludeList] = useState(false);
   const [myList, setMyList] = useState([]);
+  const [selectedLists, setSelectedLists] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddListModal, setIsAddListModal] = useState(false);
+  const [listTitle, setListTitle] = useState("");
+  const [security, setSecurity] = useState("N");
 
   function AverageRating({ avgScore }) {
     const stars = [1, 2, 3, 4, 5];
@@ -192,12 +197,61 @@ function Detail() {
   }
 
   function favorite() {
-    if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
 
     setIsModalOpen(true);
+  }
+
+  async function getMyLists() {
+    try {
+      const result = await jaxios.get("/api/member/getList", {params: {midx: loginUser.midx}});
+      setMyList(result.data.myList);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function addList() {
+    jaxios.post("/api/main/addList", {title: listTitle, security, midx: loginUser.midx})
+    .then((result) => {
+      if (result.data.msg === "ok") {
+        alert("리스트가 추가되었습니다");
+        setIsAddListModal(false);
+        setIsModalOpen(false);
+        setListTitle("");
+        setSecurity("N");
+        getMyLists();
+      } else {
+        alert(result.data.msg);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  }
+
+  function addMyList() {
+    if (selectedLists.length === 0) {
+      alert("추가할 리스트를 선택해주세요.");
+      return;
+    }
+
+    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: id})
+    .then((result)=>{
+      if (result.data.msg === "ok") {
+        alert("리스트를 추가했습니다");
+        getMyDblists();
+      } else {
+        alert(result.data.msg);
+      }
+    })
+    .catch((err)=>{console.error(err);})
+
+    setIsModalOpen(false);
+    setSelectedLists([]);
   }
 
   async function getLikes() {
@@ -221,14 +275,15 @@ function Detail() {
   }
 
   async function like(id) {
-    if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
     
     try {
         await jaxios.post("/api/main/like", {midx: loginUser.midx, dbidx: id});
-        await getMyLikes(); 
+        getMyLikes();
+        getLikes();
     } catch (err) {
         console.error("좋아요 처리 중 에러 발생:", err);
         alert("좋아요 처리 중 오류가 발생했습니다.");
@@ -247,10 +302,12 @@ function Detail() {
     }
   }
 
-  async function getMyLists() {
+  async function getMyDblists() {
     try {
-      const result = await jaxios.get("/api/member/getList", {params: {midx: loginUser.midx}});
-      setMyList(result.data.myList);
+      const result = await jaxios.get("/api/main/getMyDblists", {params: {midx: loginUser.midx}});
+      if (result.data !== undefined && result.data.list !== undefined) {
+        setIsIncludeList(result.data.list.some(item => item.dbidx === Number(id)));
+      }
     } catch (err) {
       console.error(err);
     }
@@ -261,9 +318,17 @@ function Detail() {
       findItem(id);
       getAverage();
       getLikes();
-      getMyLists();
     },[]
   )
+
+  useEffect(
+    () => {
+      if (loginUser?.midx) {
+        getMyLists();
+        getMyDblists();
+      }
+    }, [loginUser]
+  );
 
   return (
     <section className="content_info">
@@ -540,6 +605,7 @@ function Detail() {
             <Review dbidx={id} season="0" refreshAverage={getAverage} />
           </div>
         </div>
+
         <div className="right">
           <div className="movieInfo">
             <h3>영화 정보</h3>
@@ -556,7 +622,7 @@ function Detail() {
                   </div>
                 </div>
                 <div>
-                  <button className="buttonHover" onClick={()=>{favorite()}}><FontAwesomeIcon icon={faBookmark} /></button>
+                  <button className={`buttonHover ${isIncludeList ? "on" : ""}`} onClick={()=>{favorite()}}><FontAwesomeIcon icon={faBookmark} /></button>
                   <button className={`buttonHover ${likeOn ? "on" : ""}`} onClick={()=>{like(item.id)}}><FontAwesomeIcon icon={faThumbsUp} /><small>{likeCount}</small></button>
                 </div>
               </li>
@@ -624,20 +690,38 @@ function Detail() {
                 myList.length > 0 ? 
                   myList.map((mylist, lidx) => {
                     return (
-                      <li key={lidx}>
-                        <label htmlFor={`mylist_${mylist.listidx}`}>{mylist.title}</label>
-                        <input type="checkbox" value={mylist.listidx} id={`mylist_${mylist.listidx}`} />
-                        {/* <b><FontAwesomeIcon icon={faCheck} /></b> */}
+                      <li key={lidx} className="checkboxWrap">
+                        <input type="checkbox" value={mylist.listidx} id={`mylist_${mylist.listidx}`} onChange={(e)=>{const value = parseInt(e.target.value); if (e.target.checked) {setSelectedLists(prev => [...prev, value]);} else {setSelectedLists(prev => prev.filter(id => id !== value));}}} />
+                        <label className="flex" htmlFor={`mylist_${mylist.listidx}`}><p>{mylist.title}</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
                       </li>
                     )
                   })
                 : null
               }
-              <li><p>리스트 새로 만들기</p><button>+</button></li>
+              <li className="flex"><p>리스트 새로 만들기</p><button onClick={()=>{setIsAddListModal(true)}}>+</button></li>
             </ul>
             <div className="buttonWrap">
-              <button className="mainButton" onClick={() => {}}>추가하기</button>
-              <button className="mainButton" onClick={() => setIsModalOpen(false)}>닫기</button>
+              <button className="mainButton" onClick={()=>{addMyList()}}>추가하기</button>
+              <button className="mainButton" onClick={()=>setIsModalOpen(false)}>닫기</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isAddListModal && (
+        <div className="modalOverlay" onClick={() => setIsAddListModal(false)}>
+          <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+            <h3>리스트 추가</h3>
+            <div>
+              <input type="text" value={listTitle} onChange={(e)=>{setListTitle(e.currentTarget.value)}} />
+              <div className="checkboxWrap">
+                <input type="checkbox" value={security} onChange={(e)=>setSecurity(e.target.checked ? "Y" : "N")} id="checkbox_security" />
+                <label htmlFor="checkbox_security" className="flex"><p>리스트 노출 여부</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
+              </div>
+            </div>
+            <div className="buttonWrap">
+              <button className="mainButton" onClick={()=>{addList()}}>추가하기</button>
+              <button className="mainButton" onClick={()=>setIsAddListModal(false)}>닫기</button>
             </div>
           </div>
         </div>

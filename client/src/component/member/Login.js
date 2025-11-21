@@ -12,6 +12,7 @@ function Login() {
   const navigate = useNavigate()
   const cookies = new Cookies()
   const dispatch = useDispatch()
+  const [message, setMessage] = useState('')
 
   function onLoginlocal() {
     if (!email) return alert('이메일을 입력하세요')
@@ -21,9 +22,8 @@ function Login() {
       .post('/api/member/login', null, { params: { username: email, password: pwd } })
       .then((result) => {
         if (result.data.error === 'ERROR_LOGIN') {
-          return alert('이메일과 패스워드를 확인하세요')
+          setMessage('이메일과 패스워드를 확인하세요')
         } else {
-          alert(result.data.nickname + '님이 로그인하셨습니다')
           cookies.set('user', JSON.stringify(result.data), { path: '/' })
           dispatch(loginAction(result.data))
           navigate('/')
@@ -49,9 +49,11 @@ function Login() {
             <button className="btn btn-primary" onClick={onLoginlocal}>
               &nbsp;&nbsp;LOGIN&nbsp;&nbsp;
             </button>
-            <button className="btn btn-secondary" onClick={() => navigate('/join')}>
-              &nbsp;&nbsp;JOIN&nbsp;&nbsp;
+
+            <button className="btn btn-secondary" onClick={() => navigate('/confirmEmailCode')}>
+              JOIN
             </button>
+
           </div>
           <div className="sns-btns">
             <button
@@ -61,6 +63,7 @@ function Login() {
               KAKAO
             </button>
           </div>
+          <div style={{color:'orange', margin: '0 auto'}}>{message}</div>
         </div>
       </div>
     </article>

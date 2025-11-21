@@ -149,7 +149,7 @@ function Discover() {
 
   async function like(id) {
     if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
     

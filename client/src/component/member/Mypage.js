@@ -24,6 +24,8 @@ function Mypage({onClose}) {
     const [profileimg, setProfileimg] = useState('')
     const [profilemsg, setProfilemsg] = useState('')
     const [oldImgSrc, setOldImgSrc] = useState(loginUser.profileimg)
+    const [currentPwd, setCurrentPwd] = useState('')
+    const [message, setMessage] = useState('')
 
     const [imgSrc, setImgSrc] = useState('')
     const [imgStyle, setImgStyle] = useState({display:"none"});
@@ -55,11 +57,11 @@ function Mypage({onClose}) {
             }
 
             axios.get(`/api/file/url/${loginUser.profileimg}`)
-                .then((result) => {
-                    setOldImgSrc(result.data.image); // 미리보기 이미지 URL
-                })
-                .catch((err) => console.error(err));
-                }
+            .then((result) => {
+                setOldImgSrc(result.data.image); // 미리보기 이미지 URL
+            })
+            .catch((err) => console.error(err));
+            }
     }, [loginUser]);
 
     async function updateUser(){
@@ -119,8 +121,22 @@ function Mypage({onClose}) {
     }
 
     async function updatePwd(){
-        // if(loginUser.provider !== 'KAKAO' && pwd===''){ return alert('패스워드를 입력하세요');}
-        // if(loginUser.provider !== 'KAKAO' && pwd!==pwdChk){ return alert('패스워드 확인이 일치하지 않습니다');}
+        let result = await axios.post('/api/member/checkPwd', null, {params:{midx:loginUser.midx, pwd:currentPwd}})
+        if(result.data.msg === 'ok'){
+          setMessage('♥일치♥')
+          if(loginUser.provider !== 'KAKAO' && pwd===''){ return alert('패스워드를 입력하세요');}
+          if(loginUser.provider !== 'KAKAO' && pwd!==pwdChk){ return alert('패스워드 확인이 일치하지 않습니다');}
+          result = await axios.post('/api/member/resetPwd', null, {params:{midx:loginUser.midx, pwd}})
+            if( result.data.msg === 'ok' ){
+              console.log('비밀번호 변경')
+              dispatch( logoutAction() );
+              cookies.remove('user', {path:'/',} )
+              setIsOpen(false)
+              navigate('/')
+            }
+        }else{
+          setMessage('일치 X')
+        }
     }
 
     function fileUpload(e){
@@ -170,140 +186,159 @@ function Mypage({onClose}) {
     return (
         <>
         <div className="modal-backdrop" onClick={onClose}>
-  <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-    <div className="modal-header">
-      <h2>
-        {view === "menu" && `${loginUser.nickname} 님`}
-        {view === "profile" && "회원 정보 변경"}
-        {view === "password" && "암호 변경"}
-      </h2>
-      <button className="close-btn" onClick={onClose}>✕</button>
-    </div>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>
+                {view === "menu" && `${loginUser.nickname} 님`}
+                {view === "profile" && "회원 정보 변경"}
+                {view === "password" && "암호 변경"}
+              </h2>
+              <button className="close-btn" onClick={onClose}>✕</button>
+            </div>
 
-    <div className="modal-content">
-      {view === "menu" && (
-        <>
-          <div className="menu-item">
-            <div onClick={() => { onClose(); navigate('/mypage'); }}>마이페이지</div>
-          </div>
-          {/* <div>
-              <div onClick={()=>{ onClose(); navigate('/mylist') }}>마이리스트</div>
-          </div>
-          <hr />
-          <div style={{display:"flex", justifyContent:'center'}}>
-              <div onClick={()=>{ onClose(); navigate('/myfollow') }}>팔로우&nbsp;&nbsp;|&nbsp;&nbsp;팔로워</div>
-          </div> */}
-          <hr className="menu-divider" />
-          <div className="menu-item">
-            <div onClick={() => setView("profile")} style={{ cursor: 'pointer' }}>회원 정보 변경</div>
-            {/* <div onClick={() => setView("password")} style={{cursor:'pointer'}}>암호 변경</div> */}
-          </div>
-          <hr className="menu-divider" />
+            <div className="modal-content">
+              {view === "menu" && (
+                <>
+                  <div className="menu-item">
+                    <div onClick={() => { onClose(); navigate('/mypageView'); }}>마이페이지</div>
+                    {/* <div onClick={() => { onClose(); navigate('/mylist'); }}>마이리스트</div> */}
+                  </div>
+                  {/* <hr className="menu-divider" />
+                  <div className="menu-item" style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
+                    <div onClick={() => { onClose(); navigate('/myfollow'); }}>팔로우</div>&nbsp;&nbsp;/&nbsp;&nbsp;
+                    <div onClick={() => { onClose(); navigate('/myfollower'); }}>팔로워</div>
+                  </div> */}
+                  {/* <div>
+                      <div onClick={()=>{ onClose(); navigate('/mylist') }}>마이리스트</div>
+                  </div>
+                  <hr />
+                  <div style={{display:"flex", justifyContent:'center'}}>
+                      <div onClick={()=>{ onClose(); navigate('/myfollow') }}>팔로우&nbsp;&nbsp;|&nbsp;&nbsp;팔로워</div>
+                  </div> */}
+                  <hr className="menu-divider" />
+                  <div className="menu-item">
+                    <div onClick={() => setView("profile")} style={{ cursor: 'pointer' }}>회원 정보 변경</div>
+                  </div>
+                  <hr className="menu-divider" />
+                  <div className='menu-item'>
+                    <div onClick={() => setView("password")} style={{cursor:'pointer'}}>암호 변경</div>
+                  </div>
+                  <hr className="menu-divider" />
 
-          <button className="logout-btn" onClick={() => { onLogout(); }}>로그아웃</button>
-          {/* <button className="delete-btn">계정 영구 삭제</button> */}
-        </>
-      )}
+                  <button className="logout-btn" onClick={() => { onLogout(); }}>로그아웃</button>
+                  {/* <button className="delete-btn">계정 영구 삭제</button> */}
+                </>
+              )}
 
-      {/* 회원 정보 변경 화면 */}
-      {view === "profile" && (
-        <div className="profile-form">
-          <div className="mpfield">
-            <label>이메일</label>
-            <input type='text' value={email} onChange={(e) => { setEmail(e.currentTarget.value); }} readOnly/>
-          </div>
+              {/* 회원 정보 변경 화면 */}
+              {view === "profile" && (
+                <div className="profile-form">
+                  <div className="mpfield">
+                    <label>이메일</label>
+                    <input type='text' value={email} onChange={(e) => { setEmail(e.currentTarget.value); }} readOnly/>
+                  </div>
 
-          <div className="mpfield">
-            <label>비밀번호</label>
-            {
-              (loginUser.provider === 'KAKAO') ? (
-                <input type="password" value={pwdChk} disabled />
-              ) : (
-                <input type="password" value={pwd} onChange={(e) => { setPwd(e.currentTarget.value); }} />
-              )
-            }
-          </div>
+                  <div className="mpfield">
+                    <label>이름</label>
+                    <input type="text" value={loginUser.name} readOnly />
+                  </div>
 
-          <div className="mpfield">
-            <label>비밀번호 확인</label>
-            {
-              (loginUser.provider === 'KAKAO') ?
-                (<input type="password" readOnly />) :
-                (<input type="password" value={pwdChk} onChange={(e) => { setPwdChk(e.currentTarget.value); }} />)
-            }
-          </div>
+                  <div className="mpfield">
+                    <label>닉네임</label>
+                    <input type="text" value={nickname} onChange={(e) => { setNickname(e.currentTarget.value); }} />
+                  </div>
 
-          <div className="mpfield">
-            <label>이름</label>
-            <input type="text" value={loginUser.name} readOnly />
-          </div>
+                  <div className="mpfield">
+                    <label>전화번호</label>
+                    <input type="text" value={phone} onChange={(e) => { setPhone(e.currentTarget.value); }} />
+                  </div>
 
-          <div className="mpfield">
-            <label>닉네임</label>
-            <input type="text" value={nickname} onChange={(e) => { setNickname(e.currentTarget.value); }} />
-          </div>
+                  <div className="mpfield">
+                    <label>우편번호</label>
+                      <input type="text" value={zipnum} onChange={(e) => { setZipnum(e.currentTarget.value); }} readOnly />
+                      <button className="btn-highlight" onClick={() => { setIsOpen(!isOpen); }}>검색</button>
+                  </div>
 
-          <div className="mpfield">
-            <label>전화번호</label>
-            <input type="text" value={phone} onChange={(e) => { setPhone(e.currentTarget.value); }} />
-          </div>
+                  <div className="mpfield">
+                    <label>주소</label>
+                    <input type="text" value={address1} onChange={(e) => { setAddress1(e.currentTarget.value); }} />
+                  </div>
 
-          <div className="mpfield">
-            <label>우편번호</label>
-              <input type="text" value={zipnum} onChange={(e) => { setZipnum(e.currentTarget.value); }} readOnly />
-              <button className="btn-highlight" onClick={() => { setIsOpen(!isOpen); }}>검색</button>
-          </div>
+                  <div className="mpfield">
+                    <label>상세주소</label>
+                    <input type="text" value={address2} onChange={(e) => { setAddress2(e.currentTarget.value); }} />
+                  </div>
 
-          <div className="mpfield">
-            <label>주소</label>
-            <input type="text" value={address1} onChange={(e) => { setAddress1(e.currentTarget.value); }} />
-          </div>
+                  <div className="mpfield">
+                    <label>프로필 메세지</label>
+                    <input type="text" value={profilemsg} onChange={(e) => { setProfilemsg(e.currentTarget.value); }} />
+                  </div>
 
-          <div className="mpfield">
-            <label>상세주소</label>
-            <input type="text" value={address2} onChange={(e) => { setAddress2(e.currentTarget.value); }} />
-          </div>
+                  <div className="mpfield">
+                    <label>프로필 이미지</label>
+                    <input type="file" onChange={(e) => { fileUpload(e); }} />
+                  </div>
 
-          <div className="mpfield">
-            <label>프로필 메세지</label>
-            <input type="text" value={profilemsg} onChange={(e) => { setProfilemsg(e.currentTarget.value); }} />
-          </div>
+                  <div className="mpfield">
+                    <label>현재 이미지</label>
+                    <div className="mp-image-wrapper">
+                    {
+                      (oldImgSrc)&&(
+                        <img className="old-img" src={oldImgSrc} />
+                      )
+                    }
+                    {
+                      (imgSrc)&&(
+                        <img className="new-img" src={imgSrc} style={imgStyle} />
+                      )
+                    }
+                    </div>
+                  </div>
 
-          <div className="mpfield">
-            <label>프로필 이미지</label>
-            <input type="file" onChange={(e) => { fileUpload(e); }} />
-          </div>
+                  <div className="btn-group">
+                    <button className="btn btn-primary" onClick={() => { updateUser(); }}>저장</button>
+                    <button className="btn btn-secondary" onClick={() => setView("menu")}>뒤로</button>
+                  </div>
+                </div>
+              )}
 
-          <div className="mpfield">
-            <label>수정 전</label>
-            <img src={oldImgSrc} />
-            <label>수정 후</label>
-            <img src={imgSrc} style={imgStyle} />
-          </div>
+              {/* 암호 변경 화면 */}
+              {view === "password" && (
+                  <div>
+                    <div className="mpfield">
+                    <label>현재 비밀번호</label>
+                    <input type="password" value={currentPwd} onChange={(e)=>{setCurrentPwd(e.currentTarget.value)}}/><br /><br />
+                    {
+                      (message)?(<div style={{color:'orange'}}>{message}</div>):(null)
+                    }
+                  </div>
+                  <div className="mpfield">
+                    <label>수정 비밀번호</label>
+                    {
+                      (loginUser.provider === 'KAKAO') ? (
+                        <input type="password" value={pwdChk} disabled />
+                      ) : (
+                        <input type="password" value={pwd} onChange={(e) => { setPwd(e.currentTarget.value); }} />
+                      )
+                    }
+                  </div>
 
-          <div className="btn-group">
-            <button className="btn btn-primary" onClick={() => { updateUser(); }}>저장</button>
-            <button className="btn btn-secondary" onClick={() => setView("menu")}>뒤로</button>
+                  <div className="mpfield">
+                    <label>비밀번호 확인</label>
+                    {
+                      (loginUser.provider === 'KAKAO') ?
+                      (<input type="password" readOnly />) :
+                      (<input type="password" value={pwdChk} onChange={(e) => { setPwdChk(e.currentTarget.value); }} />)
+                    }
+                  </div>
+
+                  <button onClick={ ()=>{ updatePwd() } }>변경</button>
+                  <button onClick={() => setView("menu")}>뒤로</button>
+                  </div>
+              )}
+            </div>
           </div>
         </div>
-      )}
-
-      {/* 암호 변경 화면
-      {view === "password" && (
-          <div>
-          <label>현재 비밀번호</label>
-          <input type="password" /><br /><br />
-
-          <label>새 비밀번호</label>
-          <input type="password" /><br /><br />
-
-          <button onClick={ ()=>{ updatePwd() } }>변경</button>
-          <button onClick={() => setView("menu")}>뒤로</button>
-          </div>
-      )} */}
-    </div>
-  </div>
-</div>
 
 <div>
   <Modal isOpen={isOpen} ariaHideApp={false} style={customStyles}>

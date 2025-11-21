@@ -3,6 +3,7 @@ package com.ott.server.controller;
 import com.google.gson.Gson;
 import com.ott.server.dto.KakaoProfile;
 import com.ott.server.dto.OAuthToken;
+import com.ott.server.entity.DbList;
 import com.ott.server.entity.FileEntity;
 import com.ott.server.entity.Follow;
 import com.ott.server.entity.Member;
@@ -23,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -81,6 +83,7 @@ public class MemberController {
         HashMap<String, Object> result = new HashMap<>();
 //        member.setDeleteyn("N");
 //        member.setProvider("LOCAL"); // LOCAL: 일반 , KAKAO: 카카오
+        System.out.println("회원가입 전화번호 : " + member.getPhone());
         member.setRole(1); // 1: 일반 , 2: 관리자
         ms.insertMember(member);
         result.put("msg", "ok");
@@ -227,6 +230,23 @@ public class MemberController {
         return result;
     }
 
+    @PostMapping("/checkPwd")
+    public HashMap<String, Object> checkPwd(@RequestParam("midx") int midx, @RequestParam("pwd") String pwd) {
+        HashMap<String, Object> result = ms.checkPwd(midx, pwd);
+        System.out.println("11111111111111111111111111111111111111111111111111111111111");
+        System.out.println("checkPwd result : " + result.get("msg"));
+        return result;
+    }
+
+    @PostMapping("/resetPwd")
+    public HashMap<String, Object> resetPwd(@RequestParam("midx") int midx, @RequestParam("pwd") String pwd) {
+        HashMap<String, Object> result = new HashMap<>();
+        System.out.println("222222222222222222222222222222222222222222222222222222");
+        ms.resetPwd(midx, pwd);
+        result.put("msg", "ok");
+        return result;
+    }
+
     @GetMapping("/getList")
     public HashMap<String, Object> getList(@RequestParam("midx") int midx) {
         HashMap<String, Object> result = new HashMap<>();
@@ -273,6 +293,73 @@ public class MemberController {
         HashMap<String, Object> result = new HashMap<>();
         ms.deleteFollow(follow);
         result.put("msg", "ok");
+        return result;
+    }
+
+    private int number;
+
+    @PostMapping("/sendMail")
+    public HashMap<String, Object> sendMail(@RequestParam("email") String email){
+        HashMap<String, Object> result = new HashMap<>();
+        Member member = ms.checkEmail(email);
+        if(member == null){
+            number = ms.sendEmail(email);
+            result.put("msg", "ok");
+        }else{
+            result.put("msg", "no");
+        }
+        return result;
+    }
+
+    @PostMapping("/confirmCode")
+    public HashMap<String, Object> confirmCode(@RequestParam("code") String code){
+        HashMap<String, Object> result = new HashMap<>();
+        if( Integer.parseInt( code ) == number ){
+            result.put("msg", "ok");
+        }else{
+            result.put("msg", "no");
+        }
+        return result;
+    }
+
+    @GetMapping("/getMyListView")
+    public HashMap<String, Object> getMyListView(@RequestParam("listidx") int listidx) {
+        System.out.println("listidx = " + listidx);
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("myListView", ms.getListView(listidx));
+        return result;
+    }
+
+    @GetMapping("/getMyListDetailView/{page}")
+    public HashMap<String, Object> getMyListDetailView(@PathVariable("page") int page, @RequestParam("listidx") int listidx) {
+        System.out.println("listidx = " + listidx);
+        HashMap<String, Object> result = ms.getListDetailView(page, listidx);
+        return result;
+    }
+
+    @GetMapping("/addTitleList/{dbidx}")
+    public HashMap<String, Object> addTitleList(@PathVariable("dbidx") int dbidx, @RequestParam("listidx") int listidx) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.insertDbList(dbidx, listidx);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @PostMapping("/getKakaoUser")
+    public HashMap<String, Object> getKakaoUser(@RequestParam("snsid") String snsid, @RequestParam("password") String pwd) {
+        HashMap<String, Object> result = new HashMap<>();
+        System.out.println("11111111111111111111111111111111111111111111111");
+        System.out.println("pwd = " + pwd);
+        if( pwd.equals("KAKAO") ){
+            Member member = ms.getKakaoUser(snsid);
+            System.out.println("member = " + member);
+            if( member == null ){
+                result.put("msg", "no");
+            }else{
+                result.put("KakaoUser", member);
+                result.put("msg", "ok");
+            }
+        }
         return result;
     }
 

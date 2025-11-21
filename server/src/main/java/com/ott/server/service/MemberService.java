@@ -2,17 +2,23 @@ package com.ott.server.service;
 
 
 import com.ott.server.dto.Paging;
+import com.ott.server.entity.DbList;
 import com.ott.server.entity.Follow;
 import com.ott.server.entity.ListEntity;
 import com.ott.server.entity.Member;
+import com.ott.server.repository.DbListRepository;
 import com.ott.server.repository.FollowRepository;
 import com.ott.server.repository.ListEntityRepository;
 import com.ott.server.repository.MemberRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +36,7 @@ public class MemberService {
     private final MemberRepository mr;
     private final ListEntityRepository ler;
     private final FollowRepository fr;
+    private final DbListRepository dlr;
 
     public Member checkEmail(String email) {
         return mr.findByEmail(email);
@@ -129,5 +136,99 @@ public class MemberService {
 
     public void deleteFollow(Follow follow) {
         fr.deleteByFfromAndFto(follow.getFfrom(), follow.getFto());
+    }
+
+    // 이메일 전송주체
+    @Value("${spring.mail.username}")
+    private static String senderEmail;
+    private final JavaMailSender JMSender;
+    private static int number;
+
+    public int sendEmail(String email) {
+        // 코드 발생
+        number = (int)(Math.random() * (90000)) + 100000;
+        // 수신 이메일, 제목 내용 등등을 설정할 객체를 생성, 전송될 이메일 내용(수신자, 제목, 내용 등) 구성 객체
+        MimeMessage message = JMSender.createMimeMessage();
+        try {
+            message.setFrom( senderEmail );  // 보내는 사람 설정
+            message.setRecipients( MimeMessage.RecipientType.TO, email );  // 받는 사람 설정
+            message.setSubject("오늘 뭐보지? [이메일 인증]");  // 제목 설정
+            String body = "";
+            body += "<h3>" + "요청하신 인증 번호입니다." + "</h3>";
+            body += "<h1>" + number + "</h1>";
+            body += "<h3>" + "인증번호를 입력하시고 회원가입을 해주세요." + "</h3>";
+            message.setText(body,"UTF-8", "html");  // 본문 설정
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+        JMSender.send(message);  // 구성 완료된 message 를  JMSender 로 전송
+        return number;
+    }
+
+    public ListEntity getListView(int listidx) {
+        return ler.findByListidx(listidx);
+    }
+
+    public HashMap<String, Object> getListDetailView(int page, int listidx) {
+        //HashMap<String, Object> result = new HashMap<>();
+        //List<DbList> dbList = dlr.findByListidx(listidx);
+        //System.out.println("getListDetailView : " + dbList);
+        HashMap<String , Object> result = new HashMap<>();
+        if( (Integer)page == null || page < 1 ){
+            result.put("dbList", dlr.findAllByListidx(listidx));
+        }else {
+            Paging paging = new Paging();
+            paging.setPage(page);
+
+            //int count = fr.findAll().size();
+            int count = dlr.countByListidx(listidx);
+            System.out.println("리스트 타이틀 카운트 : " + count);
+            paging.setDisplayRow(2);
+            paging.setDisplayPage(7);
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "id"));
+            Page<DbList> follows = dlr.findByListidx(listidx, pageable);
+            result.put("dbList", follows.getContent());
+            result.put("paging", paging);
+        }
+        return result;
+    }
+
+    public DbList insertDbList(int dbidx, int listidx) {
+        DbList dbList = new DbList();
+        dbList.setDbidx(dbidx);
+        dbList.setListidx(listidx);
+        return dlr.save(dbList);
+    }
+
+    public Member getKakaoUser(String snsid) {
+        return mr.findBySnsid(snsid);
+    }
+
+    public void resetPwd(int midx, String pwd) {
+        Optional<Member> optionalMember = mr.findByMidx(midx);
+        Member mem = optionalMember.get();
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
+        mem.setPwd(pe.encode(pwd));
+    }
+
+    public HashMap<String, Object> checkPwd(int midx, String pwd) {
+        HashMap<String, Object> result = new HashMap<>();
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
+        Optional<Member> optionalMember = mr.findByMidx(midx);
+        Member mem = optionalMember.get();
+        System.out.println("checkPwd mem : " + mem);
+        if( mem != null ){
+            boolean isPasswordMatch = pe.matches(pwd, mem.getPwd());
+            if( isPasswordMatch ){
+                result.put("msg", "ok");
+            }else{
+                result.put("msg", "no");
+            }
+        }else{
+            result.put("msg", "no");
+        }
+        return result;
     }
 }

@@ -9,6 +9,7 @@ function Main() {
   const baseUrl = "https://api.themoviedb.org/3";
   const loginUser = useSelector(state=>state.user);
   const [likes, setLikes] = useState([]);
+  const [favorites, setFavorites] = useState([]);
 
   const [onAir, setOnAir] = useState([]);
   const [trending, setTrending] = useState([]);
@@ -155,6 +156,18 @@ function Main() {
     }
   }
 
+  async function getMyDblists() {
+    try {
+      const result = await jaxios.get("/api/main/getMyDblists", {params: {midx: loginUser.midx}});
+      if (result.data !== undefined && result.data.list !== undefined) {
+        const dbidxList = result.data.list.map(favorite => favorite.dbidx);
+        setFavorites(dbidxList);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   useEffect(
     ()=>{
       findTvs("on_the_air");
@@ -166,6 +179,7 @@ function Main() {
 
       if (loginUser && loginUser.midx > 0) {
         getMyLikes();
+        getMyDblists();
       }
     },[]
   )
@@ -191,37 +205,37 @@ function Main() {
       </Slider>
   
       <h3>주간 인기 급상승 TV 시리즈</h3>
-      <ListCard lists={trending} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={trending} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>인기 TV 시리즈</h3>
-      <ListCard lists={popular} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={popular} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>평점 높은 TV 시리즈</h3>
-      <ListCard lists={topRated} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={topRated} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>액션 & 어드밴쳐</h3>
-      <ListCard lists={action} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={action} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>애니메이션</h3>
-      <ListCard lists={animation} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={animation} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>코미디</h3>
-      <ListCard lists={comedy} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={comedy} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>범죄</h3>
-      <ListCard lists={crime} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={crime} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>드라마</h3>
-      <ListCard lists={drama} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={drama} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>SF</h3>
-      <ListCard lists={SF} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={SF} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>가족</h3>
-      <ListCard lists={family} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={family} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3>어린이</h3>
-      <ListCard lists={kids} target="tv" likes={likes} setLikes={setLikes} />
+      <ListCard lists={kids} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
     </div>
   )
 }

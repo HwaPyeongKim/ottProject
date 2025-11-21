@@ -2,7 +2,9 @@ package com.ott.server.service;
 
 import com.ott.server.dto.Paging;
 import com.ott.server.entity.Review;
+import com.ott.server.entity.ReviewReport;
 import com.ott.server.repository.MemberRepository;
+import com.ott.server.repository.ReviewReportRepository;
 import com.ott.server.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ public class ReviewService {
 
     private final ReviewRepository rr;
     private final MemberRepository mr;
+    private final ReviewReportRepository rrr;
 
     public void saveReview(Review review) {
         review.setDeleteyn("N");
@@ -34,12 +37,12 @@ public class ReviewService {
         paging.setDisplayRow(displayRow);
         paging.setPage(page);
 
-        int count = rr.countByDbidxAndSeasonAndDeleteyn(dbidx, season, deleteyn);
+        int count = rr.countByDbidxAndSeasonAndDeleteynAndContentIsNotNullAndContentNot(dbidx, season, deleteyn, "");
         paging.setTotalCount(count);
         paging.calPaging();
 
         Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "writedate"));
-        Page<Review> list = rr.findAllByDbidxAndSeasonAndDeleteyn(dbidx, season, deleteyn, pageable);
+        Page<Review> list = rr.findAllByDbidxAndSeasonAndDeleteynAndContentIsNotNullAndContentNot(dbidx, season, deleteyn, "", pageable);
 
         result.put("list", list.getContent());
         result.put("paging", paging);
@@ -55,6 +58,34 @@ public class ReviewService {
         Review review = rr.findByRidx(ridx);
         if (review != null) {
             review.setDeleteyn("Y");
+        }
+    }
+
+    public void edit(Review review) {
+        Review review1 = rr.findByRidx(review.getRidx());
+        if (review1 != null) {
+            review1.setScore(review.getScore());
+            review1.setContent(review.getContent());
+        }
+    }
+
+    public int spoil(int ridx, int midx) {
+        ReviewReport reviewReport = rrr.findByRidxAndMidx(ridx, midx);
+        if (reviewReport != null) {
+            return 0;
+        } else {
+            ReviewReport report = new ReviewReport();
+            report.setRidx(ridx);
+            report.setMidx(midx);
+            rrr.save(report);
+
+            int count = rrr.countByRidx(ridx);
+            if (count >= 5) {
+                Review review = rr.findByRidx(ridx);
+                review.setIsspoil("Y");
+            }
+
+            return 1;
         }
     }
 }
