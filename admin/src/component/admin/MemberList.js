@@ -33,23 +33,6 @@ function MemberList() {
         loadData(p, key);
     }
 
-    function changeAdmin(userid, checked) {
-        const url = checked
-            ? '/api/admin/changeRoleAdmin'
-            : '/api/admin/changeRoleUser';
-
-        jaxios.post(url, null, { params: { userid } })
-            .then((result) => {
-                if (result.data.msg === 'ok') {
-                    alert(
-                        checked
-                            ? `${userid} 님이 관리자로 변경되었습니다.`
-                            : `${userid} 님이 일반유저로 변경되었습니다.`
-                    );
-                }
-            });
-    }
-
     return (
         <div className="admin-container">
 
@@ -77,9 +60,10 @@ function MemberList() {
             <table className="admin-table">
                 <thead>
                     <tr>
-                        <th>권한</th>
-                        <th>User ID</th>
+                        <th>NO.</th>
                         <th>성명</th>
+                        <th>닉네임</th>
+                        <th>이메일</th>
                         <th>Phone</th>
                         <th>주소</th>
                         <th>Provider</th>
@@ -91,17 +75,10 @@ function MemberList() {
                     {memberList.length > 0 ? (
                         memberList.map((member, idx) => (
                             <tr key={idx}>
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        checked={member.memberRoleList?.includes("ADMIN")}
-                                        onChange={(e) =>
-                                            changeAdmin(member.userid, e.target.checked)
-                                        }
-                                    />
-                                </td>
-                                <td>{member.userid}</td>
+                                <td>{member.midx}</td>
                                 <td>{member.name}</td>
+                                <td>{member.nickname}</td>
+                                <td>{member.email}</td>
                                 <td>{member.phone}</td>
                                 <td>{member.address1} {member.address2}</td>
                                 <td>{member.provider}</td>
@@ -110,27 +87,27 @@ function MemberList() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="7">데이터가 없습니다.</td>
+                            <td colSpan="6">데이터가 없습니다.</td>
                         </tr>
                     )}
                 </tbody>
             </table>
 
             {/* 페이징 */}
-            <div style={{ textAlign: "center", marginTop: "1rem" }}>
+            <div className="pagination">
                 {paging.prev && (
-                    <span
-                        style={{ cursor: "pointer", margin: "0 5px" }}
+                    <span 
+                        className="page-btn" 
                         onClick={() => onPageMove(paging.beginPage - 1)}
                     >
                         ◀
                     </span>
                 )}
 
-                {beginEnd.map((p) => (
+                {beginEnd.map((p, idx) => (
                     <span
-                        key={p}
-                        style={{ cursor: "pointer", margin: "0 5px" }}
+                        key={idx}
+                        className={`page-btn ${p === paging.page ? "active" : ""}`}
                         onClick={() => onPageMove(p)}
                     >
                         {p}
@@ -138,8 +115,8 @@ function MemberList() {
                 ))}
 
                 {paging.next && (
-                    <span
-                        style={{ cursor: "pointer", margin: "0 5px" }}
+                    <span 
+                        className="page-btn" 
                         onClick={() => onPageMove(paging.endPage + 1)}
                     >
                         ▶

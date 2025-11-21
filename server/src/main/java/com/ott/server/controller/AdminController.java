@@ -57,12 +57,12 @@ public class AdminController {
         return result;
     }
 
-//    @GetMapping("/getMemberList")
-//    public HashMap<String, Object> getMemberList(@RequestParam("page") int page,
-//                                                 @RequestParam(value="key", required = false, defaultValue = "") String key){
-//        HashMap<String, Object> result = as.getMemberList(page, key);
-//        return result;
-//    }
+    @GetMapping("/getMemberList")
+    public HashMap<String, Object> getMemberList(@RequestParam("page") int page,
+                                                 @RequestParam(value="key", required = false, defaultValue = "") String key){
+        HashMap<String, Object> result = as.getMemberList(page, key);
+        return result;
+    }
 
 
 
