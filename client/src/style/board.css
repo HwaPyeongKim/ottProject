@@ -33,20 +33,25 @@
 
 .tab-button {
   padding: 8px 20px;
-  margin: 0 5px;
-  border: 1px solid #ddd;
+  margin: 0 5px;  
+  border: 1px solid #ddd;  
   border-radius: 20px;
-  background-color: white;
+  background-color: rgb(122, 108, 108);
+  color: white;
+  border-color: black;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: bold;
   transition: all 0.2s; /* 부드러운 전환 효과 */
 }
+.boardWrite{
+  background-color: var(--highlight-color);
+  color: #000;
+}
 
 .tab-button.active {
-  background-color: rgb(122, 108, 108);
-  color: white;
-  border-color: black;
+  background-color: white;
+  color: #000;
 }
 
 /* 개별 댓글 아이템 스타일 */
@@ -223,7 +228,6 @@
   text-align: left;
   cursor: pointer;
   font-size: 14px;
-  /* transition: background 0.2s; */
 }
 
 .dropdown_menu button:hover {
@@ -234,7 +238,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
   margin: 10px 10px;
 }
 
