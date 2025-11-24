@@ -30,6 +30,15 @@
 }
 
 /* ============================
+   탭메뉴
+   ============================ */
+.tabMenu {display: flex; margin-bottom: 20px;}
+.tabMenu li {margin-right: 10px;}
+.tabMenu li button {background: transparent; font-size: 1.2rem; font-weight: bold; color: #fff; border: none; outline: none; border-radius: 5px; padding: 5px 20px; cursor: pointer;}
+.tabMenu li button.on {background: #f5c518;}
+.tabMenu li button:hover {background: #f5c518;}
+
+/* ============================
    테이블
    ============================ */
 .admin-table {
