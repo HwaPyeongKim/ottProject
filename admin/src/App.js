@@ -5,6 +5,7 @@ import axios from "axios";
 
 import "./style/admin.css";
 // import "./style/common.css";
+import "./style/reset.css";
 import "./style/commonj.css";
 
 

@@ -67,6 +67,19 @@ public class AdminController {
     }
 
 
+    @GetMapping("/getReports")
+    public HashMap<String, Object> getReports(@RequestParam("page") int page, @RequestParam(value="key", required=false, defaultValue="") String key, @RequestParam("tab") String tab) {
+        HashMap<String, Object> result = as.getReports(page, key, tab);
+        return result;
+    }
+
+    @PostMapping("/cancelReport")
+    public HashMap<String, Object> cancelReport(@RequestParam("tab") String tab, @RequestParam("idx") int idx) {
+        HashMap<String, Object> result = new HashMap<>();
+        as.cancelReport(tab,idx);
+        result.put("msg", "ok");
+        return result;
+    }
 
 
 }

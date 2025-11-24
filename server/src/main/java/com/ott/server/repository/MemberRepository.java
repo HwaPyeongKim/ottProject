@@ -1,5 +1,6 @@
 package com.ott.server.repository;
 
+import com.ott.server.entity.Board;
 import com.ott.server.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,10 +1,11 @@
 package com.ott.server.service;
 
 import com.ott.server.dto.Paging;
-import com.ott.server.entity.Member;
-import com.ott.server.entity.Qna;
+import com.ott.server.entity.*;
+import com.ott.server.repository.BoardRepository;
 import com.ott.server.repository.MemberRepository;
 import com.ott.server.repository.QnaRepository;
+import com.ott.server.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,8 @@ public class AdminService {
 
     private final MemberRepository mr;
     private final QnaRepository qr;
+    private final BoardRepository br;
+    private final ReviewRepository rr;
 
 
     public HashMap<String, Object> getQnaList(int page, String key) {
@@ -132,4 +135,74 @@ public class AdminService {
         return result;
     }
 
+    public HashMap<String, Object> getReports(int page, String key, String tab) {
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+
+        if (tab.equals("community")) {
+            if (key.equals("")) {
+                int count = br.countByStatus(BoardStatus.BLURRED);
+                paging.setTotalCount(count);
+                paging.calPaging();
+                int pageNumber = (page < 1) ? 0 : page - 1;
+                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(Sort.Direction.DESC, "writedate"));
+                Page<Board> list = br.findByStatus(BoardStatus.BLURRED, pageable );
+                result.put("list", list.getContent());
+            } else {
+                int count = br.countByKeyAndStatus(key);
+                paging.setTotalCount(count);
+                paging.calPaging();
+                int pageNumber = (page < 1) ? 0 : page - 1;
+                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(Sort.Direction.DESC, "writedate"));
+                Page<Board> list = br.searchByKeyAndStatus(BoardStatus.BLURRED , key, pageable);
+                result.put("list", list.getContent());
+            }
+        } else {
+            if (key.equals("")) {
+                int count = rr.countByIsspoil("Y");
+                paging.setTotalCount(count);
+                paging.calPaging();
+                int pageNumber = (page < 1) ? 0 : page - 1;
+                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(Sort.Direction.DESC, "writedate"));
+                Page<Review> list = rr.findByIsspoil( "Y" , pageable );
+                result.put("list", list.getContent());
+            } else {
+                int count = rr.countByKeyAndIsspoil(key);
+                paging.setTotalCount(count);
+                paging.calPaging();
+                int pageNumber = (page < 1) ? 0 : page - 1;
+                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(Sort.Direction.DESC, "writedate"));
+                Page<Review> list = rr.searchByKeyAndIsspoil(key, pageable);
+                result.put("list", list.getContent());
+            }
+        }
+
+        result.put("paging", paging);
+        return result;
+    }
+
+    public HashMap<String, Object> cancelReport(String tab, int idx) {
+        HashMap<String, Object> result = new HashMap<>();
+        if (tab.equals("community")) {
+            Board board = br.findByBidx(idx);
+            if (board != null) {
+                board.setStatus(BoardStatus.NORMAL);
+                result.put("msg", "ok");
+            } else {
+                result.put("msg", "게시글을 찾을 수 없습니다");
+            }
+        } else {
+            Review review = rr.findByRidx(idx);
+            if (review != null) {
+                review.setIsspoil("N");
+                result.put("msg", "ok");
+            } else {
+                result.put("msg", "후기를 찾을 수 없습니다");
+            }
+        }
+        return result;
+    }
 }
