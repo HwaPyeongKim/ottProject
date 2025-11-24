@@ -37,17 +37,6 @@ function BoardMain() {
         }
     }
 
-    // function onPageMove(p) {
-    //     jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
-    //         .then(result => {
-    //             setPaging(result.data.paging);
-    //             const newBoards = result.data.boardList
-    //                 .filter(board => !deletedIds.includes(board.bidx))
-    //                 .filter(board => !boardList.some(b => b.bidx === board.bidx));
-    //             setBoardList([...boardList, ...newBoards]);
-    //         })
-    //         .catch(err => console.error(err));
-    // }
 
     function onPageMove(p) {
     jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
@@ -113,6 +102,7 @@ function BoardMain() {
                     <button className={`tab-button ${sortType === 'latest' ? 'active' : ''}`} onClick={Latest}>최신</button>
                     <button className={`tab-button ${sortType === 'popular' ? 'active' : ''}`} onClick={Popular}>인기</button>
                 </div>
+                <button className='tab-button boardWrite' onClick={() => navigate("/writeForm")}>글쓰기</button>
             </div>
             <div className="search-bar">
                 <input
@@ -121,8 +111,7 @@ function BoardMain() {
                     value={searchWord}
                     onChange={(e) => setSearchWord(e.target.value)}
                 />
-                <button className='search-btn' onClick={() => onSearch(1)}>검색</button>
-                <button className='tab-button boardWrite' onClick={() => navigate("/writeForm")}>글쓰기</button>
+                <button className='search-btn' onClick={() => onSearch(1)}>검색</button>                
             </div>
             <div className="boardlist">
                 {boardList && boardList.length !== 0 ? (

@@ -41,8 +41,8 @@ function Board(props) {
             margin: 0, 
             width: "700px",
             height: "700px",
-            padding: 0,
-            overflow: "hidden", // 수정: 모달 밖 스크롤 방지
+            padding: "15px",
+            overflow: "auto", // 수정: 모달 밖 스크롤 방지
             zIndex: 1001,
             borderRadius: "35px",
             border: "none", 
@@ -67,22 +67,22 @@ function Board(props) {
         return `${Math.floor(days / 365)}년 전`;
     }
 
-    useEffect(() => {
-        const preventScroll = (e) => {
-        if (isOpen) e.preventDefault();
-        };
-        if (isOpen) {
-        window.addEventListener('wheel', preventScroll, { passive: false });
-        window.addEventListener('touchmove', preventScroll, { passive: false });
-        } else {
-        window.removeEventListener('wheel', preventScroll);
-        window.removeEventListener('touchmove', preventScroll);
-        }
-        return () => {
-        window.removeEventListener('wheel', preventScroll);
-        window.removeEventListener('touchmove', preventScroll);
-        };
-    }, [isOpen]);
+    // useEffect(() => {
+    //     const preventScroll = (e) => {
+    //     if (isOpen) e.preventDefault();
+    //     };
+    //     if (isOpen) {
+    //     window.addEventListener('wheel', preventScroll, { passive: false });
+    //     window.addEventListener('touchmove', preventScroll, { passive: false });
+    //     } else {
+    //     window.removeEventListener('wheel', preventScroll);
+    //     window.removeEventListener('touchmove', preventScroll);
+    //     }
+    //     return () => {
+    //     window.removeEventListener('wheel', preventScroll);
+    //     window.removeEventListener('touchmove', preventScroll);
+    //     };
+    // }, [isOpen]);
 
     useEffect(
         ()=>{
@@ -176,6 +176,19 @@ function Board(props) {
         .catch((err)=>{console.error(err)});
     }
 
+    useEffect(() => {
+        async function CommentCount() {
+            try {
+                const res = await jaxios.get(`/api/bcomment/getCommentCount/${props.board.bidx}`);
+                setCommentCount(res.data.count); // 서버에서 댓글+대댓글 합계 반환
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        if (props.board.bidx) {
+            CommentCount();
+        }
+    }, [props.board.bidx]);
    
 
     return (
@@ -193,7 +206,9 @@ function Board(props) {
 
                 <div className="comment-body">
                     <div className="review-content">
-                        <img className="review-image" src={imgSrc} alt="영화포스터 / 자유게시물 등" />      
+                        {imgSrc && (
+                            <img className="review-image" src={imgSrc} alt="영화포스터 / 자유게시물 등" />
+                        )}      
                         {isBlurred && !showSpoiler ? (
                             <div className="spoiler-warning" onClick={() => setShowSpoiler(true)} >
                             ⚠️ 스포성 내용이 포함된 게시글입니다. (클릭하여 보기)
@@ -214,11 +229,6 @@ function Board(props) {
                         )}
                     </div>
       
-                    
-                    {/* <div className="likes-replies">
-                        <span>좋아요 {likeList.length}</span>
-                        <span>댓글 0</span>
-                    </div> */}
                 </div>
                 <div className="comment-actions">                    
                     <div className="action-buttons">
@@ -230,7 +240,7 @@ function Board(props) {
                                     <button className="icon-button" onClick={() => onLike()}>🤍 {likeList.length}</button>
                                 )
                             }
-                            <button className="icon-button" onClick={()=>{setIsOpen(true)}}>💬 1</button>
+                            <button className="icon-button" onClick={()=>{setIsOpen(true)}}>💬 {commentCount}</button>
                         </div>
                         <div className="update-button" ref={updateButtonRef}>
                             <button className="icon-button" onClick={() => setMenuOpen(prev => !prev)}>⋯</button>
@@ -245,7 +255,7 @@ function Board(props) {
 
                 <div>
                     <Modal isOpen={isOpen} onRequestClose={closeModal} style={customStyles} >
-                        <CommentModal onClose={closeModal} bidx={props.board.bidx}/>
+                        <CommentModal onClose={closeModal} bidx={props.board.bidx} onCommentAdded={() => setCommentCount(prev => prev + 1)}/>
                     </Modal>
                 </div>
             </div>

@@ -26,11 +26,9 @@ public class BComment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bidx")
-    @JsonIgnore
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "midx")
-    @JsonIgnore
     private Member member;
 }
