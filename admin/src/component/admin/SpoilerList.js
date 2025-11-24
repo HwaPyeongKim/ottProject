@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
+// import parse from 'html-react-parser';
 import jaxios from "../../util/JWTUtil";
+import axios from "axios";
 
 function SpoilerList() {
 
@@ -9,6 +11,8 @@ function SpoilerList() {
   const [beginEnd, setBeginEnd] = useState([]);
   const [lists, setLists] = useState([]);
   const [key, setKey] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [content, setContent] = useState({});
 
   function getLists(tab, page, key) {
     jaxios.get("/api/admin/getReports", {params: { page, key, tab }})
@@ -29,7 +33,6 @@ function SpoilerList() {
   async function cancelReport (tab, idx) {
     try {
       const result = await jaxios.post("/api/admin/cancelReport", null, {params: {tab, idx}});
-      console.log(result.data);
       if (result.data.msg === "ok") {
         alert("블라인드가 해제되었습니다");
         setLists([]);
@@ -39,6 +42,30 @@ function SpoilerList() {
       }
     } catch (err) {
       console.error(err);
+    }
+  }
+
+  async function viewContent(b, bidx=0) {
+    if (b) {
+      setModalOpen(true);
+
+      try {
+        const result = await jaxios.get(`/api/board/getBoard/${bidx}`);
+        const board = result.data.board;
+        board.imgSrc = "";
+        if (board.fidx) {
+          const file = await axios.get(`/api/file/url/${board.fidx}`);
+          board.imgSrc = file.data.image;
+        }
+        console.log(board);
+        setContent(board);
+      } catch (err) {
+        console.error(err);
+      }
+
+    } else {
+      setModalOpen(false);
+      setContent({});
     }
   }
 
@@ -64,10 +91,10 @@ function SpoilerList() {
       
       {
         activeTab === "community" ? (
-          <table className="admin-table">
+          <table className="admin-table spoiler">
             <thead>
               <tr>
-                <th>제목</th>
+                <th className="content">제목</th>
                 <th>작성자</th>
                 <th>신고건수</th>
                 <th>작성일</th>
@@ -81,11 +108,11 @@ function SpoilerList() {
 
                   return (
                     <tr key={lidx}>
-                      <td><button onClick={()=>{}}>{list.title}</button></td>
+                      <td className="content"><button onClick={()=>{viewContent(true, list.bidx)}}>{list.title}</button></td>
                       <td>{list.boardMember?.nickname ?? "Unknown"}</td>
                       <td>{list.reportcount}</td>
                       <td>{list.writedate ? list.writedate.substring(2, 10) : null}</td>
-                      <td><button onClick={()=>{cancelReport(activeTab, list.bidx)}}>해제하기</button></td>
+                      <td className="buttons"><button className="mainButton" onClick={()=>{cancelReport(activeTab, list.bidx)}}>해제하기</button></td>
                     </tr>
                   )
                 })
@@ -94,10 +121,10 @@ function SpoilerList() {
             </tbody>
           </table>
         ) : (
-          <table className="admin-table">
+          <table className="admin-table spoiler">
             <thead>
               <tr>
-                <th>내용</th>
+                <th className="content">내용</th>
                 <th>작성자</th>
                 <th>신고건수</th>
                 <th>작성일</th>
@@ -111,11 +138,11 @@ function SpoilerList() {
 
                   return (
                     <tr key={lidx}>
-                      <td><button onClick={()=>{}}>{list.content}</button></td>
+                      <td className="content"><button onClick={()=>{}} className="textWrap">{list.content}</button></td>
                       <td>{list.member?.nickname ?? "Unknown"}</td>
                       <td>{list.reportcount}</td>
                       <td>{list.writedate ? list.writedate.substring(2, 10) : null}</td>
-                      <td><button onClick={()=>{cancelReport(activeTab, list.ridx)}}>해제하기</button></td>
+                      <td className="buttons"><button className="mainButton" onClick={()=>{cancelReport(activeTab, list.ridx)}}>해제하기</button></td>
                     </tr>
                   )
                 })
@@ -133,6 +160,37 @@ function SpoilerList() {
         ))}
         {paging.next && (<span  className="page-btn"  onClick={() => onPageMove(paging.endPage + 1)}>▶</span>)}
       </div>
+
+      {modalOpen && content && (
+        <div className="modalOverlay" onClick={() => viewContent(false)}>
+          <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+            {
+              content ?
+              (
+                <div className="contentWrap">
+                  <div className="userinfo">
+                    <div>
+                      <img src="" alt="" />
+                    </div>
+                    <p>{content.boardMember?.nickname ?? "Unknown"}</p>
+                  </div>
+                  <div className="content">
+                    <img src={content.imgSrc} alt="게시글 사진" />
+                    <div>
+                      <h3>{content.title}</h3>
+                      <p>{content.content}</p>
+                    </div>
+                  </div>
+                </div>
+              ) :
+              <p>데이터를 불러올 수 없습니다</p>
+            }
+            <div className="buttonWrap">
+              <button className="mainButton" onClick={()=>viewContent(false)}>닫기</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
