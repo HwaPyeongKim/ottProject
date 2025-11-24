@@ -12,6 +12,7 @@ import Submenu from "./component/Submenu";
 
 import MemberList from "./component/admin/MemberList";
 import QnaList from "./component/admin/QnaList";
+import QnaAdminView from "./component/admin/QnaAdminView";
 import SpoilerList from "./component/admin/SpoilerList";
 
 
@@ -25,7 +26,9 @@ function App() {
         <Routes>
             <Route path="/memberList" element={<MemberList />} />
             <Route path="/qnaList" element={<QnaList />} />
+            <Route path="/qnaAdminView/:qidx" element={<QnaAdminView />} />
             <Route path="/SpoilerList" element={<SpoilerList />} />
+            
         </Routes>
       </div>
     </div>

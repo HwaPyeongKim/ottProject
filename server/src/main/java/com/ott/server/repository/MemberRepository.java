@@ -18,7 +18,13 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
 
     Optional<Member> findByMidx(int midx);
 
-    Collection<Object> findByNameContaining(String key);
+    long countByNameContainingOrNicknameContainingOrEmailContainingOrAddress1Containing(
+            String name, String nickname, String email, String address1
+    );
 
-    Page<Member> findAllByNameContaining(String key, Pageable pageable);
+    // 검색 + 페이징용
+    Page<Member> findByNameContainingOrNicknameContainingOrEmailContainingOrAddress1Containing(
+            String name, String nickname, String email, String address1,
+            Pageable pageable
+    );
 }

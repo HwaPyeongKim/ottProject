@@ -59,10 +59,13 @@ public class AdminController {
 
     @GetMapping("/getMemberList")
     public HashMap<String, Object> getMemberList(@RequestParam("page") int page,
-                                                 @RequestParam(value="key", required = false, defaultValue = "") String key){
-        HashMap<String, Object> result = as.getMemberList(page, key);
-        return result;
+                                                 @RequestParam(value="key", required = false, defaultValue = "") String key,
+                                                 @RequestParam(value="sortField", defaultValue = "midx") String sortField,
+                                                 @RequestParam(value="sortDir", defaultValue = "DESC") String sortDir) {
+
+        return as.getMemberList(page, key, sortField, sortDir);
     }
+
 
 
 

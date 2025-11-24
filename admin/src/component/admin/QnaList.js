@@ -55,6 +55,7 @@ function QnaList() {
                         type="text"
                         className="admin-input"
                         value={key}
+                        placeholder="검색어 입력 (제목)"
                         onChange={(e) => setKey(e.currentTarget.value)}
                     />
 
@@ -85,8 +86,9 @@ function QnaList() {
                         qnaList.map((qna, idx) => (
                             <tr
                                 key={idx}
-                                onClick={() => navigate(`/qnaView/${qna.qidx}`)}
+                                onClick={() => navigate(`/qnaAdminView/${qna.qidx}`)}
                                 style={{ cursor: "pointer" }}
+                                className={qna.reply ? "" : "not-answer"}  // ★ 추가 (답변 N일 때 전체 줄 스타일)
                             >
                                 <td>{qna.qidx}</td>
 
@@ -110,7 +112,6 @@ function QnaList() {
                     )}
                 </tbody>
             </table>
-
 
             {/* 페이징 */}
             <div className="pagination">

@@ -187,17 +187,63 @@
   color: #000;
 }
 
-/* 답변 완료(Y) */
-.reply-status.done {
-  color: var(--text-color);
+.not-answer {
+  background-color: rgba(255, 60, 60, 0.12) !important;
 }
 
-/* 답변 미완료(N) 강조 */
+.not-answer:hover {
+  background-color: rgba(255, 50, 50, 0.18) !important;
+}
+
 .reply-status.pending {
-  background-color: rgba(255, 80, 80, 0.1); /* 은은한 빨간 배경 */
-  color: #ff6b6b; /* 부드러운 빨간 글씨 */
-  border: 1px solid rgba(255, 99, 99, 0.3);
-  border-radius: 4px;
-  padding: 4px 8px;
+  color: #ff6d6d;
   font-weight: 600;
 }
+
+/* 상세페이지 필드 정렬 */
+.field {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1.2rem;
+}
+
+.field > label {
+  flex: 1;
+  font-weight: 600;
+  color: var(--highlight-color);
+}
+
+.field > span {
+  flex: 5;
+}
+
+/* 긴 내용 자동 줄바꿈 */
+.long-text {
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+/* 답변 입력 영역 */
+.reply-box {
+  flex: 5;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+/* 답변 완료 스타일 */
+.reply-complete {
+  color: #4ecb71;
+  font-weight: 600;
+}
+
+/* 버튼 그룹 정렬 */
+.btn-area {
+  text-align: right;
+  margin-top: 2rem;
+}
+
+
+
+

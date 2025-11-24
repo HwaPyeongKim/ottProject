@@ -93,28 +93,43 @@ public class AdminService {
         return result;
     }
 
-    public HashMap<String, Object> getMemberList(int page, String key) {
+    public HashMap<String, Object> getMemberList(int page, String key, String sortField, String sortDir) {
         HashMap<String, Object> result = new HashMap<>();
         Paging paging = new Paging();
         paging.setPage(page);
         paging.setDisplayPage(10);
         paging.setDisplayRow(10);
-        if( key.equals("") ) {
-            int count = mr.findAll().size();
-            paging.setTotalCount(count);
+
+        Sort sort = sortDir.equalsIgnoreCase("ASC")
+                ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        Page<Member> list;
+
+        if (key == null || key.equals("")) {
+            long count = mr.count();
+            paging.setTotalCount((int) count);
             paging.calPaging();
-            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "midx"));
-            Page<Member> list = mr.findAll( pageable );
-            result.put("memberList", list.getContent());
-        }else{
-            int count = mr.findByNameContaining(key).size();
-            paging.setTotalCount(count);
+            list = mr.findAll(pageable);
+        } else {
+            long count = mr.countByNameContainingOrNicknameContainingOrEmailContainingOrAddress1Containing(
+                    key, key, key, key
+            );
+            paging.setTotalCount((int) count);
             paging.calPaging();
-            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "midx"));
-            Page<Member> list = mr.findAllByNameContaining( key, pageable );
-            result.put("memberList", list.getContent());
+
+            list = mr.findByNameContainingOrNicknameContainingOrEmailContainingOrAddress1Containing(
+                    key, key, key, key,
+                    pageable
+            );
         }
+
+        result.put("memberList", list.getContent());
         result.put("paging", paging);
+        result.put("sortField", sortField);
+        result.put("sortDir", sortDir);
         return result;
     }
+
 }
