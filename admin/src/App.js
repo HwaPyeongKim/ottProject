@@ -4,7 +4,7 @@ import Slider from "react-slick";
 import axios from "axios";
 
 import "./style/admin.css";
-import "./style/common.css";
+// import "./style/common.css";
 import "./style/commonj.css";
 
 

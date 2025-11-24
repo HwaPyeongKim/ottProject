@@ -93,28 +93,28 @@ public class AdminService {
         return result;
     }
 
-//    public HashMap<String, Object> getMemberList(int page, String key) {
-//        HashMap<String, Object> result = new HashMap<>();
-//        Paging paging = new Paging();
-//        paging.setPage(page);
-//        paging.setDisplayPage(10);
-//        paging.setDisplayRow(10);
-//        if( key.equals("") ) {
-//            int count = mr.findAll().size();
-//            paging.setTotalCount(count);
-//            paging.calPaging();
-//            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "indate"));
-//            Page<Member> list = mr.findAll( pageable );
-//            result.put("memberList", list.getContent());
-//        }else{
-//            int count = mr.findByNameContaining(key).size();
-//            paging.setTotalCount(count);
-//            paging.calPaging();
-//            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "indate"));
-//            Page<Member> list = mr.findAllByNameContaining( key, pageable );
-//            result.put("memberList", list.getContent());
-//        }
-//        result.put("paging", paging);
-//        return result;
-//    }
+    public HashMap<String, Object> getMemberList(int page, String key) {
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+        if( key.equals("") ) {
+            int count = mr.findAll().size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "midx"));
+            Page<Member> list = mr.findAll( pageable );
+            result.put("memberList", list.getContent());
+        }else{
+            int count = mr.findByNameContaining(key).size();
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page-1, 10, Sort.by(Sort.Direction.DESC, "midx"));
+            Page<Member> list = mr.findAllByNameContaining( key, pageable );
+            result.put("memberList", list.getContent());
+        }
+        result.put("paging", paging);
+        return result;
+    }
 }
