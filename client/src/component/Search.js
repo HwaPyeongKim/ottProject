@@ -13,6 +13,7 @@ function Search() {
   const {keyword} = useParams();
   const loginUser = useSelector(state=>state.user);
   const [filters, setFilters] = useState({sortBy: "popularity.desc", genre: "", year: "", certification: ""});
+  const [tempFilters, setTempFilters] = useState({sortBy: "popularity.desc", genre: "", year: "", certification: ""});
   const [searchResultsMovie, setSearchResultsMovie] = useState([]);
   const [searchResultsTV, setSearchResultsTV] = useState([]);
   const [discoverResultsMovie, setDiscoverResultsMovie] = useState([]);
@@ -288,13 +289,13 @@ function Search() {
     const uniqueGenres = [...new Set(genreValues)];
     const genreString = uniqueGenres.join(",");
 
-    setFilters((prev) => ({ ...prev, genre: genreString }));
+    setTempFilters((prev) => ({ ...prev, genre: genreString }));
   };
 
   const handlePClick = (index) => {setActiveIndex(prev => (prev === index ? null : index));};
 
   const resetFilters = () => {
-    setFilters({
+    setTempFilters({
       sortBy: "popularity.desc",
       genre: "",
       year: "",
@@ -312,27 +313,27 @@ function Search() {
     radios.forEach(radio => radio.checked = radio.value === "");
   };
 
-  useEffect(
-    () => {
-      if (loginUser?.midx) {
-        getMyLikes();
-      }
-    }, [loginUser]
-  );
+  const applyFilter = () => {
+    setFilters(tempFilters); // 여기서만 실제 필터 적용
+    setPageMovie(1);
+    setPageTV(1);
+  };
 
   useEffect(() => {
     setPageMovie(1);
     setPageTV(1);
-  }, [keyword, filters]);
+  }, [keyword]);
 
   useEffect(
     () => {
       if (loginUser?.midx) {
+        getMyLikes();
         getMyLists();
         getMyDblists();
       }
     }, [loginUser]
   );
+  
 
   return (
     <div>
@@ -342,7 +343,7 @@ function Search() {
           <p className={activeIndex === 0 ? "on" : ""} onClick={() => handlePClick(0)}>개봉 년도</p>
           <div className={`yearWrap ${activeIndex === 0 ? "on" : ""}`}>
             <label htmlFor="yearFilter">개봉년도</label>
-            <input type="number" min="1900" max="2100" onChange={(e) =>setFilters(prev => ({ ...prev, year: e.target.value }))} id="yearFilter" />
+            <input type="number" min="1900" max="2100" onChange={(e) =>setTempFilters(prev => ({ ...prev, year: e.target.value }))} id="yearFilter" />
           </div>
         </li>
         <li>
@@ -392,7 +393,7 @@ function Search() {
                 { id: "cert_19", label: "청소년 관람불가", value: "19" }
               ].map((cert) => (
                 <li key={cert.id}>
-                  <input type="radio" id={cert.id} name="certification" value={cert.value} checked={filters.certification === cert.value} onChange={(e) => setFilters((prev) => ({ ...prev, certification: e.target.value }))} />
+                  <input type="radio" id={cert.id} name="certification" value={cert.value} checked={filters.certification === cert.value} onChange={(e) => setTempFilters((prev) => ({ ...prev, certification: e.target.value }))} />
                   <label htmlFor={cert.id}>{cert.label} <span><FontAwesomeIcon icon={faCheck} /></span></label>
                 </li>
               ))}
@@ -403,6 +404,7 @@ function Search() {
           <p className={activeIndex === 3 ? "on" : ""} onClick={() => handlePClick(3)}>평점</p>
           <div className={activeIndex === 3 ? "on" : ""}></div>
         </li> */}
+        <li className="applyFilter"><button onClick={applyFilter} className="reset">필터적용</button></li>
         <li className="reset"><button onClick={resetFilters}>초기화</button></li>
       </ul>
 

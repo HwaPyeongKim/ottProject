@@ -146,6 +146,7 @@ const ListCard = ({ lists, target, likes, setLikes, favorites, setFavorites }) =
   useEffect(
     () => {
       if (loginUser?.midx) {
+        getMyLikes();
         getMyLists();
         getMyDblists();
       }

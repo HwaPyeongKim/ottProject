@@ -30,8 +30,7 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [imgSrc, setImgSrc] = useState("");
-  const {keyword: urlKeyword} = useParams();
-  const [keyword, setKeyword] = useState(urlKeyword || "");
+  const [keyword, setKeyword] = useState("");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -46,8 +45,13 @@ function Header() {
   );
 
   useEffect(() => {
-    setKeyword(urlKeyword || "");
-  }, [urlKeyword]);
+    const path = location.pathname;
+    
+    if (path.startsWith("/search/")) {
+      const extractedKeyword = decodeURIComponent(path.replace("/search/", ""));
+      setKeyword(extractedKeyword);
+    }
+  }, [location.pathname]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && keyword.trim() !== "") {
