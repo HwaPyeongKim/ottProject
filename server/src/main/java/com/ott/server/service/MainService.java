@@ -2,6 +2,7 @@ package com.ott.server.service;
 
 import com.ott.server.entity.DbList;
 import com.ott.server.entity.Likes;
+import com.ott.server.repository.DbListRepository;
 import com.ott.server.repository.LikesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

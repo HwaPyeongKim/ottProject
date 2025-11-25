@@ -1,7 +1,7 @@
 /* ============================
    회원정보 폼
    ============================ */
-.profile-form {
+.join-profile-form {
   display: flex;
   margin: 0 auto;
   width: 700px;
@@ -13,7 +13,7 @@
 /* ============================
    회원정보 폼 - 필드 높이 조정
    ============================ */
-.mpfield {
+.join-mpfield {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -21,7 +21,7 @@
   padding: 4px 0;    
 }
 
-.mpfield label {
+.join-mpfield label {
   flex: 0 0 130px;
   text-align: left;
   color: #ffc500;
@@ -30,7 +30,7 @@
   letter-spacing: 0.3px;
 }
 
-.mpfield input {
+.join-mpfield input {
   flex: 1;
   background: #2c2c2e;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -41,7 +41,7 @@
   transition: all 0.25s ease;
 }
 
-.mpfield input:focus {
+.join-mpfield input:focus {
   outline: none;
   border-color: #f5c518;
   background: #3a3a3c;
@@ -96,7 +96,7 @@
 /* ============================
    이미지 미리보기 (PROFILE IMG PREVIEW)
    ============================ */
-.mpfield img {
+.join-mpfield img {
   max-width: 100px;   /* 기존 80px -> 120px로 확대 */
   max-height: 100px;  /* 이미지가 늘어나도 비율 유지 */
   border-radius: 50%;
@@ -109,14 +109,14 @@
 /* ============================
    버튼 그룹
    ============================ */
-.btn-group {
+.join-btn-group {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 24px;
 }
 
-.btn {
+.join-btn {
   padding: 10px 20px;
   border-radius: 10px;
   border: none;
@@ -126,20 +126,20 @@
   font-size: 0.9rem;
 }
 
-.btn-primary {
+.join-btn-primary {
   background: #f5c518;
   color: #000;
 }
 
-.btn-primary:hover {
+.join-btn-primary:hover {
   background: #ffd43b;
 }
 
-.btn-secondary {
+.join-btn-secondary {
   background: #3a3a3c;
   color: #f5f5f7;
 }
 
-.btn-secondary:hover {
+.join-btn-secondary:hover {
   background: #505050;
 }

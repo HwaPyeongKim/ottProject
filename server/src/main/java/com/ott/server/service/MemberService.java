@@ -170,12 +170,14 @@ public class MemberService {
     }
 
     public HashMap<String, Object> getListDetailView(int page, int listidx) {
+        System.out.println("디테일뷰 리스트idx : " + listidx);
         //HashMap<String, Object> result = new HashMap<>();
         //List<DbList> dbList = dlr.findByListidx(listidx);
         //System.out.println("getListDetailView : " + dbList);
         HashMap<String , Object> result = new HashMap<>();
         if( (Integer)page == null || page < 1 ){
-            result.put("dbList", dlr.findAllByListidx(listidx));
+            result.put("dbList", dlr.findAllByListidx(listidx, Sort.by(Sort.Direction.DESC, "id")));
+            System.out.println("dbList : " + result.get("dbList"));
         }else {
             Paging paging = new Paging();
             paging.setPage(page);
@@ -183,13 +185,14 @@ public class MemberService {
             //int count = fr.findAll().size();
             int count = dlr.countByListidx(listidx);
             System.out.println("리스트 타이틀 카운트 : " + count);
-            paging.setDisplayRow(2);
-            paging.setDisplayPage(7);
+            paging.setDisplayRow(32);
+            paging.setDisplayPage(2);
             paging.setTotalCount(count);
             paging.calPaging();
             Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "id"));
-            Page<DbList> follows = dlr.findByListidx(listidx, pageable);
-            result.put("dbList", follows.getContent());
+            Page<DbList> dblist = dlr.findByListidx(listidx, pageable);
+            result.put("dbList", dblist.getContent());
+            System.out.println("dbList : " + dblist.getContent());
             result.put("paging", paging);
         }
         return result;
@@ -230,5 +233,27 @@ public class MemberService {
             result.put("msg", "no");
         }
         return result;
+    }
+
+    public int[] getTitleList(int listidx) {
+        List<DbList> dblist = dlr.findAllByListidx(listidx, Sort.by(Sort.Direction.DESC, "id"));
+        return dblist.stream().mapToInt(DbList::getDbidx).toArray();
+    }
+
+    public boolean toggleTitle(DbList dbList) {
+        boolean exists = dlr.existsByListidxAndDbidx(dbList.getListidx(), dbList.getDbidx());
+        if( exists ){
+            dlr.deleteByListidxAndDbidx(dbList.getListidx(), dbList.getDbidx());
+            return false;
+        }
+
+        //DbList dbList = new DbList();
+        dbList.setDbidx(dbList.getDbidx());
+        dbList.setListidx(dbList.getListidx());
+        dbList.setPosterpath(dbList.getPosterpath());
+        dbList.setTitle(dbList.getTitle());
+        dlr.save(dbList);
+
+        return true;
     }
 }

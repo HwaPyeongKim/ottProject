@@ -62,6 +62,7 @@ function MypageView() {
             .then((result)=>{
                 console.log('상세정보 팔로워 : ', result.data)
                 setFollowers( [...result.data.followers] );
+                setFollowersCount( result.data.totalFollowersCount )
             }).catch((err)=>{console.error(err)})
         },[loginUser]
     )

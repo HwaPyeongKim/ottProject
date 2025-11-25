@@ -108,28 +108,28 @@ function Join() {
     }
 
     return (
-        <div className="profile-form">
+        <div className="join-profile-form">
             <div className="mpfield">
                 <label>E-MAIL</label>
                 <input type='text' value={email} onChange={(e)=>{setEmail(e.currentTarget.value)}}/>
             </div>
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>PASSWORD</label>
                 <input type='password' value={pwd} onChange={(e)=>{setPwd(e.currentTarget.value)}}/>
             </div>
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>RETYPE PW</label>
                 <input type="password"  value={pwdChk} onChange={(e)=>{ setPwdChk(e.currentTarget.value )}}/>
             </div>
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>NAME</label>
                 <input type="text"  value={name} onChange={(e)=>{ setName(e.currentTarget.value )}}/>
             </div>
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>NICKNAME</label>
                 <input type="text"  value={nickname} onChange={(e)=>{ setNickname(e.currentTarget.value )}}/>
             </div>
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>PHONE</label>
                 <input type="text"  value={phone1} maxLength='3' onChange={(e)=>{ setPhone1(e.currentTarget.value )}}/>
                 -
@@ -137,44 +137,44 @@ function Join() {
                 -
                 <input type="text"  value={phone3} maxLength='4' onChange={(e)=>{ setPhone3(e.currentTarget.value )}}/>
             </div>
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>POST CODE</label>
                 <input type="text" value={zipnum} onChange={(e)=>{ setZipnum(e.currentTarget.value )}} readOnly/>
                 <button className="btn-highlight" onClick={ ()=>{ setIsOpen( !isOpen ) }}>SEARCH</button>
             </div>
 
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <Modal isOpen={isOpen}  ariaHideApp={false}  style={customStyles} >
                     <DaumPostcode onComplete={completeHandler} /><br />
                     <button onClick={()=>{ setIsOpen(false) }}>CLOSE</button>
                 </Modal>
             </div>
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>ADDRESS</label>
                 <input type="text"  value={address1} onChange={(e)=>{ setAddress1(e.currentTarget.value )}}/>
             </div>
 
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>DETAIL ADDRESS</label>
                 <input type="text"  value={address2} onChange={(e)=>{ setAddress2(e.currentTarget.value )}}/>
             </div>
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>INTRO</label>
                 <input type="text"  value={profilemsg} onChange={(e)=>{setProfilemsg(e.currentTarget.value)}}/>
             </div>
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>PROFILE IMG</label>
                 <input type="file" onChange={(e)=>{fileUpload(e)}}/>
             </div>
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>PROFILE IMG PREVIEW</label>
                 {
                     (imgSrc)?(<div><img src={imgSrc} style={imgStyle} /></div>):(<p>이미지 로딩 중...</p>)
                 }
             </div>
-            <div className="btn-group">
-                <button className="btn btn-primary" onClick={()=>{onSubmit()}}>JOIN</button>
-                <button className="btn btn-secondary" onClick={()=>{ navigate('/')}}>BACK</button>
+            <div className="join-btn-group">
+                <button className="join-btn join-btn-primary" onClick={()=>{onSubmit()}}>JOIN</button>
+                <button className="join-btn join-btn-secondary" onClick={()=>{ navigate('/')}}>BACK</button>
             </div>
         </div>
     )
