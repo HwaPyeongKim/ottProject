@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 15px;
+  padding: 0px;
 }
 
 /* 1. 모달 헤더 */
@@ -15,8 +15,6 @@
   align-items: center;
   padding: 15px 0;
   border-bottom: 1px solid #eee;
-  /* border-radius: 10px 10px 0 0; */
-  /* background-color: white; */
   flex-shrink: 0; /* 내용 스크롤 시 고정 */  
 }
 
@@ -44,7 +42,7 @@
 .modal-comments-list {
   flex-grow: 1; /* 남은 공간 모두 차지 */
   overflow-y: auto; /* 이 영역만 스크롤 가능 */
-  padding: 35px 45px;
+  padding: 25px 40px 25px 25px;
 }
 
 /* 개별 댓글 아이템 */
@@ -151,13 +149,15 @@
 .modal-comment-input {
   flex-grow: 1;
   border: none;
-  padding: 20px 0 30px;
+  padding-top: 15px;
   font-size: 1rem;
   color: #333;
 }
+
 .modal-comment-input::placeholder {
     color: #aaa;
 }
+
 .modal-comment-input:focus {
     outline: none;
 }
@@ -181,10 +181,13 @@
 .modal-reply-item {
   display: flex;
   margin-left: 40px;
-  margin-top: 15px;
+  margin-top: 12px;
   opacity: 0;
   transform: translateY(-10px);
   animation: fadeIn 0.2s forwards;
+}
+.modal-reply-area .modal-reply-item:first-child {
+    margin-top: 30px;
 }
 
 @keyframes fadeIn {
@@ -222,4 +225,85 @@
 .modal-comments-list {
     overflow-y: auto; /* 내부 스크롤 가능 */
     max-height: 100%; /* 모달 안에서만 스크롤 */
+}
+
+/* 대댓글 인풋창 */
+.modal-reply-input {
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  margin-left: 40px;
+}
+.modal-reply-input input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 0.9rem;
+}
+.modal-reply-input button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+
+/* 대댓글 드롭다운메뉴 */
+.reply-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-left: auto; /* 이름 옆으로 이동 */
+}
+
+.reply-dropdown-wrapper .icon-button {
+  font-size: 18px;
+  padding: 4px;
+}
+
+.reply-dropdown-wrapper .dropdown_menu {
+  position: absolute;
+  bottom: -62px; 
+  right: 0;  
+  background: white;
+  border: 1px solid #ddd; 
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);   
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform-origin: bottom right; 
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  min-width: 120px;
+  z-index: 10;
+}
+
+.reply-dropdown-wrapper .dropdown_menu.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.reply-dropdown-wrapper .dropdown_menu button {
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.reply-dropdown-wrapper .dropdown_menu button:hover {
+  background-color: #f0f0f0;
+}
+
+.modal-open {
+    overflow: hidden; /* body의 스크롤을 막음 */
 }

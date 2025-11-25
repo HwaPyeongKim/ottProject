@@ -2,7 +2,7 @@
    기본 Layout
    ============================ */
 .admin-container {
-  max-width: 1200px;
+  max-width: 60%;
   margin: 2rem auto;
   padding: 1.5rem;
   color: var(--text-color);
@@ -28,6 +28,15 @@
   margin-bottom: 1rem;
   color: var(--highlight-color);
 }
+
+/* ============================
+   탭메뉴
+   ============================ */
+.tabMenu {display: flex; margin-bottom: 20px;}
+.tabMenu li {margin-right: 10px;}
+.tabMenu li button {background: transparent; font-size: 1.2rem; font-weight: bold; color: #fff; border: none; outline: none; border-radius: 5px; padding: 5px 20px; cursor: pointer;}
+.tabMenu li button.on {background: #f5c518;}
+.tabMenu li button:hover {background: #f5c518;}
 
 /* ============================
    테이블
@@ -70,6 +79,7 @@
 .admin-btn.primary {
   background-color: var(--highlight-color);
   color: #000;
+  width: 70px;
 }
 
 .admin-btn.secondary {
@@ -124,6 +134,9 @@
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid #333;
+  justify-content: space-between;
+  padding-left: 20%;
+  padding-right: 20%;
 }
 
 /* 메뉴 아이템 */
@@ -153,4 +166,93 @@
 .admin-menu-btn:hover {
   background-color: #666;
 }
+
+
+/* ============================
+   페이징
+   ============================ */
+.pagination {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.page-btn {
+  margin: 0 5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background-color: #1e1e1e;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.page-btn:hover {
+  background-color: var(--highlight-color);
+  color: #000;
+}
+
+.page-btn.active {
+  background-color: var(--highlight-color);
+  color: #000;
+}
+
+.not-answer {
+  background-color: rgba(255, 60, 60, 0.12) !important;
+}
+
+.not-answer:hover {
+  background-color: rgba(255, 50, 50, 0.18) !important;
+}
+
+.reply-status.pending {
+  color: #ff6d6d;
+  font-weight: 600;
+}
+
+/* 상세페이지 필드 정렬 */
+.field {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1.2rem;
+}
+
+.field > label {
+  flex: 1;
+  font-weight: 600;
+  color: var(--highlight-color);
+}
+
+.field > span {
+  flex: 5;
+}
+
+/* 긴 내용 자동 줄바꿈 */
+.long-text {
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+/* 답변 입력 영역 */
+.reply-box {
+  flex: 5;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+/* 답변 완료 스타일 */
+.reply-complete {
+  color: #4ecb71;
+  font-weight: 600;
+}
+
+/* 버튼 그룹 정렬 */
+.btn-area {
+  text-align: right;
+  margin-top: 2rem;
+}
+
+
+
 

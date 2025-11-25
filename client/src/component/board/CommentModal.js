@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../../style/boardModal.css";
 import { useSelector } from "react-redux";
 import jaxios from "../../util/JWTUtil";
 
-const CommentModal = ({ onClose, bidx }) => {
+const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
     const loginUser = useSelector(state => state.user);
+    const modalRef = useRef(null);
 
-    const [commentList, setCommentList] = useState([]);   // 댓글 전체 리스트
+    const [commentList, setCommentList] = useState([]);   // 댓글 리스트
+    const [replyList, setReplyList] = useState([]);       // 대댓글 리스트
     const [replyOpen, setReplyOpen] = useState({});       // 대댓글 오픈 여부
     const [content, setContent] = useState("");           // 댓글 입력
-
-    //-----------------------
-    //  시간 표시
-    //-----------------------
+    const [dropdownOpen, setDropdownOpen] = useState({});
+    
     const timeAgo = (dateString) => {
         const now = new Date();
         const date = new Date(dateString);
@@ -33,63 +33,100 @@ const CommentModal = ({ onClose, bidx }) => {
     //-----------------------
     //  댓글 리스트 가져오기
     //-----------------------
-
     async function fetchComments(){
-        try {
-            const res = await jaxios.get(`/api/bcomment/getCommentList/${bidx}`);
-            console.log(res);
-            // console.log("서버 응답:", res.data);
-            setCommentList(res.data.commentList);   // 서버에서 대댓글로 묶어서 보내주는 것을 추천
-        } catch (err) {
-            console.error(err);
-        }
+    try {
+        const res = await jaxios.get(`/api/bcomment/getCommentList/${bidx}`);
+        let list = res.data.commentList;
+
+        // 파일 ID → URL 변환
+        list = await Promise.all(list.map(async comment => {
+            if (comment.memberProfileUrl) {
+                const imgRes = await jaxios.get(`/api/file/url/${comment.memberProfileUrl}`);
+                comment.memberProfileUrl = imgRes.data.image; // 실제 S3 URL로 변경
+            }
+            return comment;
+        }));
+
+        // 댓글 / 대댓글 분리
+        const comments = list.filter(c => c.pcidx === null);  
+        const replies = list.filter(c => c.pcidx !== null);
+
+        console.log(res);
+        setCommentList(comments);
+        setReplyList(replies);
+    } catch (err) {
+        console.error(err);
     }
+}
 
     useEffect(() => {
         if (bidx) fetchComments();
     }, [bidx]);
 
 
-    //-----------------------
     //  댓글 작성
-    //-----------------------
     async function addComment() {
         if (!content.trim()) return;
-
-        await jaxios.post("/api/bcomment/addComment", {board: {bidx}, member: {midx: loginUser.midx}, content, pcidx: null})
+        await jaxios.post("/api/bcomment/addComment", {boardId: bidx, memberId: loginUser.midx, content})
         .then((result)=>{
             setContent("");
             fetchComments();
+        console.log("onCommentAdded 호출 전");   // <-- 확인용
+            onCommentAdded && onCommentAdded();
+        console.log("onCommentAdded 호출 후");   // <-- 확인용
         })
         .catch((err)=>{console.error(err)})
     }    
 
-
-    //-----------------------
     //  대댓글 작성
-    //-----------------------
-    const addReply = async (parentIdx, replyText) => {
-        if (!replyText.trim()) return;
+    async function addReply(parentIdx, replyText) {
+        if (!replyText.trim()) return; // 공백제거
+
+        await jaxios.post("/api/bcomment/addReply", {boardId: bidx, memberId: loginUser.midx, content: replyText, pcidx: parentIdx})
+        .then((result) => {
+            fetchComments();   // 작성 후 다시 불러오기
+            onCommentAdded && onCommentAdded();
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+    }
+
+    // 댓글 수정
+    async function updateReply(bcidx) {
+        const editText = prompt("댓글을 수정하세요:");
+        if (!editText) {
+            setDropdownOpen(prev => ({...prev, [bcidx]: false})); // 취소 시 드롭다운 닫기
+            return;
+        }
 
         try {
-            await jaxios.post("/api/bcomment", {
-                bidx,
-                midx: loginUser.midx,
-                content: replyText,
-                pcidx: parentIdx
-            });
-
-            fetchComments();
-
+            await jaxios.post(`/api/bcomment/updateReply/${bcidx}`, {content: editText});
+            fetchComments();  // 수정 후 댓글 리스트 갱신
         } catch (err) {
             console.error(err);
+        } finally {
+            setDropdownOpen(prev => ({...prev, [bcidx]: false})); // 수정 완료/실패 후 드롭다운 닫기
         }
-    };
+    }
 
+    // 댓글 삭제
+    async function onDeleteReply(bcidx) {
+        if (!window.confirm("정말 삭제하시겠습니까?")) {
+            setDropdownOpen(prev => ({...prev, [bcidx]: false})); // 취소 시 드롭다운 닫기
+            return;
+        }
+        try {
+            await jaxios.delete(`/api/bcomment/deleteReply/${bcidx}`);
+            fetchComments();  // 삭제 후 댓글 리스트 갱신
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setDropdownOpen(prev => ({...prev, [bcidx]: false})); // 삭제 완료/실패 후 드롭다운 닫기
+        }
+    }
 
-    //-----------------------
     //  대댓글 토글
-    //-----------------------
     const toggleReply = (bcidx) => {
         setReplyOpen(prev => ({
             ...prev,
@@ -97,30 +134,57 @@ const CommentModal = ({ onClose, bidx }) => {
         }));
     };
 
+    useEffect(() => {
+        if (bidx) fetchComments();
+
+        const handleOutsideClick = (event) => {
+            // 모든 드롭다운을 닫는 함수
+            const closeAllDropdowns = () => {
+                setDropdownOpen({});
+            };
+            
+            // 클릭된 요소가 드롭다운 메뉴나 버튼의 일부인지 확인
+            let isDropdownElement = false;
+            let currentElement = event.target;
+            while(currentElement) {
+                if (currentElement.classList && (currentElement.classList.contains('reply-dropdown-wrapper') || currentElement.classList.contains('icon-button'))) {
+                    isDropdownElement = true;
+                    break;
+                }
+                currentElement = currentElement.parentElement;
+            }
+
+            // 클릭된 요소가 드롭다운 관련 요소가 아니라면 모두 닫음
+            if (!isDropdownElement) {
+                closeAllDropdowns();
+            }
+        };
+
+        document.addEventListener("mousedown", handleOutsideClick);
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+        };
+    }, [bidx]);
 
     return (
-        <div className="comment-modal-content">
-            
+        <div className="comment-modal-content" ref={modalRef}>            
             {/* Header */}
-            <div className="modal-header">
+            <div className="modal-header"> 
                 <h3 className="modal-title">댓글</h3>
                 <button className="close-button" onClick={onClose}>✖</button>
             </div>
 
-            {/* 댓글 리스트 */}
             <div className="modal-comments-list">
                 {commentList.map(comment => (
                     <div key={comment.bcidx} className="modal-comment-item">
 
-                        {/* 프로필 */}
                         <img className="modal-profile-image" 
-                             src={comment.member?.profileimgUrl || "/default.png"} 
+                             src={comment.memberProfileUrl || "/default.png"} 
                              alt="profile" />
 
                         <div className="modal-comment-info">
-
                             <div className="modal-comment-header">
-                                <span className="modal-username">{comment.member?.nickname}</span>
+                                <span className="modal-username">{comment.memberNickname}</span>
                                 <span className="modal-timestamp">{timeAgo(comment.writedate)}</span>
                             </div>
 
@@ -128,21 +192,11 @@ const CommentModal = ({ onClose, bidx }) => {
                                 {comment.content}
                             </p>
 
-
                             <div className="modal-comment-actions">
                                 <button className="modal-icon-button"
                                     onClick={() => toggleReply(comment.bcidx)}>
-                                    💬 대댓글
-                                </button>
-
-                                {comment.replies?.length > 0 && (
-                                    <button className="modal-icon-button"
-                                            onClick={() => toggleReply(comment.bcidx)}>
-                                        {replyOpen[comment.bcidx]
-                                            ? "숨기기"
-                                            : `대댓글 ${comment.replies.length}개`}
-                                    </button>
-                                )}
+                                    💬 대댓글 {replyList.filter(r => r.pcidx === comment.bcidx).length}개
+                                </button>  
                             </div>
 
 
@@ -150,21 +204,31 @@ const CommentModal = ({ onClose, bidx }) => {
                             {replyOpen[comment.bcidx] && (
                                 <div className="modal-reply-area">
 
-                                    {comment.replies?.map(reply => (
+                                    {replyList
+                                    .filter(r => r.pcidx === comment.bcidx)
+                                    .map(reply => (
                                         <div key={reply.bcidx} className="modal-reply-item">
-                                            
-                                            <img className="modal-profile-image"
-                                                 src={reply.member?.profileimgUrl || "/default.png"}
-                                                 alt="profile" />
+
+                                            <img className="modal-profile-image" src={reply.memberProfileUrl || "/default.png"} alt="profile" />
 
                                             <div className="modal-comment-info">
-
                                                 <div className="modal-comment-header">
-                                                    <span className="modal-username">{reply.member?.nickname}</span>
+                                                    <span className="modal-username">{reply.memberNickname}</span>
                                                     <span className="modal-timestamp">{timeAgo(reply.writedate)}</span>
+                                                    {reply.memberNickname === loginUser.nickname && (
+                                                        <div className="update-button reply-dropdown-wrapper"> {/* wrapper 변경 */}
+                                                            <button className="icon-button"
+                                                            onClick={() =>setDropdownOpen(prev => ({...prev,[reply.bcidx]: !prev[reply.bcidx],}))}>
+                                                            ⁝
+                                                            </button>
+                                                            <div className={`dropdown_menu ${dropdownOpen[reply.bcidx] ? 'open' : ''}`}>
+                                                                <button onClick={() => updateReply(reply.bcidx)}>수정</button>
+                                                                <button onClick={() => onDeleteReply(reply.bcidx)}>삭제</button>
+                                                            </div>
+                                                        </div>
+                                                    )}                                                
                                                 </div>
-
-                                                <p className="modal-comment-text">{reply.content}</p>
+                                                <p className="modal-comment-text">{reply.content}</p>   
                                             </div>
                                         </div>
                                     ))}
@@ -174,10 +238,8 @@ const CommentModal = ({ onClose, bidx }) => {
                                         parentIdx={comment.bcidx}
                                         onSubmit={addReply}
                                     />
-
                                 </div>
                             )}
-
                         </div>
                     </div>
                 ))}
@@ -216,7 +278,7 @@ const ReplyInput = ({ parentIdx, onSubmit }) => {
                 value={text}
                 onChange={e => setText(e.target.value)}
             />
-            <button className="modal-submit-button"
+            <button className="modal-submit-button2"
                     onClick={() => {
                         onSubmit(parentIdx, text);
                         setText("");

@@ -57,13 +57,29 @@ public class AdminController {
         return result;
     }
 
-//    @GetMapping("/getMemberList")
-//    public HashMap<String, Object> getMemberList(@RequestParam("page") int page,
-//                                                 @RequestParam(value="key", required = false, defaultValue = "") String key){
-//        HashMap<String, Object> result = as.getMemberList(page, key);
-//        return result;
-//    }
+    @GetMapping("/getMemberList")
+    public HashMap<String, Object> getMemberList(@RequestParam("page") int page,
+                                                 @RequestParam(value="key", required = false, defaultValue = "") String key,
+                                                 @RequestParam(value="sortField", defaultValue = "midx") String sortField,
+                                                 @RequestParam(value="sortDir", defaultValue = "DESC") String sortDir) {
 
+        return as.getMemberList(page, key, sortField, sortDir);
+    }
+
+
+    @GetMapping("/getReports")
+    public HashMap<String, Object> getReports(@RequestParam("page") int page, @RequestParam(value="key", required=false, defaultValue="") String key, @RequestParam("tab") String tab) {
+        HashMap<String, Object> result = as.getReports(page, key, tab);
+        return result;
+    }
+
+    @PostMapping("/cancelReport")
+    public HashMap<String, Object> cancelReport(@RequestParam("tab") String tab, @RequestParam("idx") int idx) {
+        HashMap<String, Object> result = new HashMap<>();
+        as.cancelReport(tab,idx);
+        result.put("msg", "ok");
+        return result;
+    }
 
 
 }

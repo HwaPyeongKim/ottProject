@@ -87,12 +87,16 @@
 /* 모달 */
 .modalOverlay {position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000;}
 .modalContent {background: #1e1e1e; padding: 20px; border-radius: 10px; width: 400px;}
+.modalContent .flex {display: flex; justify-content: space-between; align-items: center;}
 .modalContent.modalReview {width: 1200px;}
 .modalContent.modalReview textarea {width: 1180px; height: 100px; padding: 10px; margin-top: 10px; resize: none; background: #111924; border: none; outline: none; color: #fff;}
 .modalContent ul {}
-.modalContent ul li {display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #2a2a2a;}
-/* .modalContent ul li input[type=checkbox] {display: none;}
-.modalContent ul li input[type=checkbox]:checked+b {display: inline-block; width: 20px; color: #f5c518;} */
+.modalContent small {font-size: 0.6em;}
+.modalContent ul li {padding: 20px 0; border-bottom: 1px solid #2a2a2a;}
 .modalContent ul li button {width: 20px; border: none; outline: none; background: transparent; color: #f5c518; font-size: 1.5em;}
+.modalContent div input[type=text] {width: 380px; margin-bottom: 20px; padding:0 10px; background: #10161d; border: 0; border-radius: 5px; color: #fff; font-size: 1.1em; line-height: 40px;}
+.modalContent .checkboxWrap input[type=checkbox] {display: none;}
+.modalContent .checkboxWrap input[type=checkbox]:checked+label b {display: inline-block; width: 20px; color: #f5c518;}
+.modalContent .checkboxWrap label {align-items: center;}
 .modalContent .buttonWrap {display: flex; justify-content: space-between; margin-top: 20px;}
 .modalContent .buttonWrap button {width: 49%; padding: 10px 0;}

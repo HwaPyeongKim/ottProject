@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import jaxios from '../../util/JWTUtil';
 
@@ -9,45 +8,44 @@ function MemberList() {
     const [beginEnd, setBeginEnd] = useState([]);
     const [key, setKey] = useState("");
 
+    // 🔥 추가된 부분
+    const [sortField, setSortField] = useState("midx");
+    const [sortDir, setSortDir] = useState("DESC");
+
     useEffect(() => {
-        loadData(1, key);
+        loadData(1, key, sortField, sortDir);
     }, []);
 
-    function loadData(page, key) {
-        jaxios.get('/api/admin/getMemberList', { params: { page, key } })
-            .then((result) => {
-                setMemberList(result.data.memberList);
-                setPaging(result.data.paging);
-                setKey(result.data.key);
+    function loadData(page, key, sortField, sortDir) {
+        jaxios.get('/api/admin/getMemberList', {
+            params: { page, key, sortField, sortDir }
+        })
+        .then((result) => {
+            setMemberList(result.data.memberList);
+            setPaging(result.data.paging);
 
-                let arr = [];
-                for (let i = result.data.paging.beginPage; i <= result.data.paging.endPage; i++) {
-                    arr.push(i);
-                }
-                setBeginEnd(arr);
-            })
-            .catch((err) => console.error(err));
+            let arr = [];
+            for (let i = result.data.paging.beginPage; i <= result.data.paging.endPage; i++) {
+                arr.push(i);
+            }
+            setBeginEnd(arr);
+        })
+        .catch((err) => console.error(err));
     }
 
     function onPageMove(p) {
-        loadData(p, key);
+        loadData(p, key, sortField, sortDir);
     }
 
-    function changeAdmin(userid, checked) {
-        const url = checked
-            ? '/api/admin/changeRoleAdmin'
-            : '/api/admin/changeRoleUser';
+    // 🔥 헤더 클릭 시 정렬 토글
+    function handleSort(field) {
+        let direction = "ASC";
+        if (sortField === field && sortDir === "ASC") direction = "DESC";
 
-        jaxios.post(url, null, { params: { userid } })
-            .then((result) => {
-                if (result.data.msg === 'ok') {
-                    alert(
-                        checked
-                            ? `${userid} 님이 관리자로 변경되었습니다.`
-                            : `${userid} 님이 일반유저로 변경되었습니다.`
-                    );
-                }
-            });
+        setSortField(field);
+        setSortDir(direction);
+
+        loadData(1, key, field, direction);
     }
 
     return (
@@ -61,12 +59,12 @@ function MemberList() {
                         className="admin-input"
                         type="text"
                         value={key}
-                        placeholder="검색어 입력"
+                        placeholder="검색어 입력 (성명, 닉네임, 이메일, 주소)"
                         onChange={(e) => setKey(e.target.value)}
                     />
                     <button
                         className="admin-btn primary"
-                        onClick={() => onPageMove(1)}
+                        onClick={() => loadData(1, key, sortField, sortDir)}
                     >
                         검색
                     </button>
@@ -77,13 +75,30 @@ function MemberList() {
             <table className="admin-table">
                 <thead>
                     <tr>
-                        <th>권한</th>
-                        <th>User ID</th>
-                        <th>성명</th>
-                        <th>Phone</th>
-                        <th>주소</th>
-                        <th>Provider</th>
-                        <th>가입일</th>
+                        <th onClick={() => handleSort("midx")}>
+                            NO. {sortField === "midx" && (sortDir === "ASC" ? "▲" : "▼")}
+                        </th>
+                        <th onClick={() => handleSort("name")}>
+                            성명 {sortField === "name" && (sortDir === "ASC" ? "▲" : "▼")}
+                        </th>
+                        <th onClick={() => handleSort("nickname")}>
+                            닉네임 {sortField === "nickname" && (sortDir === "ASC" ? "▲" : "▼")}
+                        </th>
+                        <th onClick={() => handleSort("email")}>
+                            이메일 {sortField === "email" && (sortDir === "ASC" ? "▲" : "▼")}
+                        </th>
+                        <th onClick={() => handleSort("phone")}>
+                            Phone {sortField === "phone" && (sortDir === "ASC" ? "▲" : "▼")}
+                        </th>
+                        <th onClick={() => handleSort("address1")}>
+                            주소 {sortField === "address1" && (sortDir === "ASC" ? "▲" : "▼")}
+                        </th>
+                        <th onClick={() => handleSort("provider")}>
+                            Provider {sortField === "provider" && (sortDir === "ASC" ? "▲" : "▼")}
+                        </th>
+                        <th onClick={() => handleSort("indate")}>
+                            가입일 {sortField === "indate" && (sortDir === "ASC" ? "▲" : "▼")}
+                        </th>
                     </tr>
                 </thead>
 
@@ -91,17 +106,10 @@ function MemberList() {
                     {memberList.length > 0 ? (
                         memberList.map((member, idx) => (
                             <tr key={idx}>
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        checked={member.memberRoleList?.includes("ADMIN")}
-                                        onChange={(e) =>
-                                            changeAdmin(member.userid, e.target.checked)
-                                        }
-                                    />
-                                </td>
-                                <td>{member.userid}</td>
+                                <td>{member.midx}</td>
                                 <td>{member.name}</td>
+                                <td>{member.nickname}</td>
+                                <td>{member.email}</td>
                                 <td>{member.phone}</td>
                                 <td>{member.address1} {member.address2}</td>
                                 <td>{member.provider}</td>
@@ -110,27 +118,27 @@ function MemberList() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="7">데이터가 없습니다.</td>
+                            <td colSpan="8">데이터가 없습니다.</td>
                         </tr>
                     )}
                 </tbody>
             </table>
 
             {/* 페이징 */}
-            <div style={{ textAlign: "center", marginTop: "1rem" }}>
+            <div className="pagination">
                 {paging.prev && (
                     <span
-                        style={{ cursor: "pointer", margin: "0 5px" }}
+                        className="page-btn"
                         onClick={() => onPageMove(paging.beginPage - 1)}
                     >
                         ◀
                     </span>
                 )}
 
-                {beginEnd.map((p) => (
+                {beginEnd.map((p, idx) => (
                     <span
-                        key={p}
-                        style={{ cursor: "pointer", margin: "0 5px" }}
+                        key={idx}
+                        className={`page-btn ${p === paging.page ? "active" : ""}`}
                         onClick={() => onPageMove(p)}
                     >
                         {p}
@@ -139,7 +147,7 @@ function MemberList() {
 
                 {paging.next && (
                     <span
-                        style={{ cursor: "pointer", margin: "0 5px" }}
+                        className="page-btn"
                         onClick={() => onPageMove(paging.endPage + 1)}
                     >
                         ▶

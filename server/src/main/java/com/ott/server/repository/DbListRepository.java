@@ -19,4 +19,5 @@ public interface DbListRepository extends JpaRepository<DbList, Integer> {
     boolean existsByListidxAndDbidx(int listidx, int dbidx);
 
     void deleteByListidxAndDbidx(int listidx, int dbidx);
+    DbList findByListidxAndDbidx(int listidx, int dbidx);
 }

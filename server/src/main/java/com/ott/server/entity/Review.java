@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Formula;
 
 import java.sql.Timestamp;
 
@@ -31,4 +32,7 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "midx", insertable = false, updatable = false)
     private Member member;
+
+    @Formula("(SELECT COUNT(rr.report_idx) FROM review_report rr WHERE rr.ridx = ridx)")
+    private int reportcount;
 }

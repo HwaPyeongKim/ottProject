@@ -96,6 +96,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         
         if(path.startsWith("/admin/getMyQnaList")){return true;}
 
+        if(path.startsWith("/admin/getReports")){return true;}
+        if(path.startsWith("/admin/cancelReport")){return true;}
+
 
         return false;
     }

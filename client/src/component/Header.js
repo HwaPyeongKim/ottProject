@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Cookies } from "react-cookie";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-
+import { Link } from 'react-router-dom'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faBars, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -30,8 +30,7 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [imgSrc, setImgSrc] = useState("");
-  const {keyword: urlKeyword} = useParams();
-  const [keyword, setKeyword] = useState(urlKeyword || "");
+  const [keyword, setKeyword] = useState("");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -46,8 +45,13 @@ function Header() {
   );
 
   useEffect(() => {
-    setKeyword(urlKeyword || "");
-  }, [urlKeyword]);
+    const path = location.pathname;
+    
+    if (path.startsWith("/search/")) {
+      const extractedKeyword = decodeURIComponent(path.replace("/search/", ""));
+      setKeyword(extractedKeyword);
+    }
+  }, [location.pathname]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && keyword.trim() !== "") {
@@ -119,10 +123,15 @@ function Header() {
         <ul>
     <li><a href="/company">회사소개</a></li>
     <li><a href="/qna">Q & A</a></li>
-    <li><a href="/admin">관리자 페이지</a></li>
+    <li><a href="http://localhost:3001" 
+        target="_blank" 
+        rel="noopener noreferrer">관리자 페이지</a>
+    </li>
 
     {loginUser && loginUser.role == 2
-      ? <li><a href="/admin">관리자 페이지</a></li>
+      ? <li><a href="http://localhost:3001" 
+        target="_blank" 
+        rel="noopener noreferrer">관리자 페이지</a></li>
       : null}
   </ul>
       </div>

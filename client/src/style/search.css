@@ -1,5 +1,6 @@
-.filter {display: flex; margin-bottom: 20px;}
+.filter {display: flex; margin-bottom: 20px; align-items: center;}
 .filter > li {position: relative; margin-right: 20px;}
+.filter > li.applyFilter button {background: transparent; border: none; outline: none; color: #fff; background: #3b82f6; padding: 5px 10px;}
 .filter > li.reset button {background: transparent; border: none; outline: none; color: #999c9f;}
 .filter > li.reset button:hover {color: #f5c518;}
 .filter > li p {cursor: pointer;}

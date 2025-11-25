@@ -20,7 +20,12 @@ function SubMenu() {
             <Link className="admin-menu-item" to="/memberList">MEMBER</Link>
             <Link className="admin-menu-item" to="/qnaList">Q & A</Link>
             <Link className="admin-menu-item" to="/spoilerList">SPOILER</Link>
-            <button className="admin-menu-btn" >BACK</button>
+            <button
+            className="admin-menu-btn"
+            onClick={() => window.location.href = "http://localhost:3000"}
+            >
+            BACK
+            </button>
         </div>
     )
 }

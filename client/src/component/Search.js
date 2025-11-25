@@ -13,6 +13,7 @@ function Search() {
   const {keyword} = useParams();
   const loginUser = useSelector(state=>state.user);
   const [filters, setFilters] = useState({sortBy: "popularity.desc", genre: "", year: "", certification: ""});
+  const [tempFilters, setTempFilters] = useState({sortBy: "popularity.desc", genre: "", year: "", certification: ""});
   const [searchResultsMovie, setSearchResultsMovie] = useState([]);
   const [searchResultsTV, setSearchResultsTV] = useState([]);
   const [discoverResultsMovie, setDiscoverResultsMovie] = useState([]);
@@ -20,6 +21,15 @@ function Search() {
   const [combinedResults, setCombinedResults] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
   const [likes, setLikes] = useState([]);
+
+  const [favorites, setFavorites] = useState([]);
+  const [selectedLists, setSelectedLists] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddListModal, setIsAddListModal] = useState(false);
+  const [listTitle, setListTitle] = useState("");
+  const [security, setSecurity] = useState("N");
+  const [myList, setMyList] = useState([]);
+  const [selected, setSelected] = useState({});
 
   const [pageMovie, setPageMovie] = useState(1);
   const [pageTV, setPageTV] = useState(1);
@@ -169,8 +179,8 @@ function Search() {
   }, [hasMoreMovie, hasMoreTV]);
 
   async function like(id) {
-    if (!loginUser || loginUser.midx === undefined) {
-      alert("로그인 후 이용해주세요");
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
       return;
     }
     
@@ -195,6 +205,81 @@ function Search() {
     }
   }
 
+  function favorite() {
+    if (!loginUser?.midx) {
+      alert("로그인이 필요한 서비스 입니다");
+      return;
+    }
+    
+    setIsModalOpen(true);
+  }
+
+  async function getMyLists() {
+    try {
+      const result = await jaxios.get("/api/member/getList", {params: {midx: loginUser.midx}});
+      setMyList(result.data.myList);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function addList() {
+    jaxios.post("/api/main/addList", {title: listTitle, security, midx: loginUser.midx})
+    .then((result) => {
+      if (result.data.msg === "ok") {
+        alert("리스트가 추가되었습니다");
+        setIsAddListModal(false);
+        setIsModalOpen(false);
+        setListTitle("");
+        setSecurity("N");
+        getMyLists();
+      } else {
+        alert(result.data.msg);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  }
+
+  function addMyList(item) {
+    if (selectedLists.length === 0) {
+      alert("추가할 리스트를 선택해주세요");
+      return;
+    }
+
+    if (item == null) {
+      alert("추가할 콘텐츠를 선택해주세요");
+      return;
+    }
+
+    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: item.id})
+    .then((result)=>{
+      if (result.data.msg === "ok") {
+        alert("리스트를 추가했습니다");
+        getMyDblists();
+      } else {
+        alert(result.data.msg);
+      }
+    })
+    .catch((err)=>{console.error(err);})
+
+    setIsModalOpen(false);
+    setSelectedLists([]);
+  }
+
+  async function getMyDblists() {
+    try {
+      const result = await jaxios.get("/api/main/getMyDblists", {params: {midx: loginUser.midx}});
+      if (result.data !== undefined && result.data.list !== undefined) {
+        const dbidxList = result.data.list.map(favorite => favorite.dbidx);
+        setFavorites(dbidxList);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   const handleGenreChange = () => {
     const genreCheckboxes = document.querySelectorAll(".genre:checked");
 
@@ -204,13 +289,13 @@ function Search() {
     const uniqueGenres = [...new Set(genreValues)];
     const genreString = uniqueGenres.join(",");
 
-    setFilters((prev) => ({ ...prev, genre: genreString }));
+    setTempFilters((prev) => ({ ...prev, genre: genreString }));
   };
 
   const handlePClick = (index) => {setActiveIndex(prev => (prev === index ? null : index));};
 
   const resetFilters = () => {
-    setFilters({
+    setTempFilters({
       sortBy: "popularity.desc",
       genre: "",
       year: "",
@@ -228,16 +313,27 @@ function Search() {
     radios.forEach(radio => radio.checked = radio.value === "");
   };
 
-  useEffect(
-    ()=>{
-      getMyLikes();
-    },[]
-  )
+  const applyFilter = () => {
+    setFilters(tempFilters); // 여기서만 실제 필터 적용
+    setPageMovie(1);
+    setPageTV(1);
+  };
 
   useEffect(() => {
     setPageMovie(1);
     setPageTV(1);
-  }, [keyword, filters]);
+  }, [keyword]);
+
+  useEffect(
+    () => {
+      if (loginUser?.midx) {
+        getMyLikes();
+        getMyLists();
+        getMyDblists();
+      }
+    }, [loginUser]
+  );
+  
 
   return (
     <div>
@@ -247,7 +343,7 @@ function Search() {
           <p className={activeIndex === 0 ? "on" : ""} onClick={() => handlePClick(0)}>개봉 년도</p>
           <div className={`yearWrap ${activeIndex === 0 ? "on" : ""}`}>
             <label htmlFor="yearFilter">개봉년도</label>
-            <input type="number" min="1900" max="2100" onChange={(e) =>setFilters(prev => ({ ...prev, year: e.target.value }))} id="yearFilter" />
+            <input type="number" min="1900" max="2100" onChange={(e) =>setTempFilters(prev => ({ ...prev, year: e.target.value }))} id="yearFilter" />
           </div>
         </li>
         <li>
@@ -297,7 +393,7 @@ function Search() {
                 { id: "cert_19", label: "청소년 관람불가", value: "19" }
               ].map((cert) => (
                 <li key={cert.id}>
-                  <input type="radio" id={cert.id} name="certification" value={cert.value} checked={filters.certification === cert.value} onChange={(e) => setFilters((prev) => ({ ...prev, certification: e.target.value }))} />
+                  <input type="radio" id={cert.id} name="certification" value={cert.value} checked={filters.certification === cert.value} onChange={(e) => setTempFilters((prev) => ({ ...prev, certification: e.target.value }))} />
                   <label htmlFor={cert.id}>{cert.label} <span><FontAwesomeIcon icon={faCheck} /></span></label>
                 </li>
               ))}
@@ -308,6 +404,7 @@ function Search() {
           <p className={activeIndex === 3 ? "on" : ""} onClick={() => handlePClick(3)}>평점</p>
           <div className={activeIndex === 3 ? "on" : ""}></div>
         </li> */}
+        <li className="applyFilter"><button onClick={applyFilter} className="reset">필터적용</button></li>
         <li className="reset"><button onClick={resetFilters}>초기화</button></li>
       </ul>
 
@@ -323,7 +420,7 @@ function Search() {
                       {
                         loginUser && loginUser.midx ?
                         <>
-                          <button onClick={()=>{}}><FontAwesomeIcon icon={faBookmark} /></button>
+                          <button className={`favorite${favorites.includes(item.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); favorite(); setSelected(item)}}><FontAwesomeIcon icon={faBookmark} /></button>
                           <button className={`like${likes.includes(item.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(item.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button>
                         </>
                         : null
@@ -353,6 +450,52 @@ function Search() {
           })
         }
       </div>
+
+      {isModalOpen && (
+        <div className="modalOverlay" onClick={() => setIsModalOpen(false)}>
+          <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+            <h3>리스트에 추가 <small>({selected.title ? selected.title : (selected.name ? selected.name : "")})</small></h3>
+            <ul>
+              {
+                myList.length > 0 ? 
+                  myList.map((mylist, lidx) => {
+                    return (
+                      <li key={lidx} className="checkboxWrap">
+                        <input type="checkbox" value={mylist.listidx} id={`mylist_${mylist.listidx}`} onChange={(e)=>{const value = parseInt(e.target.value); if (e.target.checked) {setSelectedLists(prev => [...prev, value]);} else {setSelectedLists(prev => prev.filter(id => id !== value));}}} />
+                        <label className="flex" htmlFor={`mylist_${mylist.listidx}`}><p>{mylist.title}</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
+                      </li>
+                    )
+                  })
+                : null
+              }
+              <li className="flex"><p>리스트 새로 만들기</p><button onClick={()=>{setIsAddListModal(true)}}>+</button></li>
+            </ul>
+            <div className="buttonWrap">
+              <button className="mainButton" onClick={()=>{addMyList(selected)}}>추가하기</button>
+              <button className="mainButton" onClick={()=>setIsModalOpen(false)}>닫기</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isAddListModal && (
+        <div className="modalOverlay" onClick={() => setIsAddListModal(false)}>
+          <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+            <h3>리스트 추가</h3>
+            <div>
+              <input type="text" value={listTitle} onChange={(e)=>{setListTitle(e.currentTarget.value)}} />
+              <div className="checkboxWrap">
+                <input type="checkbox" value={security} onChange={(e)=>setSecurity(e.target.checked ? "Y" : "N")} id="checkbox_security" />
+                <label htmlFor="checkbox_security" className="flex"><p>리스트 노출 여부</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
+              </div>
+            </div>
+            <div className="buttonWrap">
+              <button className="mainButton" onClick={()=>{addList()}}>추가하기</button>
+              <button className="mainButton" onClick={()=>setIsAddListModal(false)}>닫기</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
