@@ -52,12 +52,14 @@ public class MainService {
         return result;
     }
 
-    public void addLists(int listidx, int dbidx) {
+    public void addLists(int listidx, int dbidx, String posterpath, String title) {
         DbList dblist = dr.findByListidxAndDbidx(listidx, dbidx);
         if (dblist == null) {
             DbList dblistData = new DbList();
             dblistData.setListidx(listidx);
             dblistData.setDbidx(dbidx);
+            dblistData.setPosterpath(posterpath);
+            dblistData.setTitle(title);
             dr.save(dblistData);
         }
     }

@@ -259,7 +259,7 @@
 .admin-table.spoiler td.content button {border: none; outline: none; background: transparent; cursor: pointer; color: inherit; font-size: inherit;}
 .admin-table.spoiler td.content .textWrap {max-width: 500px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 .admin-table.spoiler td.content button:hover {color: #f5c518;}
-.admin-table.spoiler td.buttons button {background: #f5c518; color: #060d17; border: none; border-radius: 5px; cursor: pointer;}
+.admin-table.spoiler td.buttons button {background: #f5c518; color: #060d17; border: none; border-radius: 5px; padding: 3px 10px; cursor: pointer;}
 .admin-table.spoiler td.buttons button:hover {color: #fff;}
 
 .modalOverlay {position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000;}
@@ -271,8 +271,14 @@
 .modalContent .contentWrap .content {display: flex; justify-content: space-between; max-height: 500px; overflow: auto;}
 .modalContent .contentWrap .content h3 {font-size: 1.1em; font-weight: bold; margin-bottom: 10px;}
 .modalContent .contentWrap .content img {width: 100px; height: 150px;}
-.modalContent .contentWrap .content div {flex: 5; margin-left: 20px;}
+.modalContent .contentWrap .content > div {flex: 5; margin-left: 20px;}
 .modalContent .buttonWrap {margin-top: 20px;}
 .modalContent .buttonWrap button {width: 100%; padding: 10px 0; background: #f5c518; font-size: 1.1em; font-weight: bold; color: #060d17; border: none; border-radius: 5px; cursor: pointer;}
 .modalContent .buttonWrap button:hover{color: #fff;}
+
+/* 스크롤 커스텀 */
+.modalContent .contentWrap .content::-webkit-scrollbar {width: 10px;}
+.modalContent .contentWrap .content::-webkit-scrollbar-track {background: #222;}
+.modalContent .contentWrap .content::-webkit-scrollbar-thumb {background: #555; border-radius: 8px;}
+.modalContent .contentWrap .content::-webkit-scrollbar-thumb:hover {background: #777;}
 /* 스포일러 종료 */

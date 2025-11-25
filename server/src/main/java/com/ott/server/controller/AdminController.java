@@ -68,8 +68,8 @@ public class AdminController {
 
 
     @GetMapping("/getReports")
-    public HashMap<String, Object> getReports(@RequestParam("page") int page, @RequestParam(value="key", required=false, defaultValue="") String key, @RequestParam("tab") String tab) {
-        HashMap<String, Object> result = as.getReports(page, key, tab);
+    public HashMap<String, Object> getReports(@RequestParam("page") int page, @RequestParam(value="key", required=false, defaultValue="") String key, @RequestParam("tab") String tab, @RequestParam("sort") String sort, @RequestParam("dir") String dir) {
+        HashMap<String, Object> result = as.getReports(page, key, tab, sort, dir);
         return result;
     }
 

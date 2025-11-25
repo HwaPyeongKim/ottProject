@@ -135,12 +135,33 @@ public class AdminService {
         return result;
     }
 
-    public HashMap<String, Object> getReports(int page, String key, String tab) {
+    public HashMap<String, Object> getReports(int page, String key, String tab, String sort, String dir) {
         HashMap<String, Object> result = new HashMap<>();
         Paging paging = new Paging();
         paging.setPage(page);
         paging.setDisplayPage(10);
         paging.setDisplayRow(10);
+
+        Sort.Direction direction = dir.equalsIgnoreCase("asc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        String sortFieldConverted;
+        if (tab.equals("community")) {
+            switch (sort) {
+                case "nickname":
+                    sortFieldConverted = "boardMember.nickname";
+                    break;
+                default:
+                    sortFieldConverted = sort;
+            }
+        } else {
+            switch (sort) {
+                case "nickname":
+                    sortFieldConverted = "member.nickname";
+                    break;
+                default:
+                    sortFieldConverted = sort;
+            }
+        }
 
         if (tab.equals("community")) {
             if (key.equals("")) {
@@ -148,7 +169,7 @@ public class AdminService {
                 paging.setTotalCount(count);
                 paging.calPaging();
                 int pageNumber = (page < 1) ? 0 : page - 1;
-                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(Sort.Direction.DESC, "writedate"));
+                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(direction, sortFieldConverted));
                 Page<Board> list = br.findByStatus(BoardStatus.BLURRED, pageable );
                 result.put("list", list.getContent());
             } else {
@@ -156,7 +177,7 @@ public class AdminService {
                 paging.setTotalCount(count);
                 paging.calPaging();
                 int pageNumber = (page < 1) ? 0 : page - 1;
-                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(Sort.Direction.DESC, "writedate"));
+                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(direction, sortFieldConverted));
                 Page<Board> list = br.searchByKeyAndStatus(BoardStatus.BLURRED , key, pageable);
                 result.put("list", list.getContent());
             }
@@ -166,7 +187,7 @@ public class AdminService {
                 paging.setTotalCount(count);
                 paging.calPaging();
                 int pageNumber = (page < 1) ? 0 : page - 1;
-                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(Sort.Direction.DESC, "writedate"));
+                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(direction, sortFieldConverted));
                 Page<Review> list = rr.findByIsspoil( "Y" , pageable );
                 result.put("list", list.getContent());
             } else {
@@ -174,7 +195,7 @@ public class AdminService {
                 paging.setTotalCount(count);
                 paging.calPaging();
                 int pageNumber = (page < 1) ? 0 : page - 1;
-                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(Sort.Direction.DESC, "writedate"));
+                Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(direction, sortFieldConverted));
                 Page<Review> list = rr.searchByKeyAndIsspoil(key, pageable);
                 result.put("list", list.getContent());
             }

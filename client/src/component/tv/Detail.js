@@ -240,13 +240,13 @@ function Detail() {
     }
   }
 
-  function addMyList() {
+  function addMyList(item) {
     if (selectedLists.length === 0) {
       alert("추가할 리스트를 선택해주세요.");
       return;
     }
 
-    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: id})
+    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: item.id, posterpath: item.poster_path, title: item.name})
     .then((result)=>{
       if (result.data.msg === "ok") {
         alert("리스트를 추가했습니다");
@@ -646,7 +646,7 @@ function Detail() {
             <ul>
               <li className="poster">
                 <div>
-                  <img src={`https://image.tmdb.org/t/p/w154${item.poster_path}`} alt={`${item.title} 포스터`} />
+                  <img src={`https://image.tmdb.org/t/p/w154${item.poster_path}`} alt={`${item.name} 포스터`} />
                   <div className="ratings">
                     <h4>평점</h4>
                     <p><AverageRating avgScore={average} /></p>
@@ -725,7 +725,7 @@ function Detail() {
               <li className="flex"><p>리스트 새로 만들기</p><button onClick={()=>{setIsAddListModal(true)}}>+</button></li>
             </ul>
             <div className="buttonWrap">
-              <button className="mainButton" onClick={()=>{addMyList()}}>추가하기</button>
+              <button className="mainButton" onClick={()=>{addMyList(item)}}>추가하기</button>
               <button className="mainButton" onClick={()=>setIsModalOpen(false)}>닫기</button>
             </div>
           </div>

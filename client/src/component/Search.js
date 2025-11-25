@@ -253,7 +253,7 @@ function Search() {
       return;
     }
 
-    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: item.id})
+    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: item.id, posterpath: item.poster_path, title: item.title})
     .then((result)=>{
       if (result.data.msg === "ok") {
         alert("리스트를 추가했습니다");

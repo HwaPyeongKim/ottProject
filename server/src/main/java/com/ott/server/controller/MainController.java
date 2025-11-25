@@ -44,13 +44,15 @@ public class MainController {
     public static class AddRequest {
         private List<Integer> listidxs;
         private int dbidx;
+        private String title;
+        private String posterpath;
     }
 
     @PostMapping("/addLists")
     public HashMap<String, Object> addLists(@RequestBody AddRequest request) {
         HashMap<String, Object> result = new HashMap<>();
         for (int listidx : request.getListidxs()) {
-            ms.addLists(listidx, request.getDbidx());
+            ms.addLists(listidx, request.getDbidx(), request.getPosterpath(), request.getTitle());
         }
         result.put("msg", "ok");
         return result;

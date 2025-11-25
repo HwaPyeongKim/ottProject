@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import parse from 'html-react-parser';
+import DOMPurify from "dompurify";
 import jaxios from "../../util/JWTUtil";
 import axios from "axios";
 
@@ -14,8 +14,11 @@ function SpoilerList() {
   const [modalOpen, setModalOpen] = useState(false);
   const [content, setContent] = useState({});
 
+  const [sortField, setSortField] = useState("writedate");
+  const [sortDir, setSortDir] = useState("desc");
+
   function getLists(tab, page, key) {
-    jaxios.get("/api/admin/getReports", {params: { page, key, tab }})
+    jaxios.get("/api/admin/getReports", {params: { page, key, tab, sort: sortField, dir: sortDir }})
     .then((result) => {
       console.log(result);
       setLists(result.data.list);
@@ -57,6 +60,10 @@ function SpoilerList() {
           const file = await axios.get(`/api/file/url/${board.fidx}`);
           board.imgSrc = file.data.image;
         }
+        if (board.boardMember.profileimg !== undefined && board.boardMember.profileimg > 0) {
+          const profileimg = await axios.get(`/api/file/url/${board.boardMember.profileimg}`);
+          board.profileimg = profileimg.data.image;
+        }
         console.log(board);
         setContent(board);
       } catch (err) {
@@ -81,8 +88,27 @@ function SpoilerList() {
     getLists(activeTab, p, key);
   }
 
+  function handleSort(field) {
+    let direction = "asc";
+    if (sortField === field && sortDir === "asc") direction = "desc";
+
+    setSortField(field);
+    setSortDir(direction);
+
+    onPageMove(1, key);
+  }
+
   return (
     <div className="admin-container">
+
+      <div className="admin-card">
+          <h2 className="admin-title">블라인드 관리</h2>
+
+          <div style={{ display: "flex", gap: "1rem" }}>
+              <input type="text" className="admin-input" value={key} placeholder="검색어 입력 (제목, 내용)" onChange={(e) => setKey(e.currentTarget.value)}/>
+              <button className="admin-btn primary" style={{ marginLeft: "auto" }} onClick={() => onPageMove(1)}>검색</button>
+          </div>
+      </div>
 
       <ul className="tabMenu">
         <li><button onClick={()=>{setActiveTab("community")}} className={activeTab === "community" ? "on" : ""} >커뮤니티</button></li>
@@ -94,10 +120,10 @@ function SpoilerList() {
           <table className="admin-table spoiler">
             <thead>
               <tr>
-                <th className="content">제목</th>
-                <th>작성자</th>
-                <th>신고건수</th>
-                <th>작성일</th>
+                <th onClick={() => handleSort("title")} className="content">제목 {sortField === "title" && (sortDir === "asc" ? "▲" : "▼")}</th>
+                <th onClick={() => handleSort("nickname")}>작성자 {sortField === "nickname" && (sortDir === "asc" ? "▲" : "▼")}</th>
+                <th onClick={() => handleSort("reportcount")}>신고건수 {sortField === "reportcount" && (sortDir === "asc" ? "▲" : "▼")}</th>
+                <th onClick={() => handleSort("writedate")}>작성일 {sortField === "writedate" && (sortDir === "asc" ? "▲" : "▼")}</th>
                 <th>블라인드 해제</th>
               </tr>
             </thead>
@@ -124,10 +150,10 @@ function SpoilerList() {
           <table className="admin-table spoiler">
             <thead>
               <tr>
-                <th className="content">내용</th>
-                <th>작성자</th>
-                <th>신고건수</th>
-                <th>작성일</th>
+                <th onClick={() => handleSort("content")} className="content">내용 {sortField === "content" && (sortDir === "asc" ? "▲" : "▼")}</th>
+                <th onClick={() => handleSort("nickname")}>작성자 {sortField === "nickname" && (sortDir === "asc" ? "▲" : "▼")}</th>
+                <th onClick={() => handleSort("reportcount")}>신고건수 {sortField === "reportcount" && (sortDir === "asc" ? "▲" : "▼")}</th>
+                <th onClick={() => handleSort("writedate")}>작성일 {sortField === "writedate" && (sortDir === "asc" ? "▲" : "▼")}</th>
                 <th>블라인드 해제</th>
               </tr>
             </thead>
@@ -170,7 +196,7 @@ function SpoilerList() {
                 <div className="contentWrap">
                   <div className="userinfo">
                     <div>
-                      <img src="" alt="" />
+                      <img src={content.profileimg} alt="프로필 사진" />
                     </div>
                     <p>{content.boardMember?.nickname ?? "Unknown"}</p>
                   </div>
@@ -178,7 +204,7 @@ function SpoilerList() {
                     <img src={content.imgSrc} alt="게시글 사진" />
                     <div>
                       <h3>{content.title}</h3>
-                      <p>{content.content}</p>
+                      <div dangerouslySetInnerHTML={{ __html: content.content }}></div>
                     </div>
                   </div>
                 </div>
