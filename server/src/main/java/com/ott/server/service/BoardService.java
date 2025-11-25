@@ -25,7 +25,6 @@ public class BoardService {
 
     private final BoardRepository br;
     private final BLikesRepository blr;
-    private final BCommentRepository bcr;
     private final ReportRepository rr;
 
     public HashMap<String, Object> getBoardList(int page, String searchWord, String sortType) {
