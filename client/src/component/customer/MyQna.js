@@ -60,8 +60,8 @@ function MyQna () {
         <button className="btn btn-success" onClick={() => navigate('/qnaWrite')}>
           문의하기
         </button>
-        <button className="btn btn-success" onClick={() => navigate(`/myQna`)}>
-          나의 Q&A 조회&nbsp; &gt;
+        <button className="btn btn-success" onClick={() => navigate(`/qna`)}>
+          전체 Q&A 조회&nbsp; &gt;
         </button>
       </div>
 

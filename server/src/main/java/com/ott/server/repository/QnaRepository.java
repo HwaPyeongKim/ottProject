@@ -20,5 +20,7 @@ public interface QnaRepository extends JpaRepository<Qna, Integer> {
     List<Qna> findByMember_MidxAndTitleContaining(int midx, String key);
     Page<Qna> findAllByMember_MidxAndTitleContaining(int midx, String key, Pageable pageable);
 
+    int countByTitleContainingOrContentContaining(String title, String content);
 
+    Page<Qna> findAllByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
 }

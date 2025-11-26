@@ -23,6 +23,20 @@ public class AdminController {
         return as.getQnaList(page, key);
     }
 
+    @GetMapping("/getAdminQnaList")
+    public HashMap<String, Object> getQnaList(
+            @RequestParam("page") int page,
+            @RequestParam(value="key", required = false, defaultValue = "") String key,
+            @RequestParam(value="sortField", defaultValue = "qidx") String sortField,
+            @RequestParam(value="sortDir", defaultValue = "DESC") String sortDir
+    ){
+        System.out.println("🔥 getQnaList: page=" + page + ", key=" + key +
+                ", sortField=" + sortField + ", sortDir=" + sortDir);
+
+        return as.getAdminQnaList(page, key, sortField, sortDir);
+    }
+
+
     @GetMapping("/getMyQnaList")
     public HashMap<String, Object> getMyQnaList(@RequestParam("midx") int midx,
                                                 @RequestParam("page") int page,

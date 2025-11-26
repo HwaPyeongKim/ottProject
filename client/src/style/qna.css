@@ -277,3 +277,87 @@
   background-color: #666;
 }
 
+/* ============================
+   모달 (다크그레이 톤)
+   ============================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(1px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+
+.modal-box {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  width: 350px;
+  text-align: center;
+  color: var(--text-color);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.45);
+  animation: modalFade 0.25s ease-out;
+}
+
+.modal-box h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: var(--highlight-color);
+}
+
+.modal-box p {
+  font-size: 0.9rem;
+  color: var(--subtext-color);
+  margin-bottom: 1rem;
+}
+
+.modal-input {
+  width: 90%;
+  background-color: #1c1c1c;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.8rem;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: var(--highlight-color);
+  background-color: #222;
+}
+
+.modal-btns {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.modal-btns .btn {
+  flex: 1;
+  padding: 0.7rem 0;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+}
+
+/* 애니메이션 */
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
