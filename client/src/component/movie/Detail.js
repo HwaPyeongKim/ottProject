@@ -233,13 +233,13 @@ function Detail() {
     });
   }
 
-  function addMyList() {
+  function addMyList(item) {
     if (selectedLists.length === 0) {
       alert("추가할 리스트를 선택해주세요.");
       return;
     }
 
-    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: id})
+    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: item.id, posterpath: item.poster_path, title: item.title})
     .then((result)=>{
       if (result.data.msg === "ok") {
         alert("리스트를 추가했습니다");
@@ -602,7 +602,7 @@ function Detail() {
           </div>
 
           <div className="review">
-            <Review dbidx={id} season="0" refreshAverage={getAverage} />
+            <Review dbidx={id} season="0" refreshAverage={getAverage} title={item.title} posterpath={item.poster_path} />
           </div>
         </div>
 
@@ -701,7 +701,7 @@ function Detail() {
               <li className="flex"><p>리스트 새로 만들기</p><button onClick={()=>{setIsAddListModal(true)}}>+</button></li>
             </ul>
             <div className="buttonWrap">
-              <button className="mainButton" onClick={()=>{addMyList()}}>추가하기</button>
+              <button className="mainButton" onClick={()=>{addMyList(item)}}>추가하기</button>
               <button className="mainButton" onClick={()=>setIsModalOpen(false)}>닫기</button>
             </div>
           </div>

@@ -5,6 +5,7 @@ import Board from './Board';
 
 import "../../style/board.css";
 import jaxios from '../../util/JWTUtil';
+import axios from 'axios';
 function BoardMain() {
     const loginUser = useSelector(state => state.user);
     const navigate = useNavigate();
@@ -39,7 +40,7 @@ function BoardMain() {
 
 
     function onPageMove(p) {
-    jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
+    axios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
         .then(result => {
 
             const merged = [
@@ -61,10 +62,18 @@ function BoardMain() {
         .catch(err => console.error(err));
     }
 
-
+    function onWriteClick() {
+        if (!loginUser || !loginUser.midx) {
+            alert("글쓰기는 로그인이 필요한 서비스입니다.");
+            navigate("/login");
+            return;
+        }
+        // 로그인 되어 있으면 페이지 이동
+        navigate("/writeForm");
+    }
 
     function onSearch(p) {
-        jaxios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
+        axios.get(`/api/board/getBoardList/${p}`, { params: { searchWord, sortType } })
             .then(result => {
                 const filteredBoards = result.data.boardList.filter(board => !deletedIds.includes(board.bidx));
                 setBoardList(filteredBoards);
@@ -74,6 +83,11 @@ function BoardMain() {
     }
 
     function deleteBoard(bidx) {
+        if (!loginUser || !loginUser.midx) {
+            alert("삭제는 로그인이 필요한 서비스입니다.");
+            return;
+        }
+
         if (window.confirm('정말로 게시글을 삭제하시겠습니까?')) {
             jaxios.delete(`/api/board/deleteBoard/${bidx}`)
             .then(() => {
@@ -102,7 +116,7 @@ function BoardMain() {
                     <button className={`tab-button ${sortType === 'latest' ? 'active' : ''}`} onClick={Latest}>최신</button>
                     <button className={`tab-button ${sortType === 'popular' ? 'active' : ''}`} onClick={Popular}>인기</button>
                 </div>
-                <button className='tab-button boardWrite' onClick={() => navigate("/writeForm")}>글쓰기</button>
+                <button className='tab-button boardWrite' onClick={() => onWriteClick()}>글쓰기</button>
             </div>
             <div className="search-bar">
                 <input

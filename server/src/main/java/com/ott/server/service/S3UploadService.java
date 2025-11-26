@@ -12,7 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -62,5 +66,34 @@ public class S3UploadService {
     // 실제 접근 가능한 URL 생성
     public String getFileUrl(String key) {
         return amazoneS3.getUrl(bucket, key).toString();
+    }
+
+    // 여러 파일 ID를 받아 URL 목록 반환
+    public Map<String, String> getFileUrls(java.util.List<String> fidxStrings) {
+
+        // 1. 결과 Map 정의 (Key: String Fidx, Value: String URL)
+        Map<String, String> urlMap = new HashMap<>();
+
+        // 2. String Fidx List를 Integer Fidx List로 변환 (DB PK 조회를 위함)
+        List<Integer> fidxs = fidxStrings.stream()
+                //  문자열을 정수로 변환하여 Integer List를 생성
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
+
+        // 3. 모든 FileEntity를 한 번의 DB 쿼리로 조회 (N+1 해결)
+        java.util.List<FileEntity> files = fr.findAllById(fidxs);
+
+        // 4. 경로(path)를 URL로 변환하여 Map에 저장
+        for (FileEntity file : files) {
+            // DB에서 조회된 Integer Fidx를 다시 String으로 변환하여 Map의 Key로 사용
+            String originalFidxString = String.valueOf(file.getFidx());
+
+            // FileEntity에 저장된 S3 Key/Path를 이용해 실제 URL 생성
+            String url = getFileUrl(file.getPath());
+
+            urlMap.put(originalFidxString, url);
+        }
+
+        return urlMap;
     }
 }

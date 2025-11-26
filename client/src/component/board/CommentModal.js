@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import "../../style/boardModal.css";
 import { useSelector } from "react-redux";
 import jaxios from "../../util/JWTUtil";
+import axios from "axios";
 
 const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
     const loginUser = useSelector(state => state.user);
@@ -34,30 +35,30 @@ const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
     //  댓글 리스트 가져오기
     //-----------------------
     async function fetchComments(){
-    try {
-        const res = await jaxios.get(`/api/bcomment/getCommentList/${bidx}`);
-        let list = res.data.commentList;
+        try {
+            const res = await jaxios.get(`/api/bcomment/getCommentList/${bidx}`);
+            let list = res.data.commentList;
 
-        // 파일 ID → URL 변환
-        list = await Promise.all(list.map(async comment => {
-            if (comment.memberProfileUrl) {
-                const imgRes = await jaxios.get(`/api/file/url/${comment.memberProfileUrl}`);
-                comment.memberProfileUrl = imgRes.data.image; // 실제 S3 URL로 변경
-            }
-            return comment;
-        }));
+            // 파일 ID → URL 변환
+            // list = await Promise.all(list.map(async comment => {
+            //     if (comment.memberProfileUrl) {
+            //         const imgRes = await jaxios.get(`/api/file/url/${comment.memberProfileUrl}`);
+            //         comment.memberProfileUrl = imgRes.data.image; // 실제 S3 URL로 변경
+            //     }
+            //     return comment;
+            // }));
 
-        // 댓글 / 대댓글 분리
-        const comments = list.filter(c => c.pcidx === null);  
-        const replies = list.filter(c => c.pcidx !== null);
+            // 댓글 / 대댓글 분리
+            const comments = list.filter(c => c.pcidx === null);  
+            const replies = list.filter(c => c.pcidx !== null);
 
-        console.log(res);
-        setCommentList(comments);
-        setReplyList(replies);
-    } catch (err) {
-        console.error(err);
+            console.log(res);
+            setCommentList(comments);
+            setReplyList(replies);
+        } catch (err) {
+            console.error(err);
+        }
     }
-}
 
     useEffect(() => {
         if (bidx) fetchComments();
