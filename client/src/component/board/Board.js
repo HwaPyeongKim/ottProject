@@ -76,10 +76,10 @@ function Board(props) {
         const style = window.getComputedStyle(el);
         const lineHeight = parseFloat(style.lineHeight); // line-height 값 가져오기
         const maxLines = 3; // 3줄 제한
-
         const maxHeight = lineHeight * maxLines;
         setIsOverflowing(el.scrollHeight > maxHeight);
     }, [props.board.content, showFullContent]);
+
 
 
     useEffect(() => {
@@ -102,11 +102,16 @@ function Board(props) {
             .catch(err => console.error(err));
     }, [props.board.boardMember.profileimg]);
 
-    async function onLike() {
-        if (!loginUser?.midx) return alert("좋아요는 로그인이 필요한 서비스입니다.");
-        await jaxios.post('/api/board/addlike', { bidx: props.board.bidx, midx: loginUser.midx });
-        const result = await axios.get('/api/board/getLikeList', { params: { boardid: props.board.bidx }});
-        setLikeList([...result.data.likeList]);
+    async function onLike(){
+        if (!loginUser || !loginUser.midx) {
+            alert("좋아요는 로그인이 필요한 서비스입니다.");
+            return;
+        }
+
+        let result = await jaxios.post('/api/board/addlike', { bidx: props.board.bidx, midx: loginUser.midx })
+
+        result = await axios.get('/api/board/getLikeList', {params: {boardid: props.board.bidx}})
+        setLikeList( [ ...result.data.likeList ] );
     }
 
     useEffect(() => {
@@ -119,16 +124,25 @@ function Board(props) {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    useEffect(() => {
-        if (!loginUser?.midx) return setReported(false);
+
+    useEffect(
+        () => {
+        if (!loginUser || !loginUser.midx) {
+            setReported(false);
+            return;
+        }
         jaxios.get(`/api/board/isReported/${props.board.bidx}?midx=${loginUser.midx}`)
             .then(res => setReported(res.data.reported))
             .catch(err => console.error(err));
     }, [props.board.bidx, loginUser?.midx]);
 
-    function reportBoard() {
-        if (!loginUser?.midx) return alert("스포신고는 로그인이 필요한 서비스입니다.");
-        if (reported) return;
+    function reportBoard(){
+        if (!loginUser || !loginUser.midx) {
+            alert("스포신고는 로그인이 필요한 서비스입니다.");
+            return;
+        }
+
+        if(reported) return;
 
         jaxios.post(`/api/board/reportBoard/${props.board.bidx}`, { midx: loginUser.midx })
             .then(res => {
@@ -146,6 +160,7 @@ function Board(props) {
                 const res = await axios.get(`/api/bcomment/getCommentCount/${props.board.bidx}`);
                 setCommentCount(res.data.count);
             } catch (err) { console.error(err); }
+
         }
         if (props.board.bidx) CommentCount();
     }, [props.board.bidx]);
@@ -171,15 +186,10 @@ function Board(props) {
                             </div>
                         ) : (
                             <div>
-                                <p className="review-text boardtitle">{props.board.title}</p>
-                                <div 
-                                    className={`review-text ${!showFullContent ? 'clamp' : ''}`}
-                                    style={{ whiteSpace: "pre-wrap" }}
-                                    ref={contentRef}
-                                >
-                                    {parse(props.board.content || '')}
-                                </div>
-
+                            <p className="review-text boardtitle">{props.board.title}</p>
+                            <div className={`review-text ${!showFullContent ? 'clamp' : ''}`} style={{ whiteSpace: "pre-wrap" }}>
+                                {parse(props.board.content || '')}
+                            </div>
                                 {isOverflowing && (
                                     <button className="show-more-button" onClick={() => setShowFullContent(prev => !prev)}>
                                         {showFullContent ? "접기" : "더보기"}

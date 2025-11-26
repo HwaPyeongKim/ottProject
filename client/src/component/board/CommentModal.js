@@ -35,19 +35,10 @@ const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
     //  댓글 리스트 가져오기
     //-----------------------
     async function fetchComments(){
-        try {
-            const res = await axios.get(`/api/bcomment/getCommentList/${bidx}`);
-            let list = res.data?.commentList ?? [];
-
-
-            // 파일 ID → URL 변환
-            // list = await Promise.all(list.map(async comment => {
-            //     if (comment.memberProfileUrl) {
-            //         const imgRes = await jaxios.get(`/api/file/url/${comment.memberProfileUrl}`);
-            //         comment.memberProfileUrl = imgRes.data.image; // 실제 S3 URL로 변경
-            //     }
-            //     return comment;
-            // }));
+        try {          
+            const res = await jaxios.get(`/api/bcomment/getCommentList/${bidx}`);
+            let list = res.data.commentList;
+            // let list = res.data?.commentList ?? [];
 
             // 댓글 / 대댓글 분리
             const comments = list.filter(c => c.pcidx === null);  
