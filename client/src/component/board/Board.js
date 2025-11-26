@@ -92,12 +92,11 @@ function Board(props) {
             // console.log("현재 로그인 정보:", loginUser);
             // console.log(" 쿠키 user:", cookies.get("user"));
 
-            jaxios.get(`/api/board/getLikeList`, {params: {boardid: props.board.bidx}})
+            axios.get(`/api/board/getLikeList`, {params: {boardid: props.board.bidx}})
             .then((result)=>{
                 setLikeList([...result.data.likeList]);
             }).catch((err)=>{console.error(err)})            
         },[]
-        // },[props.board]
     )
 
     useEffect(
@@ -128,9 +127,14 @@ function Board(props) {
     )
 
     async function onLike(){
+        if (!loginUser || !loginUser.midx) {
+            alert("좋아요는 로그인이 필요한 서비스입니다.");
+            return;
+        }
+
         let result = await jaxios.post('/api/board/addlike', { bidx: props.board.bidx, midx: loginUser.midx })
 
-        result = await jaxios.get('/api/board/getLikeList', {params: {boardid: props.board.bidx}})
+        result = await axios.get('/api/board/getLikeList', {params: {boardid: props.board.bidx}})
         setLikeList( [ ...result.data.likeList ] );
     }
 
@@ -149,6 +153,10 @@ function Board(props) {
 
     useEffect(
         () => {
+        if (!loginUser || !loginUser.midx) {
+            setReported(false);
+            return;
+        }
         // 페이지 로드 시 신고 여부 확인
         jaxios.get(`/api/board/isReported/${props.board.bidx}?midx=${loginUser.midx}`)
         .then((res) => {
@@ -159,6 +167,11 @@ function Board(props) {
     ); 
 
     function reportBoard(){
+        if (!loginUser || !loginUser.midx) {
+            alert("스포신고는 로그인이 필요한 서비스입니다.");
+            return;
+        }
+
         if(reported) return;
 
         jaxios.post(`/api/board/reportBoard/${props.board.bidx}`, {midx: loginUser.midx} )
@@ -179,7 +192,7 @@ function Board(props) {
     useEffect(() => {
         async function CommentCount() {
             try {
-                const res = await jaxios.get(`/api/bcomment/getCommentCount/${props.board.bidx}`);
+                const res = await axios.get(`/api/bcomment/getCommentCount/${props.board.bidx}`);
                 setCommentCount(res.data.count); // 서버에서 댓글+대댓글 합계 반환
             } catch (err) {
                 console.error(err);
@@ -216,9 +229,9 @@ function Board(props) {
                         ) : (
                             <div>
                             <p className="review-text boardtitle">{props.board.title}</p>
-                            <p className={`review-text ${!showFullContent ? 'clamp' : ''}`} style={{ whiteSpace: "pre-wrap" }}>
+                            <div className={`review-text ${!showFullContent ? 'clamp' : ''}`} style={{ whiteSpace: "pre-wrap" }}>
                                 {parse(props.board.content || '')}
-                            </p>
+                            </div>
 
                             {props.board.content.length > 100 && (
                                 <button className="show-more-button" onClick={() => setShowFullContent(prev => !prev)}>
