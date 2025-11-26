@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface DbListRepository extends JpaRepository<DbList, Integer> {
 
-    List<DbList> findAllByListidx(int listidx);
+    List<DbList> findAllByListidx(int listidx, Sort id);
 
     int countByListidx(int listidx);
 

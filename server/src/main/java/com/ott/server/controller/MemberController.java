@@ -396,12 +396,10 @@ public class MemberController {
         return result;
     }
 
-
     @GetMapping("/getReviewList")
-    public HashMap<String, Object> getReviewList(@RequestParam("midx") int midx) {
+    public HashMap<String, Object> getReviewList(@RequestParam(required = false, value = "page", defaultValue = "") int page, @RequestParam("midx") int midx) {
         HashMap<String, Object> result = new HashMap<>();
-        List<Review> reviewList = ms.getReviewList(midx);
-        result.put("reviewList", reviewList);
+        result.put("reviewList", ms.getReviewList(page, midx));
         return result;
     }
 }

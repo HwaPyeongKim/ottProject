@@ -171,7 +171,7 @@ public class MemberService {
         //System.out.println("getListDetailView : " + dbList);
         HashMap<String , Object> result = new HashMap<>();
         if( (Integer)page == null || page < 1 ){
-            result.put("dbList", dlr.findAllByListidx(listidx));
+            result.put("dbList", dlr.findAllByListidx(listidx, Sort.by(Sort.Direction.DESC, "id")));
             System.out.println("dbList : " + result.get("dbList"));
         }else {
             Paging paging = new Paging();
@@ -231,7 +231,7 @@ public class MemberService {
     }
 
     public int[] getTitleList(int listidx) {
-        List<DbList> dblist = dlr.findAllByListidx(listidx);
+        List<DbList> dblist = dlr.findAllByListidx(listidx, Sort.by(Sort.Direction.DESC, "id"));
         return dblist.stream().mapToInt(DbList::getDbidx).toArray();
     }
 
@@ -257,7 +257,27 @@ public class MemberService {
         ler.delete(le);
     }
 
-    public List<Review> getReviewList(int midx) {
-        return rr.findByMidx(midx);
+    public HashMap<String, Object> getReviewList(int page, int midx) {
+        HashMap<String , Object> result = new HashMap<>();
+        if( (Integer)page == null || page < 1 ){
+            result.put("reviewList", rr.findAllByMidx(midx, Sort.by(Sort.Direction.DESC, "writedate")));
+            System.out.println("DB 리뷰리스트 : " + result.get("reviewList"));
+        }else {
+            Paging paging = new Paging();
+            paging.setPage(page);
+
+            int count = rr.countByMidx(midx);
+            System.out.println("리스트 타이틀 카운트 : " + count);
+            paging.setDisplayRow(24);
+            paging.setDisplayPage(2);
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "writedate"));
+            Page<Review> list = rr.findByMidx(midx, pageable);
+            System.out.println("DB 리뷰리스트 : " + list);
+            result.put("reviewList", list.getContent());
+            result.put("paging", paging);
+        }
+        return result;
     }
 }

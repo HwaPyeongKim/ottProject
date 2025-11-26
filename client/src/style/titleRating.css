@@ -1,4 +1,4 @@
-.movie-grid {
+/* .movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 20px;
@@ -24,7 +24,7 @@
 .score {
   font-size: 13px;
   color: #f5c518;
-}
+} */
 
 .tr-container {
   padding: 40px;
@@ -72,8 +72,21 @@
   font-size: 18px;
   cursor: pointer;
   flex: 1;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-weight: bold;
 }
 .tr-tabs .active {
   color: #f3d45c; /* 노란색 강조 */
   border-bottom: 3px solid #f3d45c;
+}
+
+/* 콘텐츠 그리드 */
+.tr-content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+}
+
+.tr-slider-grid {
+  
 }
