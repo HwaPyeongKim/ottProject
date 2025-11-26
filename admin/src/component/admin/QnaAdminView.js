@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import '../../style/admin.css'
 import { useNavigate, useParams } from "react-router-dom";
-import SubMenu from '../Submenu';
 import jaxios from '../../util/JWTUtil';
 
 function QnaAdminView() {
@@ -25,76 +24,69 @@ function QnaAdminView() {
 
     return (
         <div className="admin-container">
-            <h2 className="admin-title">QnA 상세 보기</h2>
-
             {qna ? (
-                <div className="admin-card">
+                <>
+                    <h2 className="admin-title">&nbsp;Q & A [ No.{qna.qidx} ]</h2>
 
-                    {/* 필드 영역 */}
-                    <div className="field">
-                        <label>번호</label>
-                        <span>{qna.qidx}</span>
+                    <div className="admin-card">
+
+                        {/* 작성자 정보 묶음 */}
+                        <div className="writer-info">
+                            <div><span className="info-label">이름</span> {qna.member.name}</div>
+                            <div><span className="info-label">닉네임</span> {qna.member.nickname}</div>
+                            <div><span className="info-label">이메일</span> {qna.member.email}</div>
+                        </div>
+                        {/* 작성일 */}
+                        <div>
+                            <div><span className="info-label">작성일시</span> {qna.writedate}</div>
+                        </div>
                     </div>
+                    <div className="admin-card">
 
-                    <div className="field">
-                        <label>제목</label>
-                        <span>{qna.title}</span>
-                    </div>
+                        {/* 제목 */}
+                        <div className="field">
+                            <label>제목</label>
+                            <span>{qna.title}</span>
+                        </div>
 
-                    <div className="field">
-                        <label>작성자</label>
-                        <span>{qna.member.nickname}</span>
-                    </div>
+                        {/* 내용 */}
+                        <div className="field">
+                            <label>내용</label>
+                            <span className="long-text">{qna.content}</span>
+                        </div>
 
-                    <div className="field">
-                        <label>이메일</label>
-                        <span>{qna.member.email}</span>
-                    </div>
+                        {/* 답변 */}
+                        <div className="field">
+                            <label>답변</label>
 
-                    <div className="field">
-                        <label>내용</label>
-                        <span className="long-text">{qna.content}</span>
-                    </div>
-
-                    <div className="field">
-                        <label>작성일시</label>
-                        <span>{(qna.writedate + "").substring(0, 10)}</span>
-                    </div>
-
-                    <div className="field">
-                        <label>답변</label>
-
-                        {qna.reply ? (
-                            <span className="reply-complete">{qna.reply}</span>
-                        ) : (
-                            <div className="reply-box">
-                                <input
-                                    className="admin-input"
-                                    type="text"
+                            {qna.reply ? (
+                                <span className="reply-complete">{qna.reply}</span>
+                            ) : (
+                                <div className="reply-box">
+                                <textarea
+                                    className="admin-textarea reply-textarea"
                                     value={reply}
                                     onChange={(e) => setReply(e.target.value)}
                                 />
-                                <button
-                                    className="admin-btn primary"
-                                    onClick={writeReply}
-                                >
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 버튼 */}
+                        <div className="btn-area">
+                            <button className="admin-btn primary" onClick={writeReply}>
                                     등록
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                            </button>
+                            <button
+                                className="admin-btn secondary"
+                                onClick={() => navigate('/qnaList')}
+                            >
+                                목록으로
+                            </button>
+                        </div>
 
-                    {/* 버튼 영역 */}
-                    <div className="btn-area">
-                        <button
-                            className="admin-btn secondary"
-                            onClick={() => navigate('/qnaList')}
-                        >
-                            목록으로
-                        </button>
                     </div>
-
-                </div>
+                </>
             ) : (
                 <>Loading...</>
             )}

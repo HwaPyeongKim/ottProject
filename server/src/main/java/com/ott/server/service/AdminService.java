@@ -226,4 +226,9 @@ public class AdminService {
         }
         return result;
     }
+
+    public void updateReply(int qidx, String reply) {
+        Qna qna = qr.findByQidx( qidx );
+        qna.setReply( reply );
+    }
 }

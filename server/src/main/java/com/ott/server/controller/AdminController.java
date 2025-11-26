@@ -66,6 +66,14 @@ public class AdminController {
         return as.getMemberList(page, key, sortField, sortDir);
     }
 
+    @PostMapping("/writeReply")
+    public HashMap<String, Object> getQna(@RequestParam("qidx") int qidx, @RequestParam("reply") String reply){
+        HashMap<String, Object> result = new HashMap<>();
+        as.updateReply(qidx, reply);
+        result.put("msg", "ok");
+        return result;
+    }
+
 
     @GetMapping("/getReports")
     public HashMap<String, Object> getReports(@RequestParam("page") int page, @RequestParam(value="key", required=false, defaultValue="") String key, @RequestParam("tab") String tab, @RequestParam("sort") String sort, @RequestParam("dir") String dir) {
