@@ -11,4 +11,6 @@ public interface ListEntityRepository extends JpaRepository<ListEntity, Integer>
     ListEntity findByListidx(int listidx);
 
     List<ListEntity> findAllByMidx(int midx);
+
+    ListEntity findByMidxAndListidx(int midx, int listidx);
 }

@@ -2,14 +2,8 @@ package com.ott.server.service;
 
 
 import com.ott.server.dto.Paging;
-import com.ott.server.entity.DbList;
-import com.ott.server.entity.Follow;
-import com.ott.server.entity.ListEntity;
-import com.ott.server.entity.Member;
-import com.ott.server.repository.DbListRepository;
-import com.ott.server.repository.FollowRepository;
-import com.ott.server.repository.ListEntityRepository;
-import com.ott.server.repository.MemberRepository;
+import com.ott.server.entity.*;
+import com.ott.server.repository.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +31,7 @@ public class MemberService {
     private final ListEntityRepository ler;
     private final FollowRepository fr;
     private final DbListRepository dlr;
+    private final ReviewRepository rr;
 
     public Member checkEmail(String email) {
         return mr.findByEmail(email);
@@ -255,5 +250,34 @@ public class MemberService {
         dlr.save(dbList);
 
         return true;
+    }
+
+    public void deleteList(ListEntity listentity) {
+        ListEntity le = ler.findByMidxAndListidx(listentity.getMidx(), listentity.getListidx());
+        ler.delete(le);
+    }
+
+    public HashMap<String, Object> getReviewList(int page, int midx) {
+        HashMap<String , Object> result = new HashMap<>();
+        if( (Integer)page == null || page < 1 ){
+            result.put("reviewList", rr.findAllByMidx(midx, Sort.by(Sort.Direction.DESC, "writedate")));
+            System.out.println("DB 리뷰리스트 : " + result.get("reviewList"));
+        }else {
+            Paging paging = new Paging();
+            paging.setPage(page);
+
+            int count = rr.countByMidx(midx);
+            System.out.println("리스트 타이틀 카운트 : " + count);
+            paging.setDisplayRow(24);
+            paging.setDisplayPage(2);
+            paging.setTotalCount(count);
+            paging.calPaging();
+            Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "writedate"));
+            Page<Review> list = rr.findByMidx(midx, pageable);
+            System.out.println("DB 리뷰리스트 : " + list);
+            result.put("reviewList", list.getContent());
+            result.put("paging", paging);
+        }
+        return result;
     }
 }

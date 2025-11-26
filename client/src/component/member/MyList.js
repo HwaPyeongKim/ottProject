@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 
 import jaxios from '../../util/JWTUtil';
-import InsertList from './InsertList';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 import '../../style/myList.css'
 
@@ -13,23 +14,54 @@ function MyList() {
     const [myList, setMyList] = useState([])
     const [listTab, setListTab] = useState('tab1')
 
-    const [open, setOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const loginUser = useSelector(state=>state.user)
     const navigate = useNavigate()
 
+    const [isAddListModal, setIsAddListModal] = useState(false);
+    const [listTitle, setListTitle] = useState("");
+    const [security, setSecurity] = useState("N");
+
     useEffect(
         ()=>{
-            setOpen(false);
-            jaxios.get('/api/member/getList', {params:{midx:loginUser.midx}})
-            .then((result)=>{
-                if(result.data.msg === 'ok'){
-                    setMyList([...result.data.myList])
-                }else{
-
-                }
-            }).catch((err)=>{console.error(err)})
+            if(!loginUser?.midx){
+                alert("로그인이 필요한 서비스 입니다");
+                return;
+            }
+            setIsModalOpen(false);
+            getMyLists();
         },[]
     )
+
+    function getMyLists() {
+        jaxios.get('/api/member/getList', {params:{midx:loginUser.midx}})
+        .then((result)=>{
+            if(result.data.msg === 'ok'){
+                setMyList([...result.data.myList])
+            }else{
+
+            }
+        }).catch((err)=>{console.error(err)})
+    }
+
+    function addList() {
+        jaxios.post("/api/main/addList", {title: listTitle, security, midx: loginUser.midx})
+        .then((result) => {
+            if (result.data.msg === "ok") {
+                alert("리스트가 추가되었습니다");
+                setIsAddListModal(false);
+                setIsModalOpen(false);
+                setListTitle("");
+                setSecurity("N");
+                getMyLists();
+            } else {
+                alert(result.data.msg);
+            }
+        })
+        .catch((err) => {
+        console.error(err);
+        });
+    }
 
     return (
         <div className="mylist-container">
@@ -38,13 +70,8 @@ function MyList() {
                 onClick={()=>{setListTab('tab1')}}>나의 공개 리스트</button>
                 <button className={listTab === 'tab2' ? "active" : ""} 
                 onClick={()=>{setListTab('tab2')}}>나의 비밀 리스트</button>
-                {
-                    <>
-                    <button style={{color:'#f5c518'}}
-                    onClick={()=>{navigate('/insertList')}}>리스트 추가</button>
-                    {open && <InsertList onClose={() => setOpen(false)} />}
-                    </>
-                }
+                <button style={{color:'#f5c518'}}
+                onClick={()=>{setIsAddListModal(true)}}>리스트 추가</button>
             </div>
 
             <div className="mylist-grid">
@@ -62,6 +89,25 @@ function MyList() {
                     })
                 }
             </div>
+
+            {isAddListModal && (
+                <div className="modalOverlay" onClick={() => setIsAddListModal(false)}>
+                    <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+                        <h3>리스트 추가</h3>
+                        <div>
+                        <input type="text" value={listTitle} onChange={(e)=>{setListTitle(e.currentTarget.value)}} />
+                        <div className="checkboxWrap">
+                            <input type="checkbox" value={security} onChange={(e)=>setSecurity(e.target.checked ? "Y" : "N")} id="checkbox_security" />
+                            <label htmlFor="checkbox_security" className="flex"><p>리스트 노출 여부</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
+                        </div>
+                        </div>
+                        <div className="buttonWrap">
+                        <button className="mainButton" onClick={()=>{addList()}}>추가하기</button>
+                        <button className="mainButton" onClick={()=>setIsAddListModal(false)}>닫기</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

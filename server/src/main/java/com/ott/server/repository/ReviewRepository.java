@@ -1,9 +1,9 @@
 package com.ott.server.repository;
 
-import com.ott.server.entity.Board;
 import com.ott.server.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +27,10 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     @Query("SELECT r FROM Review r " + "WHERE r.isspoil = 'Y' AND r.content LIKE %:key%")
     Page<Review> searchByKeyAndIsspoil(String key, Pageable pageable);
+
+    Page<Review> findByMidx(int midx, Pageable pageable);
+
+    List<Review> findAllByMidx(int midx, Sort writedate);
+
+    int countByMidx(int midx);
 }
