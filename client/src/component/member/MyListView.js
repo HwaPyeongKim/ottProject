@@ -1,6 +1,7 @@
 import axios from 'axios';
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import jaxios from '../../util/JWTUtil';
 import AddTitle from './AddTitle';
 import "../../style/myListView.css";
@@ -8,6 +9,7 @@ import "../../style/myListView.css";
 function MyListView() {
   const { listidx } = useParams();
   const numericListidx = Number(listidx);
+  const loginUser = useSelector(state=>state.user)
 
   const [myListView, setMyListView] = useState({});
   const [movieList, setMovieList] = useState([]);
@@ -18,6 +20,9 @@ function MyListView() {
 
   const [reload, setReload] = useState(false);   // AddTitle 닫힐 때 재로드용 상태
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const navigate = useNavigate();
+  
   const loader = useRef(null);
 
   const baseUrl = "https://api.themoviedb.org/3";
@@ -42,8 +47,12 @@ function MyListView() {
         setLoading(false);
         return;
       }
-      setMovieList(result.data.dbList);
-
+      if (pageNum === 1) {
+        setMovieList(result.data.dbList);
+      } else {
+        setMovieList(prev => [...prev, ...result.data.dbList]);
+      }
+      
       // const movies = await Promise.all(
       //   result.data.dbList.map(async (movie) => {
       //     const detail = await axios.get(
@@ -119,12 +128,31 @@ function MyListView() {
     setReload(true);
   };
 
+  function deleteList() {
+    jaxios.delete("/api/member/deleteList", {data:{ midx: loginUser.midx ,listidx: numericListidx }})
+        .then(res => {
+            if(res.data.msg === "ok") {
+                alert("리스트가 삭제되었습니다");
+                setIsDeleteModalOpen(false);
+                navigate('/mylist');
+            } else {
+                alert('리스트 삭제에 실패했습니다');
+                return;
+            }
+        })
+        .catch(err => console.error(err));
+  }
+
   return (
     <div className="list-page">
       <div className="list-header">
         <h1>{myListView.listname}</h1>
         <div className="list-menu">
-          <button onClick={() => setOpen(true)}>추가</button>
+          <button onClick={() => {setOpen(true)}}>추가</button>
+          <button className="deleteButton"
+                onClick={() => {setIsDeleteModalOpen(true)}}>
+            리스트 삭제
+          </button>
         </div>
       </div>
 
@@ -150,6 +178,26 @@ function MyListView() {
       <div ref={loader} className="scroll-loader">
         {loading && "Loading..."}
       </div>
+
+      {isDeleteModalOpen && (
+          <div className="mlv-modalOverlay" onClick={() => setOpen(false)}>
+              <div className="mlv-modalContent" onClick={(e) => e.stopPropagation()}>
+                  
+                  <h3>리스트 삭제</h3>
+                  <p>이 작업은 취소할 수 없습니다. 정말 리스트를 삭제하시겠습니까?</p>
+
+                  <div className="mlv-buttonWrap">
+                      <button className="mlv-cancelButton" onClick={() => setIsDeleteModalOpen(false)}>
+                          취소
+                      </button>
+                      <button className="mlv-deleteConfirmButton" onClick={deleteList}>
+                          삭제
+                      </button>
+                  </div>
+
+              </div>
+          </div>
+      )}
     </div>
   );
 }

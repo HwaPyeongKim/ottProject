@@ -27,4 +27,6 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
     @Query("SELECT r FROM Review r " + "WHERE r.isspoil = 'Y' AND r.content LIKE %:key%")
     Page<Review> searchByKeyAndIsspoil(String key, Pageable pageable);
+
+    List<Review> findByMidx(int midx);
 }

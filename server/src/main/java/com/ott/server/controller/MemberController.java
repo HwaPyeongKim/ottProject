@@ -3,10 +3,7 @@ package com.ott.server.controller;
 import com.google.gson.Gson;
 import com.ott.server.dto.KakaoProfile;
 import com.ott.server.dto.OAuthToken;
-import com.ott.server.entity.DbList;
-import com.ott.server.entity.FileEntity;
-import com.ott.server.entity.Follow;
-import com.ott.server.entity.Member;
+import com.ott.server.entity.*;
 import com.ott.server.security.util.CustomJWTException;
 import com.ott.server.security.util.JWTUtil;
 import com.ott.server.service.MemberService;
@@ -256,6 +253,14 @@ public class MemberController {
         return result;
     }
 
+    @DeleteMapping("/deleteList")
+    public HashMap<String, Object> deleteList(@RequestBody ListEntity listentity) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.deleteList(listentity);
+        result.put("msg", "ok");
+        return result;
+    }
+
     @GetMapping("/getFollowings")
     public HashMap<String, Object> getFollowings(@RequestParam(value = "page", required = false, defaultValue = "") int page, @RequestParam("midx") int midx) {
         //HashMap<String, Object> result = new HashMap<>();
@@ -391,4 +396,12 @@ public class MemberController {
         return result;
     }
 
+
+    @GetMapping("/getReviewList")
+    public HashMap<String, Object> getReviewList(@RequestParam("midx") int midx) {
+        HashMap<String, Object> result = new HashMap<>();
+        List<Review> reviewList = ms.getReviewList(midx);
+        result.put("reviewList", reviewList);
+        return result;
+    }
 }

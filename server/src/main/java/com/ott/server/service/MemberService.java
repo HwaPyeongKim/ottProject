@@ -2,14 +2,8 @@ package com.ott.server.service;
 
 
 import com.ott.server.dto.Paging;
-import com.ott.server.entity.DbList;
-import com.ott.server.entity.Follow;
-import com.ott.server.entity.ListEntity;
-import com.ott.server.entity.Member;
-import com.ott.server.repository.DbListRepository;
-import com.ott.server.repository.FollowRepository;
-import com.ott.server.repository.ListEntityRepository;
-import com.ott.server.repository.MemberRepository;
+import com.ott.server.entity.*;
+import com.ott.server.repository.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +31,7 @@ public class MemberService {
     private final ListEntityRepository ler;
     private final FollowRepository fr;
     private final DbListRepository dlr;
+    private final ReviewRepository rr;
 
     public Member checkEmail(String email) {
         return mr.findByEmail(email);
@@ -176,7 +171,7 @@ public class MemberService {
         //System.out.println("getListDetailView : " + dbList);
         HashMap<String , Object> result = new HashMap<>();
         if( (Integer)page == null || page < 1 ){
-            result.put("dbList", dlr.findAllByListidx(listidx, Sort.by(Sort.Direction.DESC, "id")));
+            result.put("dbList", dlr.findAllByListidx(listidx));
             System.out.println("dbList : " + result.get("dbList"));
         }else {
             Paging paging = new Paging();
@@ -236,7 +231,7 @@ public class MemberService {
     }
 
     public int[] getTitleList(int listidx) {
-        List<DbList> dblist = dlr.findAllByListidx(listidx, Sort.by(Sort.Direction.DESC, "id"));
+        List<DbList> dblist = dlr.findAllByListidx(listidx);
         return dblist.stream().mapToInt(DbList::getDbidx).toArray();
     }
 
@@ -255,5 +250,14 @@ public class MemberService {
         dlr.save(dbList);
 
         return true;
+    }
+
+    public void deleteList(ListEntity listentity) {
+        ListEntity le = ler.findByMidxAndListidx(listentity.getMidx(), listentity.getListidx());
+        ler.delete(le);
+    }
+
+    public List<Review> getReviewList(int midx) {
+        return rr.findByMidx(midx);
     }
 }

@@ -137,7 +137,7 @@ function MypageView() {
                 <div className="stats-container">
                     <div className="stat-box">
                         {/* <p className="stat-number">{ratings.toLocaleString()}</p> */}
-                        <div className="stat-label" onClick={()=>{}}>평점</div>
+                        <div className="stat-label" onClick={()=>{navigate('/titleRating')}}>평가</div>
                     </div>
                     <div className="stat-box">
                         {/* <p className="stat-number">{comments.toLocaleString()}</p> */}
