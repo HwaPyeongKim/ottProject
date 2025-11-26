@@ -23,6 +23,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -330,20 +331,47 @@ public class MemberController {
         return result;
     }
 
-    @GetMapping("/getMyListDetailView/{page}")
-    public HashMap<String, Object> getMyListDetailView(@PathVariable("page") int page, @RequestParam("listidx") int listidx) {
+    @GetMapping("/getMyListDetailView")
+    public HashMap<String, Object> getMyListDetailView(@RequestParam(required = false, value = "page", defaultValue = "") int page, @RequestParam("listidx") int listidx) {
+        System.out.println("getMyListDetailView : " + page);
         System.out.println("listidx = " + listidx);
         HashMap<String, Object> result = ms.getListDetailView(page, listidx);
+        System.out.println("getMyListDetailView : " + result.get("dbList"));
         return result;
     }
 
-    @GetMapping("/addTitleList/{dbidx}")
-    public HashMap<String, Object> addTitleList(@PathVariable("dbidx") int dbidx, @RequestParam("listidx") int listidx) {
+//    @GetMapping("/addTitleList/{dbidx}")
+//    public HashMap<String, Object> addTitleList(@PathVariable("dbidx") int dbidx, @RequestParam("listidx") int listidx) {
+//        System.out.println("타이틀 추가 -------------------------------------------" + dbidx + "---- 리스트아이디 ----" + listidx);
+//        HashMap<String, Object> result = new HashMap<>();
+//        ms.insertDbList(dbidx, listidx);
+//        result.put("msg", "ok");
+//        return result;
+//    }
+
+    @GetMapping("/titleList")
+    public HashMap<String, Object> getTitleList(@RequestParam("listidx") int listidx) {
         HashMap<String, Object> result = new HashMap<>();
-        ms.insertDbList(dbidx, listidx);
-        result.put("msg", "ok");
+        result.put("titleList", ms.getTitleList(listidx));
+        System.out.println("titleList = " + Arrays.toString((int[])result.get("titleList")));
         return result;
     }
+
+    @PostMapping("/toggleTitle")
+    public HashMap<String, Object> toggleTitle(@RequestBody DbList dblist) {
+        HashMap<String, Object> result = new HashMap<>();
+        boolean saved = ms.toggleTitle(dblist);
+        result.put("saved", saved);
+        return result;
+    }
+
+//    @PostMapping("/toggleTitle")
+//    public HashMap<String, Object> toggleTitle(@RequestParam("listidx") int listidx, @RequestParam("dbidx") int dbidx) {
+//        HashMap<String, Object> result = new HashMap<>();
+//        boolean saved = ms.toggleTitle(listidx, dbidx);
+//        result.put("saved", saved);
+//        return result;
+//    }
 
     @PostMapping("/getKakaoUser")
     public HashMap<String, Object> getKakaoUser(@RequestParam("snsid") String snsid, @RequestParam("password") String pwd) {

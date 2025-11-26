@@ -28,10 +28,14 @@
 
 /* 제목 */
 .modal-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 16px;
+    color: #d4d4d4;
 }
 
 /* 구분선 */
@@ -45,7 +49,7 @@
 /* 소제목 */
 .modal-subtitle {
     text-align: center;
-    font-size: 14px;
+    font-size: 20px;
     margin-bottom: 10px;
     color: #d4d4d4;
 }
@@ -78,12 +82,38 @@
 
 /* 각 아이템 */
 .item {
+    position: relative;
+    cursor: pointer;
+
     display: flex;
     align-items: center;
     padding: 10px 0;
     gap: 12px;
     border-bottom: 1px solid #1c222a;
 }
+
+.item.checked {
+    border: 2px solid #facc15; /* 노란색 */
+    border-radius: 8px;
+}
+
+.add-check-icon {
+    background: #1c222a;
+    padding: 1px 7px;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: bold;
+    color: #f5c518;
+    margin-right: 5px;
+}
+
+/* .item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    gap: 12px;
+    border-bottom: 1px solid #1c222a;
+} */
 
 .item-img {
     width: 60px;
@@ -114,7 +144,7 @@
 /* 완료 버튼 */
 .submit-btn {
     margin-top: 20px;
-    width: 100%;
+    width: 95%;
     padding: 14px 0;
     background: #ffc500;
     border: none;

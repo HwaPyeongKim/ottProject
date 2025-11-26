@@ -18,9 +18,13 @@ function AddTitle({ onClose, listidx }) {
     //const [sliderShow, setSliderShow] = useState(8);
     const [movieList, setMovieList] = useState([]);
     const [tvList, setTvList] = useState([]);
+    const [combineList, setCombineList] = useState([]);
     const [popular, setPopular] = useState([])
     const cookies = new Cookies()
     const navigate = useNavigate()
+
+    // 서버에서 저장된 항목을 먼저 불러옴
+    const [selected, setSelected] = useState({});
 
     const settings = {
     dots: true,
@@ -52,18 +56,20 @@ function AddTitle({ onClose, listidx }) {
             const result = await axios.get(`${baseUrl}/search/movie?language=ko-KR&page=1&api_key=${process.env.REACT_APP_KEY}&query=${keyword}`);
             console.log('영화 검색 : ', result.data)
             if (result.data) {
-            const movieDatas = result.data.results;
-            if (movieDatas) {
-                const moviesWithProviders = await Promise.all(
-                movieDatas.map(async (movie) => {
-                    const providerRes = await axios.get(`${baseUrl}/movie/${movie.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
-                    return {
-                    ...movie, providers: providerRes.data.results["KR"]?.flatrate || []
-                    }
-                })
-                )
-                setMovieList(moviesWithProviders);
-            }
+                const movieDatas = result.data.results;
+                if (movieDatas) {
+                    const moviesWithProviders = await Promise.all(
+                    movieDatas.map(async (movie) => {
+                        const providerRes = await axios.get(`${baseUrl}/movie/${movie.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
+                        return {
+                            ...movie, 
+                            media_type: 'movie',
+                            providers: providerRes.data.results["KR"]?.flatrate || []
+                        }
+                    })
+                    )
+                    setMovieList(moviesWithProviders);
+                }
             }
         } catch (err) {
             console.error(err);
@@ -76,18 +82,20 @@ function AddTitle({ onClose, listidx }) {
             const result = await axios.get(`${baseUrl}/search/tv?language=ko-KR&page=1&api_key=${process.env.REACT_APP_KEY}&query=${keyword}`);
             console.log('TV검색 : ', result.data)
             if (result.data) {
-            const movieDatas = result.data.results;
-            if (movieDatas) {
-                const moviesWithProviders = await Promise.all(
-                movieDatas.map(async (tv) => {
-                    const providerRes = await axios.get(`${baseUrl}/tv/${tv.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
-                    return {
-                    ...tv, providers: providerRes.data.results["KR"]?.flatrate || []
-                    }
-                })
-                )
-                setTvList(moviesWithProviders);
-            }
+                const movieDatas = result.data.results;
+                if (movieDatas) {
+                    const moviesWithProviders = await Promise.all(
+                    movieDatas.map(async (tv) => {
+                        const providerRes = await axios.get(`${baseUrl}/tv/${tv.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`);
+                        return {
+                            ...tv, 
+                            media_type: 'tv',
+                            providers: providerRes.data.results["KR"]?.flatrate || []
+                        }
+                    })
+                    )
+                    setTvList(moviesWithProviders);
+                }
             }
         } catch (err) {
             console.error(err);
@@ -101,23 +109,39 @@ function AddTitle({ onClose, listidx }) {
         },[keyword]
     )
 
+    useEffect(
+        ()=>{
+            const combine = [...movieList, ...tvList]
+            combine.sort((a,b)=>b.popularity - a.popularity);
+            setCombineList(combine);
+        },[movieList, tvList]
+    )
+
     useEffect(() => {
         const baseUrl = "https://api.themoviedb.org/3";
         const popularLoad = async () => {
             try {
-                const result = await axios.get(
+                const movieResult = await axios.get(
                 `${baseUrl}/movie/popular?language=ko-KR&api_key=${process.env.REACT_APP_KEY}`
                 );
-                // if(result.data){
-                //     const popularData = result.data.results
-                //     if(popularData){
-                //         const popularWithProviders = await Promise.all(
-                //             popularData.map()
-                //         )
-                //     }
-                // }
-                console.log('리스트추가 인기 : ', result.data.results)
-                setPopular(result.data.results);
+                console.log('리스트추가 인기 영화 : ', movieResult.data.results)
+
+                const tvResult = await axios.get(
+                `${baseUrl}/tv/popular?language=ko-KR&api_key=${process.env.REACT_APP_KEY}`
+                );
+                
+                const popularMovie = movieResult.data.results.map((item)=>({
+                    ...item,
+                    media_type: 'moive'
+                }));
+                const popularTv = tvResult.data.results.map((item)=>({
+                    ...item,
+                    media_type: 'tv'
+                }));
+
+                const combinePopular = [...popularMovie, ...popularTv]
+                combinePopular.sort((a, b) => b.popularity - a.popularity);
+                setPopular(combinePopular);
             } catch (err) {
                 console.error(err);
             }
@@ -126,59 +150,132 @@ function AddTitle({ onClose, listidx }) {
         }, []
     );
 
-    const [checklist, setChecklist] = useState([]);
-    async function onSubmit(){
-        if( checklist.length === 0 ){
-            return;
-        }else{
-            for( let i = 0; i<checklist.length; i++ ){
-                const result = await jaxios.get(`/api/member/addTitleList/${checklist[i]}`, {params:{listidx: Number(listidx)}})
+    useEffect(() => {
+        async function loadSelected() {
+            try {
+                // 예: GET /api/member/titleList?listidx=3
+                const result = await jaxios.get("/api/member/titleList", {
+                    params: { listidx: Number(listidx) }
+                });
+                console.log("타이틀리스트 : ", result.data.titleList);
+                const tl = result.data.titleList;
+                // res.data = [dbidx, dbidx, ...]
+                let obj = {};
+                tl.forEach( (id) => {
+                    obj[id] = true;
+                });
+
+                setSelected(obj);
+
+            } catch (err) {
+                console.error(err);
             }
-            // cookies.set('currentOrder', JSON.stringify(checklist), {path:'/'})
-            console.log("navigate 직전 listidx =", listidx);
-            //navigate(`/myListView/${listidx}`)
+        }
+
+        if (listidx) loadSelected();
+    }, [listidx]);
+
+    async function handleToggle(item) {
+        try{
+            const result = await jaxios.post(`/api/member/toggleTitle`, { 
+                listidx: Number(listidx),
+                dbidx: item.id,
+                posterpath: item.poster_path,
+                title: item.title || item.name
+            });
+
+            setSelected(prev => ({
+                ...prev,
+                [item.id]: result.data.saved   // true 저장 / false 삭제
+            }));
+        }catch(err){
+            console.error(err)
         }
     }
 
-    function onCheck(id, checked){
-        if (checked) {
-        setChecklist(prev => [...prev, Number(id)]);
-        } else {
-            setChecklist(prev => prev.filter(item => item !== Number(id)));
-        }
+    async function onSubmit(){
+        onClose();
+        navigate(`/myListView/${listidx}`);
     }
 
     return (
         <div className="modal-overlay">
             <div className="modal-container">
                 
-                <div className="modal-title">추가하기</div>
-                <button className="close-btn" onClick={onClose}>X</button>
+                <button className="close-btn" style={{display:"flex", justifyContent:"flex-end", color:"orange"}} onClick={onClose}>X</button>
+                <div className="modal-title">타이틀 추가하기</div>
                 <div className="divider" />
 
                 <div className="modal-subtitle">영화 또는 TV 프로그램 검색</div>
 
-                <input className="search-input" placeholder="영화 또는 TV 프로그램 검색" value={keyword} onChange={(e) => {setKeyword(e.currentTarget.value)}}/>
-                <button onClick={findMovies}>검색</button>
-
-                <div className="item-list">
-                    {popular.map((item, idx) => (
-                        <div className="item" key={idx}>
-                            <img
-                                src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`}
-                                className="item-img"
-                            />
-                            <div className="item-info">
-                                <div className="item-title">{`${item.title}`}</div>
-                                <div className="item-desc">영화, {`${item.release_date}`}</div>
-                            </div>
-                            <input type="checkbox" id={'ch'+idx} value={item.id} className="checkbox" 
-                            onChange={(e)=>{onCheck(e.currentTarget.value, e.currentTarget.checked)}}/>
-                        </div>
-                    ))}
+                <div className="modal-search">
+                    <input className="search-input" placeholder="영화 또는 TV 프로그램 검색" value={keyword} onChange={(e) => {setKeyword(e.currentTarget.value)}}/>
                 </div>
 
-                <button className="submit-btn" onClick={ async ()=>{await onSubmit(); onClose();}}>완료</button>
+                {keyword.trim() === "" && (
+                    <div className="item-list">
+                        {popular.map((item, idx) => {
+                            const title = item.title || item.name;
+                            const date = item.release_date || item.first_air_date;
+                            const mediaType = item.media_type === 'movie' ? '영화' : 'TV';
+
+                            return(
+                                <div className={`item ${selected[item.id] ? "checked" : ""}`} 
+                                    onClick={() => handleToggle(item)} key={idx}>
+                                    <img
+                                        src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${title} 포스터`}
+                                        className="item-img"
+                                    />
+                                    <div className="item-info">
+                                        <div className="item-title">{title}</div>
+                                        <div className="item-desc">{mediaType}, {date}</div>
+                                    </div>
+                                    {selected[item.id] && (<div className="add-check-icon">✔</div>)}
+                                </div>
+                            )
+                        })}
+                    </div>
+                )}
+
+                {keyword.trim() !== "" && (
+                    <>
+                        {combineList.length > 0 && (
+                            <div className="item-list">
+                                {combineList.map((item, idx) => {
+                                    const title = item.title || item.name;
+                                    const date = item.release_date || item.first_air_date;
+                                    const mediaType = item.media_type === 'movie' ? '영화' : 'TV';
+
+                                    return (
+                                        <div
+                                            className={`item ${selected[item.id] ? "checked" : ""}`}
+                                            onClick={() => handleToggle(item)} 
+                                            key={idx}
+                                        >
+                                            <img
+                                                src={`https://image.tmdb.org/t/p/w185${item.poster_path}`}
+                                                alt={`${title} 포스터`}
+                                                className="item-img"
+                                            />
+                                            <div className="item-info">
+                                                <div className="item-title">{title}</div>
+                                                <div className="item-desc">{mediaType}, {date}</div>
+                                            </div>
+                                            {selected[item.id] && <div className="add-check-icon">✔</div>}
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        )}
+
+                        {/* 검색 결과가 아무것도 없을 때 */}
+                        {movieList.length === 0 && tvList.length === 0 && (
+                            <div className="no-result">검색 결과가 없습니다.</div>
+                        )}
+                    </>
+            )}
+
+                <button className="submit-btn" onClick={ ()=>{onSubmit()}}>완료</button>
             </div>
         </div>
     );
