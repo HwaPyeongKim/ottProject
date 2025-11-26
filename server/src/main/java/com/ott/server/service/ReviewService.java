@@ -25,9 +25,15 @@ public class ReviewService {
     private final MemberRepository mr;
     private final ReviewReportRepository rrr;
 
-    public void saveReview(Review review) {
-        review.setDeleteyn("N");
-        rr.save(review);
+    public boolean saveReview(Review review) {
+        Review hasReview = rr.findByDbidxAndSeasonAndMidxAndDeleteyn(review.getDbidx(), review.getSeason(), review.getMidx(), "N");
+        if (hasReview != null) {
+            return false;
+        } else {
+            review.setDeleteyn("N");
+            rr.save(review);
+            return true;
+        }
     }
 
     public HashMap<String,Object> getReviews(int dbidx, int season, String deleteyn, int page, int displayRow) {

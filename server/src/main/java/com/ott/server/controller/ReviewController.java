@@ -18,8 +18,12 @@ public class ReviewController {
     @PostMapping("/saveReview")
     public HashMap<String,Object> saveReview(@RequestBody Review review) {
         HashMap<String,Object> result = new HashMap<>();
-        rs.saveReview(review);
-        result.put("msg", "ok");
+        boolean bReview = rs.saveReview(review);
+        if (bReview == true) {
+            result.put("msg", "ok");
+        } else {
+            result.put("msg", "이미 후기를 작성하셨습니다");
+        }
         return result;
     }
 

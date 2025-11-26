@@ -124,7 +124,7 @@ const Review = ({ dbidx, season, refreshAverage, title, posterpath }) => {
         getReviews(1, true);
         if (refreshAverage) refreshAverage();
       } else {
-        alert("후기 등록이 실패했습니다");
+        alert(result.data.msg);
       }
     })
     .catch((err)=>{console.error(err);})
@@ -248,7 +248,7 @@ const Review = ({ dbidx, season, refreshAverage, title, posterpath }) => {
                       openedSpoilId === review.ridx ? (
                         <pre onClick={()=>toggleSpoilReview(review.ridx)}>{review.content}</pre>
                       ) : (
-                        <p onClick={()=>toggleSpoilReview(review.ridx)}>⚠️ 스포성 내용이 포함된 게시글입니다. (클릭하여 보기)</p>
+                        <p onClick={()=>toggleSpoilReview(review.ridx)} className="blindReview">⚠️ 스포성 내용이 포함된 게시글입니다. (클릭하여 보기)</p>
                       )
                     )
                   }
