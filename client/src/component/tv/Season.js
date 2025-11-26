@@ -541,7 +541,7 @@ function Season() {
           </div>
 
           <div className="review">
-            <Review dbidx={id} season={snum} refreshAverage={getAverage} />
+            <Review dbidx={id} season={snum} refreshAverage={getAverage} title={item.name} posterpath={item.poster_path} />
           </div>
         </div>
 

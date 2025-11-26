@@ -12,7 +12,7 @@ import { faStar as solidStar, faStarHalfAlt } from "@fortawesome/free-solid-svg-
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 import { faStar, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
-const Review = ({ dbidx, season, refreshAverage  }) => {
+const Review = ({ dbidx, season, refreshAverage, title, posterpath }) => {
   const loginUser = useSelector(state=>state.user);
   const [page, setPage] = useState(1);
   const [hover, setHover] = useState(0);
@@ -114,7 +114,7 @@ const Review = ({ dbidx, season, refreshAverage  }) => {
   function saveReview() {
     if (!score) {return alert("별점을 체크해주세요")}
 
-    jaxios.post("/api/review/saveReview", {midx:loginUser.midx, content, dbidx, score, season})
+    jaxios.post("/api/review/saveReview", {midx:loginUser.midx, content, dbidx, score, season, title, posterpath})
     .then((result)=>{
       if (result.data.msg === "ok") {
         alert("후기가 등록되었습니다");

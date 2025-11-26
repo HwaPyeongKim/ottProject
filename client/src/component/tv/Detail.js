@@ -636,7 +636,7 @@ function Detail() {
           </div>
 
           <div className="review">
-            <Review dbidx={id} season="0" refreshAverage={getAverage} />
+            <Review dbidx={id} season="0" refreshAverage={getAverage} title={item.name} posterpath={item.poster_path} />
           </div>
         </div>
 
