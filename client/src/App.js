@@ -17,9 +17,11 @@ import Discover from "./component/Discover";
 
 import Movie from "./component/movie/Main";
 import MovieDetail from "./component/movie/Detail";
+import MovieGenre from "./component/movie/Genre";
 import Tv from "./component/tv/Main";
 import TvDetail from "./component/tv/Detail";
 import TvSeason from "./component/tv/Season";
+import TvGenre from "./component/tv/Genre";
 
 //---------------------------------------------------- gy
 import BoardMain from "./component/board/BoardMain";
@@ -44,13 +46,13 @@ import Join from "./component/member/Join";
 import MyList from "./component/member/MyList";
 import Myfollow from "./component/member/Myfollow";
 import Myfollower from "./component/member/Myfollower";
-import InsertList from "./component/member/InsertList";
 import FollowMemberView from "./component/member/FollowMemberView";
 import SocialList from "./component/member/SocialList";
 import ConfirmEmailCode from "./component/member/ConfirmEmailCode";
 import AddTitle from "./component/member/AddTitle";
 import MyListView from "./component/member/MyListView";
 import MypageView from "./component/member/MypageView";
+import TitleRating from "./component/member/TitleRating";
 //---------------------------------------------------- dg
 
 
@@ -70,9 +72,11 @@ function App() {
             <Route path="/discover" element={<Discover />} />
             <Route path="/movie" element={<Movie />} />
             <Route path="/movie/detail/:id" element={<MovieDetail />} />
+            <Route path="/movie/genre/:gid" element={<MovieGenre />} />
             <Route path="/tv" element={<Tv />} />
             <Route path="/tv/detail/:id" element={<TvDetail />} />
             <Route path="/tv/season/:id/:snum" element={<TvSeason />} />
+            <Route path="/tv/genre/:gid" element={<TvGenre />} />
 
             {/* gy */}
             <Route path="/community" element={<BoardMain />} />
@@ -94,13 +98,13 @@ function App() {
             <Route path="/mylist" element={<MyList />} />
             <Route path="/myfollow" element={<Myfollow />} />
             <Route path="/myfollower" element={<Myfollower />} />
-            <Route path="/insertList" element={<InsertList />} />
             <Route path="/followMemberView/:followMemberId" element={<FollowMemberView />} />
             <Route path="/socialList/:socialId" element={<SocialList />} />
             <Route path="/confirmEmailCode" element={<ConfirmEmailCode />} />
             <Route path="/addTitle" element={<AddTitle />} />
             <Route path="/myListView/:listidx" element={<MyListView />} />
             <Route path="/mypageView" element={<MypageView />} />
+            <Route path="/titleRating" element={<TitleRating />} />
             {/* dg */}
         </Routes>
       </div>

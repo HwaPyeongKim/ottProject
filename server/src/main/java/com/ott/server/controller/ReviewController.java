@@ -28,6 +28,7 @@ public class ReviewController {
         HashMap<String,Object> result = new HashMap<>();
         HashMap<String,Object> reviews = rs.getReviews(dbidx, season, deleteyn, page, displayRow);
         result.put("list", reviews.get("list"));
+        System.out.println("리뷰리스트 : " + reviews.get("list"));
         result.put("paging", reviews.get("paging"));
         result.put("totalCount", reviews.get("totalCount"));
         result.put("msg", "ok");

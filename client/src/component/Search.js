@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import jaxios from "../util/JWTUtil";
+import axios from "axios";
+import { ottInfos } from "../constants/ottInfos";
 
 import "../style/list.css";
 import "../style/search.css";
@@ -12,6 +14,7 @@ import { faBookmark, faThumbsUp, faCheck } from "@fortawesome/free-solid-svg-ico
 function Search() {
   const {keyword} = useParams();
   const loginUser = useSelector(state=>state.user);
+  const providerCache = new Map();
   const [filters, setFilters] = useState({sortBy: "popularity.desc", genre: "", year: "", certification: ""});
   const [tempFilters, setTempFilters] = useState({sortBy: "popularity.desc", genre: "", year: "", certification: ""});
   const [searchResultsMovie, setSearchResultsMovie] = useState([]);
@@ -37,22 +40,30 @@ function Search() {
   const [hasMoreTV, setHasMoreTV] = useState(true);
 
   const isFiltering = filters.genre !== "" || filters.year !== "" || filters.certification !== "" || filters.sortBy !== "popularity.desc";
-  
-  const ottInfos = [
-    {key: 8, label: "netflix", link: "https://www.netflix.com/search?q="},
-    {key: 1796, label: "netflixbasicwithads", link: "https://www.netflix.com/search?q="},
-    {key: 356, label: "wavve", link: "https://www.wavve.com/search?searchWord="},
-    {key: 97, label: "watcha", link: "https://watcha.com/search?query="},
-    {key: 337, label: "disneyplus", link: "https://www.disneyplus.com/ko-kr/search?q="}, // 디즈니는 검색이 안됨
-    {key: 2, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
-    {key: 350, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
-    {key: 9, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-    {key: 10, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-    {key: 119, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-    {key: 3, label: "play", link: "https://play.google.com/store/search?q="}, // 구글플레이는 우리나라에서 안된다는데 다시 확인 필요
-    {key: 1883, label: "tving", link: "https://www.tving.com/search?query="},
-    {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
-  ]
+
+  async function fetchProvider(targetId, type) {
+    if (providerCache.has(targetId)) {
+      return providerCache.get(targetId);
+    }
+
+    try {
+      const { data } = await axios.get(
+        `https://api.themoviedb.org/3/${type}/${targetId}/watch/providers`,
+        {
+          params: {
+            api_key: process.env.REACT_APP_KEY
+          }
+        }
+      );
+
+      const providers = data.results?.KR?.flatrate || [];
+      providerCache.set(targetId, providers);
+
+      return providers;
+    } catch {
+      return [];
+    }
+  }
 
   useEffect(() => {
     if (!keyword) return;
@@ -162,7 +173,19 @@ function Search() {
           });
         }
       }
-      setCombinedResults(results);
+
+      async function attachProviders() {
+        const updated = await Promise.all(
+          results.map(async (item) => {
+            const providers = await fetchProvider(item.id, item.media_type);
+            return { ...item, providers };
+          })
+        );
+
+        setCombinedResults(updated);
+      }
+
+      attachProviders();
     }, [searchResultsMovie, searchResultsTV, discoverResultsMovie, discoverResultsTV, filters, keyword, isFiltering]
   );
 

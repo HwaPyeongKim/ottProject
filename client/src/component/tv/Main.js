@@ -5,6 +5,9 @@ import axios from "axios";
 import Slider from "react-slick";
 import ListCard from '../ListCard';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
+
 function Main() {
   const baseUrl = "https://api.themoviedb.org/3";
   const loginUser = useSelector(state=>state.user);
@@ -21,6 +24,7 @@ function Main() {
   const [crime, setCrime] = useState([]);
   const [drama, setDrama] = useState([]);
   const [SF, setSF] = useState([]);
+  const [reality, setReality] = useState([]);
   const [family, setFamily] = useState([]);
   const [kids, setKids] = useState([]);
 
@@ -45,25 +49,10 @@ function Main() {
     "80": setCrime,
     "18": setDrama,
     "10765": setSF,
+    "10764": setReality,
     "10751": setFamily,
     "10762": setKids
   };
-
-  const ottInfos = [
-    {key: 8, label: "netflix", link: "https://www.netflix.com/search?q="},
-    {key: 1796, label: "netflixbasicwithads", link: "https://www.netflix.com/search?q="},
-    {key: 356, label: "wavve", link: "https://www.wavve.com/search?searchWord="},
-    {key: 97, label: "watcha", link: "https://watcha.com/search?query="},
-    {key: 337, label: "disneyplus", link: "https://www.disneyplus.com/ko-kr/search?q="}, // 디즈니는 검색이 안됨
-    {key: 2, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
-    {key: 350, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
-    {key: 9, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-    {key: 10, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-    {key: 119, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-    {key: 3, label: "play", link: "https://play.google.com/store/search?q="}, // 구글플레이는 우리나라에서 안된다는데 다시 확인 필요
-    {key: 1883, label: "tving", link: "https://www.tving.com/search?query="},
-    {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
-  ]
 
   const genreIds = [
     "10759", // 액션
@@ -72,6 +61,7 @@ function Main() {
     "80", // 범죄
     "18", // 드라마
     "10765", // SF
+    "10764", // 리얼리티
     "10751", // 가족
     "10762" // 키드
   ];
@@ -204,37 +194,40 @@ function Main() {
         }
       </Slider>
   
-      <h3>주간 인기 급상승 TV 시리즈</h3>
+      <h3 className="genre_title">주간 인기 급상승 TV 시리즈</h3>
       <ListCard lists={trending} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>인기 TV 시리즈</h3>
+      <h3 className="genre_title">인기 TV 시리즈</h3>
       <ListCard lists={popular} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>평점 높은 TV 시리즈</h3>
+      <h3 className="genre_title">평점 높은 TV 시리즈</h3>
       <ListCard lists={topRated} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>액션 & 어드밴쳐</h3>
+      <h3 className="genre_title">액션 &amp; 어드밴쳐 <a href="/tv/genre/10759">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={action} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>애니메이션</h3>
+      <h3 className="genre_title">애니메이션 <a href="/tv/genre/16">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={animation} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>코미디</h3>
+      <h3 className="genre_title">코미디 <a href="/tv/genre/35">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={comedy} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>범죄</h3>
+      <h3 className="genre_title">범죄 <a href="/tv/genre/80">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={crime} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>드라마</h3>
+      <h3 className="genre_title">드라마 <a href="/tv/genre/18">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={drama} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>SF</h3>
+      <h3 className="genre_title">SF &amp; 판타지 <a href="/tv/genre/10765">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={SF} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>가족</h3>
+      <h3 className="genre_title">리얼리티 <a href="/tv/genre/10764">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <ListCard lists={reality} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
+
+      <h3 className="genre_title">가족 <a href="/tv/genre/10751">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={family} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>어린이</h3>
+      <h3 className="genre_title">키즈 <a href="/tv/genre/10762">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={kids} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
     </div>
   )

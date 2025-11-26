@@ -55,3 +55,8 @@ header .menu button {border: 0; background: transparent; color: #fff; line-heigh
 /* 검색창 스타일 */
 .search {display: flex; align-items: center; gap: 5px; background: #111; border-radius: 8px; padding: 5px 10px;}
 .search input {background: transparent;border: none;outline: none; color: #fff;}
+
+/* 리스트 서브 타이틀 */
+.subTitle b {color: #f5c518;}
+.genre_title a {display: inline-block; opacity: 0; transform: translateX(-5px); transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none; font-size: 0.7em; color: #f5c518;}
+.genre_title:hover a {opacity: 1; transform: translateX(0); pointer-events: auto;}

@@ -236,6 +236,7 @@
   border-radius: 12px;
   background-color: #f9f9f9;
   margin-left: 40px;
+  margin-top: 10px;
 }
 .modal-reply-input input {
   flex: 1;
