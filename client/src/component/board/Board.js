@@ -187,7 +187,7 @@ function Board(props) {
                         ) : (
                             <div>
                             <p className="review-text boardtitle">{props.board.title}</p>
-                            <div className={`review-text ${!showFullContent ? 'clamp' : ''}`} style={{ whiteSpace: "pre-wrap" }}>
+                            <div ref={contentRef} className={`review-text ${!showFullContent ? 'clamp' : ''}`} style={{ whiteSpace: "pre-wrap" }}>
                                 {parse(props.board.content || '')}
                             </div>
                                 {isOverflowing && (

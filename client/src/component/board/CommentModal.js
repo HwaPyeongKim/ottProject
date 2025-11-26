@@ -36,7 +36,7 @@ const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
     //-----------------------
     async function fetchComments(){
         try {          
-            const res = await jaxios.get(`/api/bcomment/getCommentList/${bidx}`);
+            const res = await axios.get(`/api/bcomment/getCommentList/${bidx}`);
             let list = res.data.commentList;
             // let list = res.data?.commentList ?? [];
 
@@ -68,9 +68,9 @@ const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
         .then((result)=>{
             setContent("");
             fetchComments();
-        console.log("onCommentAdded 호출 전");   // <-- 확인용
+        console.log("onCommentAdded 호출 전"); 
             onCommentAdded && onCommentAdded();
-        console.log("onCommentAdded 호출 후");   // <-- 확인용
+        console.log("onCommentAdded 호출 후");  
         })
         .catch((err)=>{console.error(err)})
     }    
