@@ -102,7 +102,7 @@ function SpoilerList() {
     <div className="admin-container">
 
       <div className="admin-card">
-          <h2 className="admin-title">블라인드 관리</h2>
+          <h2 className="admin-title">스포일러 신고 관리</h2>
 
           <div style={{ display: "flex", gap: "1rem" }}>
               <input type="text" className="admin-input" value={key} placeholder="검색어 입력 (제목, 내용)" onChange={(e) => setKey(e.currentTarget.value)}/>

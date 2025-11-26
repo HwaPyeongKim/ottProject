@@ -211,6 +211,11 @@
   font-weight: 600;
 }
 
+.reply-status.done {
+  color: #4ecb71;
+  font-weight: 600;
+}
+
 /* 상세페이지 필드 정렬 */
 .field {
   display: flex;

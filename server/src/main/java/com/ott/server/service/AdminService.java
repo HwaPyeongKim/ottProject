@@ -231,4 +231,46 @@ public class AdminService {
         Qna qna = qr.findByQidx( qidx );
         qna.setReply( reply );
     }
+
+    public HashMap<String, Object> getAdminQnaList(int page, String key, String sortField, String sortDir) {
+
+        HashMap<String, Object> result = new HashMap<>();
+        Paging paging = new Paging();
+
+        paging.setPage(page);
+        paging.setDisplayPage(10);
+        paging.setDisplayRow(10);
+
+        // 🔥 정렬 조건 지정
+        Sort.Direction direction = sortDir.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(direction, sortField));
+
+        Page<Qna> list;
+
+        if (key == null || key.equals("")) {
+            // 전체 검색
+            int count = (int) qr.count();
+            paging.setTotalCount(count);
+            paging.calPaging();
+
+            list = qr.findAll(pageable);
+
+        } else {
+            // 🔥 제목 또는 내용에 key 포함된 모든 데이터 검색
+            int count = qr.countByTitleContainingOrContentContaining(key, key);
+            paging.setTotalCount(count);
+            paging.calPaging();
+
+            list = qr.findAllByTitleContainingOrContentContaining(key, key, pageable);
+        }
+
+        result.put("qnaList", list.getContent());
+        result.put("paging", paging);
+        result.put("key", key);
+
+        return result;
+    }
+
+
+
 }
