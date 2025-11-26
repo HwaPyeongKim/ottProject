@@ -121,19 +121,19 @@ function Header() {
       {/* 슬라이드 애니메이션 메뉴 */}
       <div className={`dropdown-submenu ${menuOpen ? "open" : ""}`}>
         <ul>
-    <li><a href="/company">회사소개</a></li>
-    <li><a href="/qna">Q & A</a></li>
-    <li><a href="http://localhost:3001" 
-        target="_blank" 
-        rel="noopener noreferrer">관리자 페이지</a>
-    </li>
+          <li><a href="/company">회사소개</a></li>
+          <li><a href="/qna">Q & A</a></li>
+          <li><a href="http://localhost:3001" 
+              target="_blank" 
+              rel="noopener noreferrer">관리자 페이지</a>
+          </li>
 
-    {loginUser && loginUser.role == 2
-      ? <li><a href="http://localhost:3001" 
-        target="_blank" 
-        rel="noopener noreferrer">관리자 페이지</a></li>
-      : null}
-  </ul>
+          {loginUser && loginUser.role == 2
+            ? <li><a href="http://localhost:3001" 
+              target="_blank" 
+              rel="noopener noreferrer">관리자 페이지</a></li>
+            : null}
+        </ul>
       </div>
     </header>
   )
