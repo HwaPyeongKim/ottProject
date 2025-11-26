@@ -171,7 +171,7 @@ const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
         <div className="comment-modal-content" ref={modalRef}>            
             {/* Header */}
             <div className="modal-header"> 
-                <h3 className="modal-title">댓글</h3>
+                <h3 className="modal-title1">댓글</h3>
                 <button className="close-button" onClick={onClose}>✖</button>
             </div>
 
