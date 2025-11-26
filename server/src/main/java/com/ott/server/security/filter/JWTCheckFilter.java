@@ -84,6 +84,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if(path.startsWith("/board/getLikeList")){return true;}
         if(path.startsWith("/board/isReported")){return true;}
         if(path.startsWith("/bcomment/getCommentCount")){return true;}
+        if(path.startsWith("/bcomment/getCommentList")){return true;}
         if(path.startsWith("/review/getReviews")){return true;}
         if(path.startsWith("/review/getAverage")){return true;}
         if(path.startsWith("/admin/getQnaList")){return true;}

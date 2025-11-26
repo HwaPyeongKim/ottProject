@@ -103,6 +103,13 @@ public class BCommentService {
 
     public void deleteReply(int bcidx) {
         BComment comment = cr.findById(bcidx).orElseThrow(() -> new RuntimeException("댓글 없음"));
+        // 댓글 삭제시 대댓글 제거
+        if(comment.getPcidx() == null) {
+            List<BComment> replies = cr.findByPcidx(comment.getBcidx());
+            if(!replies.isEmpty()) {
+                cr.deleteAll(replies);
+            }
+        }
         cr.delete(comment);
     }
 }

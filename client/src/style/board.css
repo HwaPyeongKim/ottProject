@@ -259,6 +259,7 @@
   border-radius: 8px;
   cursor: pointer;
 }
+
 /* 게시글 더보기 */
 .review-text.clamp {
   display: -webkit-box;
