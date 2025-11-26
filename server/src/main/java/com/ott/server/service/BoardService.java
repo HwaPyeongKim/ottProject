@@ -25,8 +25,8 @@ public class BoardService {
 
     private final BoardRepository br;
     private final BLikesRepository blr;
-    private final BCommentRepository bcr;
     private final ReportRepository rr;
+    private final BCommentRepository bcr;
 
     public HashMap<String, Object> getBoardList(int page, String searchWord, String sortType) {
         HashMap<String, Object> result = new HashMap<>();
@@ -124,13 +124,15 @@ public class BoardService {
 
     public void deleteBoard(int bidx) {
         Board board = br.findByBidx(bidx);
+        if (board == null) {
+            throw new RuntimeException("게시글 없음");
+        }
+
+        List<BComment> comments = bcr.findByBoard(board);  // board에 달린 모든 댓글 가져오기
+        bcr.deleteAll(comments);
+
         br.delete(board);
     }
-
-//    public Object getReplyList(int bidx) {
-//        List<BComment> list = bcr.findByBoard_BidxOrderByBcidxDesc(bidx);
-//        return list;
-//    }
 
     public void reportBoard(int bidx, int midx) {
         Board board = br.findByBidx(bidx);
