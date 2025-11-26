@@ -28,6 +28,8 @@ public class Review {
     private String isspoil = "N";
     @ColumnDefault("'N'")
     private String deleteyn = "N";
+    private String posterpath;
+    private String title;
 
     @ManyToOne
     @JoinColumn(name = "midx", insertable = false, updatable = false)

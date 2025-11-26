@@ -7,6 +7,7 @@ import com.ott.server.repository.DbListRepository;
 import com.ott.server.repository.LikesRepository;
 import com.ott.server.repository.ListEntityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +71,7 @@ public class MainService {
         if (lists != null) {
             for (ListEntity list : lists) {
                 int listidx = list.getListidx();
-                List<DbList> dbLists = dr.findAllByListidx(listidx);
+                List<DbList> dbLists = dr.findAllByListidx(listidx, Sort.by(Sort.Direction.DESC, "id"));
                 for (DbList dbList : dbLists) {
                     dblist.add(dbList);
                 }
