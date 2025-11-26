@@ -17,9 +17,11 @@ import Discover from "./component/Discover";
 
 import Movie from "./component/movie/Main";
 import MovieDetail from "./component/movie/Detail";
+import MovieGenre from "./component/movie/Genre";
 import Tv from "./component/tv/Main";
 import TvDetail from "./component/tv/Detail";
 import TvSeason from "./component/tv/Season";
+import TvGenre from "./component/tv/Genre";
 
 //---------------------------------------------------- gy
 import BoardMain from "./component/board/BoardMain";
@@ -70,9 +72,11 @@ function App() {
             <Route path="/discover" element={<Discover />} />
             <Route path="/movie" element={<Movie />} />
             <Route path="/movie/detail/:id" element={<MovieDetail />} />
+            <Route path="/movie/genre/:gid" element={<MovieGenre />} />
             <Route path="/tv" element={<Tv />} />
             <Route path="/tv/detail/:id" element={<TvDetail />} />
             <Route path="/tv/season/:id/:snum" element={<TvSeason />} />
+            <Route path="/tv/genre/:gid" element={<TvGenre />} />
 
             {/* gy */}
             <Route path="/community" element={<BoardMain />} />

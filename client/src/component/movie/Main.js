@@ -6,7 +6,7 @@ import Slider from "react-slick";
 import ListCard from '../ListCard';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookmark, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 
 function Main() {
   const baseUrl = "https://api.themoviedb.org/3";
@@ -57,22 +57,6 @@ function Main() {
     "878" : setSF,
     "10402" : setMusic
   };
-
-  const ottInfos = [
-    {key: 8, label: "netflix", link: "https://www.netflix.com/search?q="},
-    {key: 1796, label: "netflixbasicwithads", link: "https://www.netflix.com/search?q="},
-    {key: 356, label: "wavve", link: "https://www.wavve.com/search?searchWord="},
-    {key: 97, label: "watcha", link: "https://watcha.com/search?query="},
-    {key: 337, label: "disneyplus", link: "https://www.disneyplus.com/ko-kr/search?q="}, // 디즈니는 검색이 안됨
-    {key: 2, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
-    {key: 350, label: "appletvplus", link: "https://tv.apple.com/kr/search?term="},
-    {key: 9, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-    {key: 10, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-    {key: 119, label: "amazonprimevideo", link: "https://www.primevideo.com/-/ko/s?k="},
-    {key: 3, label: "play", link: "https://play.google.com/store/search?q="}, // 구글플레이는 우리나라에서 안된다는데 다시 확인 필요
-    {key: 1883, label: "tving", link: "https://www.tving.com/search?query="},
-    {key: 283, label: "crunchyroll", link: "https://www.crunchyroll.com/search?from=search&q="}
-  ]
 
   const genreIds = [
     "28", // 액션
@@ -223,46 +207,46 @@ function Main() {
         }
       </Slider>
 
-      <h3>주간 인기 급상승 영화</h3>
+      <h3 className="genre_title">주간 인기 급상승 영화</h3>
       <ListCard lists={trending} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>인기 영화</h3>
+      <h3 className="genre_title">인기 영화</h3>
       <ListCard lists={popular} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>액션 영화</h3>
+      <h3 className="genre_title">액션 영화 <a href="/movie/genre/28">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={action} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>모험 영화</h3>
+      <h3 className="genre_title">모험 영화 <a href="/movie/genre/12">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={adventure} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>코미디 영화</h3>
+      <h3 className="genre_title">코미디 영화 <a href="/movie/genre/35">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={comedy} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>로맨스 영화</h3>
+      <h3 className="genre_title">로맨스 영화 <a href="/movie/genre/10749">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={romance} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>드라마 영화</h3>
+      <h3 className="genre_title">드라마 영화 <a href="/movie/genre/18">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={drama} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>다큐멘터리 영화</h3>
+      <h3 className="genre_title">다큐멘터리 영화 <a href="/movie/genre/99">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={documentary} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>공포 영화</h3>
+      <h3 className="genre_title">공포 영화 <a href="/movie/genre/27">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={horror} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>스릴러 영화</h3>
+      <h3 className="genre_title">스릴러 영화 <a href="/movie/genre/53">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={thriller} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>SF 영화</h3>
+      <h3 className="genre_title">SF 영화 <a href="/movie/genre/878">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={SF} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>음악 영화</h3>
+      <h3 className="genre_title">음악 영화 <a href="/movie/genre/10402">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
       <ListCard lists={music} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>평점 높은 영화</h3>
+      <h3 className="genre_title">평점 높은 영화</h3>
       <ListCard lists={topRated} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3>개봉 예정작</h3>
+      <h3 className="genre_title">개봉 예정작</h3>
       <ListCard lists={coming} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
     </div>
   )
