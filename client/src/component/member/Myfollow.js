@@ -81,28 +81,25 @@ function Myfollow() {
     }
 
     return (
-        <div style={{display:'flex'}}>
+        <div>
             <div className="follower-container">
-                <div style={{display:'flex'}}>
-                    <div className="follower-title"style={{color:'white'}}>{loginUser.nickname} 님의 팔로잉</div>
-                    <div style={{fontSize:'25px', color:'coral', justifyContent:'center', alignItems:'center', paddingLeft:'10px'}}>
-                        {
-                            (followings)?(followingsCount):(0)
-                        }
-                    </div>
+                <div className="follower-title">
+                    {loginUser.nickname}님의 팔로잉&nbsp;ㅣ&nbsp;<span>{(followings)?(followingsCount):(0)}명</span>
                 </div>
-                <div className="follower-list" style={{color:'white'}}>
+
+                
+                <div className="follower-list">
                     {
                         followings.map((fiList, idx)=>{
                             return(
                                 <>  
                                     <div className="follower-info" onClick={()=>{navigate(`/followMemberView/${fiList.toMember.midx}`)}}>
-                                        <div className="follow-image-container" key={idx} style={{display:'flex', margin:'5px 3px'}}>
+                                        <div className="follow-image-container" key={idx}>
                                             <img src={followingsImg[idx]} />
                                         </div>
                                         <div className="follower-text">
                                             <div className='follower-name'>{fiList.toMember.nickname}</div>
-                                            <div className='follower-desc'>여러가지 정보</div>
+                                            <div className='follower-desc'>{fiList.toMember.profilemsg}</div>
                                         </div>
                                     </div>
                                 </>
