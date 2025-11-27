@@ -11,7 +11,7 @@
   z-index: 999;
 }
 
-.modal-container {
+.my-modal-container {
   background: var(--card-bg);
   width: 500px;
   border-radius: 14px;
@@ -122,7 +122,7 @@
 .mpfield label {
   flex: 0 0 130px;
   text-align: left;
-  color: #ffc500;
+  color: #dfdfdf;
   font-weight: 500;
   font-size: 0.85rem;
   letter-spacing: 0.3px;
@@ -147,9 +147,10 @@
 
 .mp-image-wrapper {
   position: relative;
-  width: 200px; /* 원하는 크기 */
-  height: 200px;
+  width: 90px; /* 원하는 크기 */
+  height: 90px;
 }
+
 .mp-image-wrapper img {
   position: absolute;
   top: 0;
