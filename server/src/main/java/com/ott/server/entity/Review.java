@@ -30,6 +30,7 @@ public class Review {
     private String deleteyn = "N";
     private String posterpath;
     private String title;
+    private String type;
 
     @ManyToOne
     @JoinColumn(name = "midx", insertable = false, updatable = false)

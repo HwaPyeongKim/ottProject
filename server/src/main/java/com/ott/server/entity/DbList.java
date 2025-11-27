@@ -18,5 +18,6 @@ public class DbList {
 
     private String posterpath;
     private String title;
+    private String type;
 
 }

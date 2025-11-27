@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Data
@@ -14,5 +15,6 @@ public class Likes {
     private int lidx;
     private int dbidx;
     private int midx;
-    private int season;
+    @ColumnDefault("0")
+    private int season = 0;
 }
