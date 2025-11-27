@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from "react-router-dom";
 import jaxios from '../../util/JWTUtil'
+import axios from 'axios';
 import "../../style/qna.css";
 
 function QnaView() {
@@ -15,7 +16,7 @@ function QnaView() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                let result = await jaxios.get('/api/admin/getQna', { params: { qidx } });
+                let result = await axios.get('/api/admin/getQna', { params: { qidx } });
 
                 if (result.data.qna.security === 'Y') {
                     setTempQna(result.data.qna);
@@ -34,7 +35,7 @@ function QnaView() {
 
     const handlePasswordCheck = async () => {
         try {
-            let res = await jaxios.post(
+            let res = await axios.post(
                 '/api/admin/confirmPass',
                 null,
                 { params: { qidx, pass: password } }
