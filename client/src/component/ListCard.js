@@ -101,7 +101,7 @@ const ListCard = ({ lists, target, likes, setLikes, favorites, setFavorites }) =
       return;
     }
     const title = item.title ? item.title : item.name;
-    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: item.id, posterpath: item.poster_path, title: title})
+    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: item.id, posterpath: item.poster_path, title: title, type: target})
     .then((result)=>{
       if (result.data.msg === "ok") {
         alert("리스트를 추가했습니다");

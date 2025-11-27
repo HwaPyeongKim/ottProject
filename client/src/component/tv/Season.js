@@ -258,7 +258,7 @@ function Season() {
       return;
     }
 
-    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: item.id, posterpath: item.poster_path, title: item.name})
+    jaxios.post("/api/main/addLists", {listidxs: selectedLists, dbidx: item.id, posterpath: item.poster_path, title: item.name, type: "tv"})
     .then((result)=>{
       if (result.data.msg === "ok") {
         alert("리스트를 추가했습니다");
@@ -526,7 +526,7 @@ function Season() {
           </div>
 
           <div className="review">
-            <Review dbidx={id} season={snum} refreshAverage={getAverage} title={item.name} posterpath={item.poster_path} />
+            <Review dbidx={id} season={snum} refreshAverage={getAverage} title={item.name} posterpath={item.poster_path} type="tv" />
           </div>
         </div>
 

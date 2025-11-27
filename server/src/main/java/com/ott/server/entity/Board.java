@@ -18,13 +18,16 @@ public class Board {
     private String title;
     @Column(length = 2000)
     private String content;
+    @ColumnDefault("0")
     private int pass = 0;
+    @ColumnDefault("0")
     private int likecount = 0;
 //    @Column( columnDefinition="DATETIME default now()" )
     @CreationTimestamp
     private Timestamp writedate;
+    @ColumnDefault("0")
     private int fidx = 0;
-
+    @ColumnDefault("0")
     private int reportcount = 0;
     @Enumerated(EnumType.STRING)
     private BoardStatus status = BoardStatus.NORMAL;

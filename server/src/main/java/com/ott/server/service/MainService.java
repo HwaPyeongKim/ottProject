@@ -53,7 +53,7 @@ public class MainService {
         return result;
     }
 
-    public void addLists(int listidx, int dbidx, String posterpath, String title) {
+    public void addLists(int listidx, int dbidx, String posterpath, String title, String type) {
         DbList dblist = dr.findByListidxAndDbidx(listidx, dbidx);
         if (dblist == null) {
             DbList dblistData = new DbList();
@@ -61,6 +61,7 @@ public class MainService {
             dblistData.setDbidx(dbidx);
             dblistData.setPosterpath(posterpath);
             dblistData.setTitle(title);
+            dblistData.setType(type);
             dr.save(dblistData);
         }
     }
