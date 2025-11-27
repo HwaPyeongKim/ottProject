@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 
 function RatingSlider({title, movies}) {
-
     const settings = {
         dots: false,
         infinite: false,
@@ -14,7 +13,7 @@ function RatingSlider({title, movies}) {
 
     return (
         <div className="tr-slider-grid">
-            <h2>{title}</h2>
+            <h2>{title}&nbsp;&nbsp;&nbsp;{movies.length}</h2>
 
             <Slider {...settings} className="lists">
                 {movies.map((m) => (

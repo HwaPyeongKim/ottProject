@@ -16,6 +16,8 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.13.1",
+    "data-fns": "^1.1.0",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.19",
     "html-react-parser": "^5.2.10",
     "http-proxy-middleware": "^3.0.5",

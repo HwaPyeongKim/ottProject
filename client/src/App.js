@@ -53,6 +53,7 @@ import AddTitle from "./component/member/AddTitle";
 import MyListView from "./component/member/MyListView";
 import MypageView from "./component/member/MypageView";
 import TitleRating from "./component/member/TitleRating";
+import TitleReview from "./component/member/TitleReview";
 //---------------------------------------------------- dg
 
 
@@ -105,6 +106,7 @@ function App() {
             <Route path="/myListView/:listidx" element={<MyListView />} />
             <Route path="/mypageView" element={<MypageView />} />
             <Route path="/titleRating" element={<TitleRating />} />
+            <Route path="/titleReview" element={<TitleReview />} />
             {/* dg */}
         </Routes>
       </div>
