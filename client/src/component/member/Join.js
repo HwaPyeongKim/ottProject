@@ -109,7 +109,7 @@ function Join() {
 
     return (
         <div className="join-profile-form">
-            <div className="mpfield">
+            <div className="join-mpfield">
                 <label>E-MAIL</label>
                 <input type='text' value={email} onChange={(e)=>{setEmail(e.currentTarget.value)}}/>
             </div>
