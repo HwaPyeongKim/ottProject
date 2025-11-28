@@ -91,62 +91,49 @@ function MypageView() {
 
     return (
         <div className="profile-card">
-            {/* 1. 커버 이미지 섹션 */}
+
+            {/* 상단 커버 */}
             <div className="cover-image-container">
                 <div className="cover-image-container-list">
-                    <button className="buttonHover" onClick={()=>{navigate('/mylist');}}><FontAwesomeIcon icon={faBookmark} /></button>
-                    리스트 이동
+                    <div onClick={()=>navigate('/mylist')}>
+                        <FontAwesomeIcon icon={faBookmark} />&nbsp;나의 리스트&nbsp;&nbsp;&nbsp;
+                    </div>
                 </div>
-                {/* <img src={coverImage} alt="Cover" className="cover-image" /> */}
             </div>
 
-            {/* 2. 프로필 정보 섹션 */}
+            {/* 프로필 영역 */}
             <div className="profile-info">
-                <div className="profile-avatar-container">
-                    {/* 프로필 이미지를 커버 이미지 위에 겹치도록 배치합니다. */}
-                    <img src={imgSrc} alt="Profile" className="profile-avatar" />
-                </div>
 
-                <div className="name-and-follow">
-                    <h2 className="profile-name" style={{color:'orange'}}>
-                        <span className="verified-badge">W</span>&nbsp;
-                        {loginUser.nickname}
-                    </h2>
-                    {/* 팔로우/팔로잉 정보 */}
-                    <div className="follow-stats">
-                        <span className="stat-item" style={{color:'orange', fontWeight:'bold'}}
-                        onClick={() => { navigate('/myfollow'); }}>팔로잉 **
-                        {
-                            (followings)?(followingsCount):(0)   
-                        }**</span>
-                        <span className="separator">|</span>
-                        <span className="stat-item" style={{color:'orange', fontWeight:'bold'}}
-                        onClick={() => { navigate('/myfollower'); }}>팔로워 **
-                        {
-                            (followers)?(followersCount):(0)
-                        }**</span>
+                <div className="profile-top-row">
+                    <div className="profile-avatar-container">
+                        <img src={imgSrc} alt="Profile" className="profile-avatar" />
                     </div>
-                    <div className='follow-stats'>
-                        <span className='stat-item' style={{color:'orange', fontWeight:'bold'}}>{loginUser.profilemsg}</span>
+
+                    <div className="name-and-follow">
+                        <h2 className="profile-name">{loginUser.nickname}</h2>
+
+                        <div className="follow-stats">
+                            <span className="stat-item" onClick={()=>navigate('/myfollow')}>
+                                팔로잉 { (followings)?(followingsCount):(0) }
+                            </span>
+                            <span className="separator">|</span>
+                            <span className="stat-item" onClick={()=>navigate('/myfollower')}>
+                                팔로워 { (followers)?(followersCount):(0) }
+                            </span>
+                        </div>
+
+                        <div className="profile-msg">
+                            <span className="stat-item">{loginUser.profilemsg}</span>
+                        </div>
                     </div>
                 </div>
-
-                <p className="tagline">{tagline}</p>
-                
-                {/* 4. 통계/수치 섹션 */}
+                {/* 하단 메뉴 */}
                 <div className="stats-container">
-                    <div className="stat-box">
-                        {/* <p className="stat-number">{ratings.toLocaleString()}</p> */}
-                        <div className="stat-label" onClick={()=>{navigate('/titleRating')}}>평가</div>
-                    </div>
-                    <div className="stat-box">
-                        {/* <p className="stat-number">{comments.toLocaleString()}</p> */}
-                        <div className="stat-label" onClick={()=>{navigate(`/titleReview/${loginUser.midx}`)}}>후기</div>
-                    </div>
-                    <div className="stat-box">
-                        {/* <p className="stat-number">{collections.toLocaleString()}</p> */}
-                        <div className="stat-label" onClick={onClickBtn}>이전</div>
-                    </div>
+                    <div className="stat-box stat-hover" onClick={()=>navigate('/')}>평점</div>
+                    <div className="vertical-line"></div>
+                    <div className="stat-box stat-hover" onClick={()=>navigate('/')}>후기</div>
+                    <div className="vertical-line"></div>
+                    <div className="stat-box stat-hover" onClick={()=>navigate('/')}>커뮤니티</div>
                 </div>
             </div>
         </div>
