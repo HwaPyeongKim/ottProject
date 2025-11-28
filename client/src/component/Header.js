@@ -29,6 +29,7 @@ function Header() {
 
   useEffect(() => {
     setOpen(false);
+    console.log('로그인유저 : ', loginUser)
     if (!loginUser.profileimg) return;
 
     axios.get(`/api/file/url/${loginUser.profileimg}`)

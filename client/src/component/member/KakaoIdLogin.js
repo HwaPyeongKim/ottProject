@@ -19,27 +19,28 @@ function KakaoIdLogin() {
     const dispatch = useDispatch();
 
     const [name, setName] = useState('')
-        const [nickname, setNickname] = useState('')
-        const [email, setEmail] = useState('')
-        const [reid, setReid]=useState('')
-        const [pwd, setPwd] = useState('')
-        const [pwdChk, setPwdChk] = useState('');
-        //const [phone, setPhone] = useState('')
-        const [phone1, setPhone1] = useState('010')
-        const [phone2, setPhone2] = useState('')
-        const [phone3, setPhone3] = useState('')
-        const [zipnum, setZipnum] = useState('')
-        const [address1, setAddress1] = useState('')
-        const [address2, setAddress2] = useState('')
-        const [profileimg, setProfileimg] = useState('')
-        const [profilemsg, setProfilemsg] = useState('')
-        const [useridStyle, setUseridStyle] = useState({fontWeight:'bold', textalign:'center'})
-        const [message, setMessage] = useState('')
-    
-        const [imgSrc, setImgSrc] = useState('')
-        const [imgStyle, setImgStyle] = useState({display:"none"});
-    
-        const [isOpen, setIsOpen] = useState(false)
+    const [nickname, setNickname] = useState('')
+    const [email, setEmail] = useState('')
+    const [reid, setReid]=useState('')
+    const [pwd, setPwd] = useState('')
+    const [pwdChk, setPwdChk] = useState('');
+    //const [phone, setPhone] = useState('')
+    const [phone1, setPhone1] = useState('010')
+    const [phone2, setPhone2] = useState('')
+    const [phone3, setPhone3] = useState('')
+    const [zipnum, setZipnum] = useState('')
+    const [address1, setAddress1] = useState('')
+    const [address2, setAddress2] = useState('')
+    const [profileimg, setProfileimg] = useState('')
+    const [profilemsg, setProfilemsg] = useState('')
+    const [snsid, setSnsid] = useState('')
+    const [useridStyle, setUseridStyle] = useState({fontWeight:'bold', textalign:'center'})
+    const [message, setMessage] = useState('')
+
+    const [imgSrc, setImgSrc] = useState('')
+    const [imgStyle, setImgStyle] = useState({display:"none"});
+
+    const [isOpen, setIsOpen] = useState(false)
 
     useEffect(
         ()=>{
@@ -48,6 +49,7 @@ function KakaoIdLogin() {
                 if( result.data.msg == 'no' ){
                     return alert("이메일 또는 패스워드 오류입니다");
                 }else{
+                    setSnsid()
                     console.log('KakaoUser', result.data.KakaoUser );
                     // dispatch( loginAction( result.data ) );
                     // cookies.set('user', JSON.stringify(result.data), {path:'/',});
@@ -94,8 +96,45 @@ function KakaoIdLogin() {
         setIsOpen(false);
     }
 
-    function onSubmit(){
+    function fileUpload(e){
+        const formData = new FormData()
+        formData.append('image', e.target.files[0])
+        axios.post( '/api/member/upload', formData)
+        .then((result)=>{
+            setImgSrc(result.data.image);
+            setImgStyle({display:"block", width:"200px"});
+            setProfileimg(result.data.fidx)
+        }).catch((err)=>{console.error(err)})
+    }
 
+    async function onSubmit(){
+        if(!email){ return alert('이메일을 입력하세요')}
+        if(!pwd){ return alert('패스워드를 입력하세요')}
+        if(!pwdChk){ return alert('패스워드 확인을 입력하세요')}
+        if(pwd !== pwdChk){ return alert('패스워드가 일치하지 않습니다')}
+        if(!name){ return alert('이름을 입력하세요')}
+        if(!nickname){ return alert('닉네임을 입력하세요')}
+        if(!phone1 || !phone2 || !phone3){ return alert('전화번호를 입력하세요')}
+        // 유효이메일 양식 체크
+        let regix = email.match( /\w+@(\w+[.])+\w+/g );
+        if( !regix ){  return alert('정확한 이메일을 입력하세요'); }
+        try{
+            // 이메일 중복체크
+            let result = await axios.post('/api/member/emailcheck', null, {params:{email}})
+            if(result.data.msg === 'no' ){ return alert('이메일이 중복됩니다'); }
+            // 닉네임 중복체크
+            result = await axios.post('/api/member/nicknamecheck', null, {params:{nickname}} );
+            if(result.data.msg === 'no' ){ return alert('닉네임이 중복됩니다'); }
+            // 회원가입
+            const phone = `${phone1}-${phone2}-${phone3}`
+            result = await axios.post('/api/member/join', {email, pwd, name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg});
+            if(result.data.msg =='ok'){
+                alert('회원 가입이 완료되었습니다. 로그인하세요');
+                navigate('/');
+            }
+        }catch(err){
+            console.error(err)
+        }        
     }
     
     return (

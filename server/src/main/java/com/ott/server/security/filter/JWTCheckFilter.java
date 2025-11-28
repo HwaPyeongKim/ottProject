@@ -37,13 +37,15 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String zipnum = (String) claims.get("zipnum");
             String address1 = (String) claims.get("address1");
             String address2 = (String) claims.get("address2");
+            String provider = (String) claims.get("provider");
             String profileimg = (String) claims.get("profileimg");
             String profilemsg = (String) claims.get("profilemsg");
+            int role = (int) claims.get("role");
             String snsid = (String) claims.get("snsid");
             List<String> list = new ArrayList<>();
             list.add("USER");
 
-            MemberDTO memberDTO = new MemberDTO( email, pwd, midx, name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg, snsid, list  );
+            MemberDTO memberDTO = new MemberDTO( email, pwd, midx, name, nickname, phone, zipnum, address1, address2, provider, profileimg, profilemsg, role, snsid, list  );
 
             UsernamePasswordAuthenticationToken authenticationToken
                     = new UsernamePasswordAuthenticationToken(memberDTO, pwd , memberDTO.getAuthorities());
