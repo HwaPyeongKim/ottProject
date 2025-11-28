@@ -186,7 +186,7 @@ function Mypage({onClose}) {
     return (
         <>
         <div className="modal-backdrop" onClick={onClose}>
-          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+          <div className="my-modal-container" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>
                 {view === "menu" && `${loginUser.nickname} 님`}
@@ -256,7 +256,7 @@ function Mypage({onClose}) {
                   <div className="mpfield">
                     <label>우편번호</label>
                       <input type="text" value={zipnum} onChange={(e) => { setZipnum(e.currentTarget.value); }} readOnly />
-                      <button className="btn-highlight" onClick={() => { setIsOpen(!isOpen); }}>검색</button>
+                      <button className="btn btn-primary" onClick={() => { setIsOpen(!isOpen); }}>검색</button>
                   </div>
 
                   <div className="mpfield">
@@ -280,23 +280,24 @@ function Mypage({onClose}) {
                   </div>
 
                   <div className="mpfield">
-                    <label>현재 이미지</label>
-                    <div className="mp-image-wrapper">
-                    {
-                      (oldImgSrc)&&(
-                        <img className="old-img" src={oldImgSrc} />
-                      )
-                    }
-                    {
-                      (imgSrc)&&(
-                        <img className="new-img" src={imgSrc} style={imgStyle} />
-                      )
-                    }
-                    </div>
+                    
+                      <div className="mp-image-wrapper">
+                      {
+                        (oldImgSrc)&&(
+                          <img className="old-img" src={oldImgSrc} />
+                        )
+                      }
+                      {
+                        (imgSrc)&&(
+                          <img className="new-img" src={imgSrc} style={imgStyle} />
+                        )
+                      }
+                      </div>
+                    
                   </div>
 
                   <div className="btn-group">
-                    <button className="btn btn-primary" onClick={() => { updateUser(); }}>저장</button>
+                    <button className="btn-highlight" onClick={() => { updateUser(); }}>저장</button>
                     <button className="btn btn-secondary" onClick={() => setView("menu")}>뒤로</button>
                   </div>
                 </div>
@@ -307,11 +308,12 @@ function Mypage({onClose}) {
                   <div>
                     <div className="mpfield">
                     <label>현재 비밀번호</label>
-                    <input type="password" value={currentPwd} onChange={(e)=>{setCurrentPwd(e.currentTarget.value)}}/><br /><br />
+                    <input type="password" value={currentPwd} onChange={(e)=>{setCurrentPwd(e.currentTarget.value)}}/>
                     {
                       (message)?(<div style={{color:'orange'}}>{message}</div>):(null)
                     }
                   </div>
+                  <br />
                   <div className="mpfield">
                     <label>수정 비밀번호</label>
                     {
@@ -332,9 +334,11 @@ function Mypage({onClose}) {
                     }
                   </div>
 
-                  <button onClick={ ()=>{ updatePwd() } }>변경</button>
-                  <button onClick={() => setView("menu")}>뒤로</button>
+                  <div className="btn-group">
+                    <button className="btn-highlight" onClick={ ()=>{ updatePwd() } }>저장</button>
+                    <button className="btn btn-secondary" onClick={() => setView("menu")}>뒤로</button>
                   </div>
+                </div>
               )}
             </div>
           </div>

@@ -68,7 +68,7 @@ function QnaList() {
                         type="text"
                         className="admin-input"
                         value={key}
-                        placeholder="검색어 입력 (제목)"
+                        placeholder="검색어 입력 (제목, 내용)"
                         onChange={(e) => setKey(e.currentTarget.value)}
                     />
 

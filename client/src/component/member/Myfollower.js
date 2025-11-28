@@ -82,28 +82,25 @@ function Myfollower() {
     }
 
     return (
-        <div style={{display:'flex'}}>
+        <div>
             <div className="follower-container">
-                <div style={{display:'flex'}}>
-                    <div className="follower-title" style={{color:'white'}}>{loginUser.nickname} 님의 팔로워</div>
-                    <div style={{fontSize:'25px', color:'coral', justifyContent:'center', alignItems:'center', paddingLeft:'10px'}}>
-                        {
-                            (followers)?(followersCount):(0)
-                        }
-                    </div>
+                <div className="follower-title">
+                    {loginUser.nickname}님의 팔로워&nbsp;ㅣ&nbsp;<span>{(followers)?(followersCount):(0)}명</span>
                 </div>
-                <div className="follower-list" style={{color:'white'}}>
+
+                
+                <div className="follower-list">
                     {
-                        followers.map((frList, idx)=>{
+                        followers.map((fiList, idx)=>{
                             return(
                                 <>  
-                                    <div className="follower-info" onClick={()=>{navigate(`/followMemberView/${frList.fromMember.midx}`)}}>
-                                        <div className="follow-image-container" key={idx} style={{display:'flex', margin:'5px 3px'}}>
+                                    <div className="follower-info" onClick={()=>{navigate(`/followMemberView/${fiList.fromMember.midx}`)}}>
+                                        <div className="follow-image-container" key={idx}>
                                             <img src={followersImg[idx]} />
                                         </div>
                                         <div className="follower-text">
-                                            <div className='follower-name'>{frList.fromMember.nickname}</div>
-                                            <div className='follower-desc'>여러가지 정보</div>
+                                            <div className='follower-name'>{fiList.fromMember.nickname}</div>
+                                            <div className='follower-desc'>{fiList.fromMember.profilemsg}</div>
                                         </div>
                                     </div>
                                 </>

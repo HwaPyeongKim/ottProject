@@ -1,53 +1,71 @@
+/* ===========================
+   전체 카드 레이아웃
+=========================== */
 .profile-card {
-  max-width: 600px; /* 카드 최대 너비 설정 */
+  max-width: 650px;
   margin: 50px auto;
-  background-color: #292826;
-  border-radius: 8px;
+  background-color: #ffffff;
+  border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* 커버 이미지의 둥근 모서리를 위해 */
+  overflow: hidden;
 }
 
-/* 1. 커버 이미지 */
+/* ===========================
+   1. 상단 커버 영역
+=========================== */
 .cover-image-container {
-  height: 200px; /* 커버 이미지 높이 */
-  position: relative; /* 프로필 아바타 배치를 위한 기준 */
-  background-color: #F9D142; /* 이미지 로딩 전 배경색 */
+  height: 130px; /* 노란 영역 줄임 */
+  position: relative;
+  background-color: #f5c518ee;
 }
 
-.cover-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
-}
-
-.cover-image-container-list{
+/* 기본 버튼 */
+.cover-image-container-list {
   position: absolute;
-  top: 20px;     /* 위에서 15px */
-  right: 20px;   /* 오른쪽에서 20px */
-  color: #292826;
+  top: 20px;
+  right: 20px;
+  color: #222222;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 600; /* 고정! 변경하지 않음 */
   display: flex;
   justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease, text-shadow 0.2s ease;
 }
 
-/* 2. 프로필 정보 섹션 */
+/* ✔ 호버 시 글씨 두께 변화 없이 자연스럽게 확대 */
+.cover-image-container-list:hover {
+  color: #000000;
+  transform: scale(1.06);
+}
+
+/* ===========================
+   2. 프로필 정보 섹션
+=========================== */
 .profile-info {
   padding: 0 20px 20px 20px;
 }
 
-/* 프로필 아바타 컨테이너 (커버 이미지와 겹치는 부분) */
-.profile-avatar-container {
+/* 프로필사진 + 닉네임을 가로 정렬 */
+.profile-top-row {
+  display: flex;
+  align-items: center;
+  margin-top: -48px;
+  padding-left: 12px;
   position: relative;
-  /* 커버 이미지 높이(200px)와 아바타 크기(80px)의 절반을 고려하여 위로 올립니다. */
-  top: -40px; 
-  left: 0;
-  width: 80px; /* 아바타 크기 */
-  height: 80px;
-  border-radius: 50%;
-  background-color: #fff; /* 테두리 효과를 위해 흰색 배경 추가 */
-  padding: 3px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 프로필 사진 */
+.profile-avatar-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #fff;
+    padding: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    margin-right: 18px;
+    position: relative;
+    top: -30px;
 }
 
 .profile-avatar {
@@ -57,89 +75,137 @@
   object-fit: cover;
 }
 
+/* 닉네임 + 팔로잉/팔로워 */
 .name-and-follow {
   display: flex;
-  align-items: flex-start;
-  margin-top: -30px; /* 아바타 때문에 위로 올라간 공간 조정 */
-  margin-bottom: 10px;
   flex-direction: column;
 }
 
 .profile-name {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 0;
-  margin-right: 10px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 10px;
+  color: #222222;
 }
 
-.verified-badge {
-  display: inline-block;
-  background-color: #000;
-  color: #fff;
-  font-size: 0.8rem;
-  padding: 2px 5px;
-  border-radius: 4px;
-  margin-left: 5px;
-}
-
+/* 팔로잉/팔로워/메세지 - 검정색 */
 .follow-stats {
-  font-size: 0.9rem;
-  color: #666;
+  font-size: 0.95rem;
+  color: #000 !important;
+  margin-top: 5px;
+  margin-left: 10px;
+  height: 20px;
 }
 
+.profile-msg {
+  font-size: 0.95rem;
+  color: #000 !important;
+  margin-top: 6px;
+  margin-left: 10px;
+  height: 70px;
+}
+
+.profile-text .message,
+.profile-msg .stat-item:last-child {
+    font-family: 'Pretendard', sans-serif;
+    font-weight: 300; /* Light 느낌 */
+    color: #000;
+    font-size: 14px;
+}
+
+.stat-item {
+  cursor: pointer;
+  color: #000 !important;
+}
+
+.stat-item:hover {
+  color: #f5c518;
+}
+
+/* 구분선 */
 .separator {
-  margin: 0 5px;
-  color: #ddd;
+  margin: 0 8px;
+  color: #999;
 }
 
+/* 프로필 태그라인 */
 .tagline {
   font-size: 1rem;
   color: #333;
-  margin-top: 0;
+  margin-top: 10px;
   margin-bottom: 20px;
 }
 
-/* 3. 팔로우 버튼 */
-.follow-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.follow-button:hover {
-  background-color: #333;
-}
-
-/* 4. 통계/수치 섹션 */
+/* ===========================
+   3. 하단 메뉴 버튼 (평점/후기/커뮤니티)
+=========================== */
 .stats-container {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 25px;
   padding-top: 20px;
   border-top: 1px solid #eee;
 }
 
 .stat-box {
-  flex-grow: 1;
+  flex: 1;
   text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #000 !important; /* 검정색 */
+  cursor: pointer;
+  position: relative;
 }
 
-.stat-number {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 0;
+/* 🔥 호버 시 바탕색 변경 + 살짝 강조 */
+.stat-box:hover {
+  background-color: #9e9e9e2f; /* 옅은 노란색 */
+  transform: translateY(-2px);
 }
 
-.stat-label {
-  font-size: 0.9rem;
-  color: #f5c518;
-  margin: 5px 0 0 0;
-  font-weight: bold;
+/* 세로 구분선 스타일 */
+.stat-box:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 5px;
+  width: 1px;
+  height: 18px;
+  background-color: #ddd;
 }
+
+/* ------------------------------
+   2. 팔로잉/팔로워 밑줄 효과
+------------------------------ */
+.follow-stats .stat-item:hover {
+  text-decoration: underline;
+  color: #000 !important; 
+}
+
+.follow-button {
+  width: 100%;
+  height: 45px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 20px 0 10px 0;
+
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+/* 호버 시 */
+.follow-button:hover {
+  background-color: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+/* 클릭 시 */
+.follow-button:active {
+  transform: translateY(0px);
+}
+
+
