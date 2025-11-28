@@ -280,4 +280,11 @@ public class MemberService {
         }
         return result;
     }
+
+    public HashMap<String, Object> getCheckMember(int midx) {
+        HashMap<String, Object> result = new HashMap<>();
+        Optional<Member> mem = mr.findByMidx(midx);
+        result.put("checkMember", mem);
+        return result;
+    }
 }
