@@ -23,26 +23,4 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class ServerApplicationTests {
-
-    @Test
-    void contextLoads() {
-        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
-        System.out.println("encoding password : " + pe.encode("1234"));
-    }
-
-//    @Autowired
-//    private BoardRepository boardRepository;
-//
-//    @Test
-//    public void testSort() {
-//        Pageable pageable = PageRequest.of(0, 10,
-//                Sort.by(Sort.Direction.DESC, "likecount")
-//                        .and(Sort.by(Sort.Direction.DESC, "writedate")));
-//
-//        Page<Board> page = boardRepository.findAll(pageable);
-//
-//        page.getContent().forEach(b -> {
-//            System.out.println(b.getBidx() + " / like: " + b.getLikecount() + " / date: " + b.getWritedate());
-//        });
-//    }
 }
