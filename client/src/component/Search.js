@@ -191,7 +191,7 @@ function Search() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
         if (hasMoreMovie) setPageMovie(prev => prev + 1);
         if (hasMoreTV) setPageTV(prev => prev + 1);
       }
