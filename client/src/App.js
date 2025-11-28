@@ -106,7 +106,7 @@ function App() {
             <Route path="/myListView/:listidx" element={<MyListView />} />
             <Route path="/mypageView" element={<MypageView />} />
             <Route path="/titleRating" element={<TitleRating />} />
-            <Route path="/titleReview" element={<TitleReview />} />
+            <Route path="/titleReview/:userMidx" element={<TitleReview />} />
             {/* dg */}
         </Routes>
       </div>

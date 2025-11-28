@@ -402,4 +402,11 @@ public class MemberController {
         result.put("reviewList", ms.getReviewList(page, midx));
         return result;
     }
+
+    @PostMapping("/getCheckMember")
+    public HashMap<String, Object> getCheckMember(@RequestParam("midx") int midx) {
+        System.out.println("checkMember = " + midx);
+        HashMap<String, Object> result = ms.getCheckMember(midx);
+        return result;
+    }
 }

@@ -144,7 +144,7 @@ function FollowMemberView() {
                     </div>
                     <div className="stat-box">
                         {/* <p className="stat-number">{comments.toLocaleString()}</p> */}
-                        <p className="stat-label">?</p>
+                        <p className="stat-label" onClick={()=>{navigate(`/titleReview/${profile.midx}`)}}>후기</p>
                     </div>
                     <div className="stat-box">
                         {/* <p className="stat-number">{collections.toLocaleString()}</p> */}
