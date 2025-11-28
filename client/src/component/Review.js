@@ -29,7 +29,7 @@ const Review = ({ dbidx, season, refreshAverage, title, posterpath, type }) => {
   const [openMenuId, setOpenMenuId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reviewObj, setReviewObj] = useState({});
-  const [openedSpoilId, setOpenedSpoilId] = useState(null);
+  const [openedSpoilIds, setOpenedSpoilIds] = useState([]);
 
   function StarRating({ score, setScore }) {
     const [hover, setHover] = useState(0);
@@ -216,9 +216,7 @@ const Review = ({ dbidx, season, refreshAverage, title, posterpath, type }) => {
           reviewList && reviewList.length > 0 ?
           reviewList.map((review, idx)=>{
             const formattedDate = review.writedate ? dayjs(review.writedate).format("YYYY-MM-DD HH:mm") : null;
-            const toggleSpoilReview = (ridx) => {
-              setOpenedSpoilId(prev => (prev === ridx ? null : ridx));
-            };
+            const toggleSpoilReview = (ridx) => {setOpenedSpoilIds(prev => prev.includes(ridx) ? prev.filter(id => id !== ridx) : [...prev, ridx] );};
             
             return (
               <li key={idx}>
@@ -245,7 +243,7 @@ const Review = ({ dbidx, season, refreshAverage, title, posterpath, type }) => {
                     review.isspoil === "N" ? (
                       <pre>{review.content}</pre>
                     ) : (
-                      openedSpoilId === review.ridx ? (
+                      openedSpoilIds.includes(review.ridx) ? (
                         <pre onClick={()=>toggleSpoilReview(review.ridx)}>{review.content}</pre>
                       ) : (
                         <p onClick={()=>toggleSpoilReview(review.ridx)} className="blindReview">⚠️ 스포성 내용이 포함된 게시글입니다. (클릭하여 보기)</p>
