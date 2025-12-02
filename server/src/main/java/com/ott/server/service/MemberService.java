@@ -201,6 +201,7 @@ public class MemberService {
     }
 
     public Member getKakaoUser(String snsid) {
+
         return mr.findBySnsid(snsid);
     }
 
@@ -257,23 +258,37 @@ public class MemberService {
         ler.delete(le);
     }
 
-    public HashMap<String, Object> getReviewList(int page, int midx) {
+    public HashMap<String, Object> getReviewList(int page, int midx, String type) {
         HashMap<String , Object> result = new HashMap<>();
+
+        boolean isTypeFilter = (type != null && !type.equals("all"));
+
         if( (Integer)page == null || page < 1 ){
-            result.put("reviewList", rr.findAllByMidx(midx, Sort.by(Sort.Direction.DESC, "writedate")));
-            System.out.println("DB 리뷰리스트 : " + result.get("reviewList"));
+            List<Review> list;
+
+            if (isTypeFilter) {
+                list = rr.findAllByMidxAndType(midx, type, Sort.by(Sort.Direction.DESC, "writedate"));
+            } else {
+                list = rr.findAllByMidx(midx, Sort.by(Sort.Direction.DESC, "writedate"));
+            }
+            result.put("reviewList", list);
+            //System.out.println("DB 리뷰리스트 : " + result.get("reviewList"));
         }else {
             Paging paging = new Paging();
             paging.setPage(page);
 
-            int count = rr.countByMidx(midx);
+            int count = isTypeFilter
+                    ? rr.countByMidxAndType(midx, type)
+                    : rr.countByMidx(midx);
             System.out.println("리스트 타이틀 카운트 : " + count);
             paging.setDisplayRow(24);
             paging.setDisplayPage(2);
             paging.setTotalCount(count);
             paging.calPaging();
             Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "writedate"));
-            Page<Review> list = rr.findByMidx(midx, pageable);
+            Page<Review> list = isTypeFilter
+                    ? rr.findByMidxAndType(midx, type, pageable)
+                    : rr.findByMidx(midx, pageable);
             System.out.println("DB 리뷰리스트 : " + list);
             result.put("reviewList", list.getContent());
             result.put("paging", paging);
@@ -286,5 +301,32 @@ public class MemberService {
         Optional<Member> mem = mr.findByMidx(midx);
         result.put("checkMember", mem);
         return result;
+    }
+
+    public void editKakao(Member member) {
+        Member mem = mr.findBySnsid(member.getSnsid());
+        if(mem != null){
+            mem.setEmail(member.getEmail());
+            mem.setPwd("EDITKAKAO");
+            mem.setName(member.getName());
+            mem.setNickname(member.getNickname());
+            mem.setPhone(member.getPhone());
+            mem.setZipnum(member.getZipnum());
+            mem.setAddress1(member.getAddress1());
+            mem.setAddress2(member.getAddress2());
+            mem.setProfileimg(member.getProfileimg());
+            mem.setProfilemsg(member.getProfilemsg());
+            mem.setRole(1);
+        }
+    }
+
+    public Member getSnsMember(String snsid) {
+        Member member = mr.findBySnsid( snsid );
+        if( member != null ){
+            return member;
+        }else{
+            return null;
+        }
+
     }
 }

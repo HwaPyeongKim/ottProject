@@ -35,4 +35,10 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     int countByMidx(int midx);
 
     Review findByDbidxAndSeasonAndMidxAndDeleteyn(int dbidx, int season, int midx, String n);
+
+    List<Review> findAllByMidxAndType(int midx, String type, Sort writedate);
+
+    int countByMidxAndType(int midx, String type);
+
+    Page<Review> findByMidxAndType(int midx, String type, Pageable pageable);
 }

@@ -132,7 +132,7 @@ function AddTitle({ onClose, listidx }) {
                 
                 const popularMovie = movieResult.data.results.map((item)=>({
                     ...item,
-                    media_type: 'moive'
+                    media_type: 'movie'
                 }));
                 const popularTv = tvResult.data.results.map((item)=>({
                     ...item,
@@ -142,6 +142,7 @@ function AddTitle({ onClose, listidx }) {
                 const combinePopular = [...popularMovie, ...popularTv]
                 combinePopular.sort((a, b) => b.popularity - a.popularity);
                 setPopular(combinePopular);
+                console.log('popular : ', combinePopular)
             } catch (err) {
                 console.error(err);
             }
@@ -181,7 +182,8 @@ function AddTitle({ onClose, listidx }) {
                 listidx: Number(listidx),
                 dbidx: item.id,
                 posterpath: item.poster_path,
-                title: item.title || item.name
+                title: item.title || item.name,
+                type: item.media_type === 'movie' ? 'movie' : 'tv'
             });
 
             setSelected(prev => ({

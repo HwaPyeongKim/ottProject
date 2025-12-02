@@ -113,11 +113,11 @@ function MypageView() {
                         <h2 className="profile-name">{loginUser.nickname}</h2>
 
                         <div className="follow-stats">
-                            <span className="stat-item" onClick={()=>navigate('/myfollow')}>
+                            <span className="stat-item" onClick={()=>navigate(`/follow/${loginUser.midx}`)}>
                                 팔로잉 { (followings)?(followingsCount):(0) }
                             </span>
                             <span className="separator">|</span>
-                            <span className="stat-item" onClick={()=>navigate('/myfollower')}>
+                            <span className="stat-item" onClick={()=>navigate('/follower/${loginUser.midx}')}>
                                 팔로워 { (followers)?(followersCount):(0) }
                             </span>
                         </div>
@@ -129,9 +129,9 @@ function MypageView() {
                 </div>
                 {/* 하단 메뉴 */}
                 <div className="stats-container">
-                    <div className="stat-box stat-hover" onClick={()=>navigate('/')}>평점</div>
+                    <div className="stat-box stat-hover" onClick={()=>navigate(`/titleRating/${loginUser.midx}`)}>평점</div>
                     <div className="vertical-line"></div>
-                    <div className="stat-box stat-hover" onClick={()=>navigate('/')}>후기</div>
+                    <div className="stat-box stat-hover" onClick={()=>navigate(`/titleReview/${loginUser.midx}`)}>후기</div>
                     <div className="vertical-line"></div>
                     <div className="stat-box stat-hover" onClick={()=>navigate('/')}>커뮤니티</div>
                 </div>

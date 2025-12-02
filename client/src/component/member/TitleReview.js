@@ -21,7 +21,7 @@ function TitleReview() {
 
   useEffect(
     ()=>{
-      fetchReview()
+      fetchReview(1)
     },[]
   )
 

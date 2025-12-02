@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -381,14 +382,18 @@ public class MemberController {
     @PostMapping("/getKakaoUser")
     public HashMap<String, Object> getKakaoUser(@RequestParam("snsid") String snsid, @RequestParam("password") String pwd) {
         HashMap<String, Object> result = new HashMap<>();
-        System.out.println("11111111111111111111111111111111111111111111111");
-        System.out.println("pwd = " + pwd);
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
         if( pwd.equals("KAKAO") ){
             Member member = ms.getKakaoUser(snsid);
-            System.out.println("member = " + member);
             if( member == null ){
                 result.put("msg", "no");
             }else{
+                String rawPassword = pwd;              // 비교하고 싶은 원본 문자열
+                String encodedPassword = member.getPwd();    // DB에 저장된 BCrypt 해시
+                boolean isMatch = pe.matches(rawPassword, encodedPassword);
+                if(isMatch){
+                    result.put("edit", "no");
+                }
                 result.put("KakaoUser", member);
                 result.put("msg", "ok");
             }
@@ -396,10 +401,42 @@ public class MemberController {
         return result;
     }
 
-    @GetMapping("/getReviewList")
-    public HashMap<String, Object> getReviewList(@RequestParam(required = false, value = "page", defaultValue = "") int page, @RequestParam("midx") int midx) {
+    @PostMapping("/editKakao")
+    public HashMap<String, Object> editKakao(@RequestBody Member member) {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("reviewList", ms.getReviewList(page, midx));
+        ms.editKakao(member);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @GetMapping("/getSnsUser")
+    public HashMap<String, Object> getLoginUser(@RequestParam("snsid") String snsid){
+        HashMap<String, Object> result = new HashMap<>();
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
+        Member member = ms.getSnsMember( snsid );
+        if( member == null ){
+            result.put("msg", "no");
+        }else{
+            String rawPassword = "KAKAO";              // 비교하고 싶은 원본 문자열
+            String encodedPassword = member.getPwd();    // DB에 저장된 BCrypt 해시
+            boolean isMatch = pe.matches(rawPassword, encodedPassword);
+            if(isMatch){
+                result.put("edit", "no");
+            }
+            result.put("msg", "ok");
+            result.put("snsUser", member);
+        }
+        return result;
+    }
+
+
+    @GetMapping("/getReviewList")
+    public HashMap<String, Object> getReviewList(
+            @RequestParam(required = false, value = "page", defaultValue = "") int page,
+            @RequestParam("midx") int midx,
+            @RequestParam(required = false, value = "type") String type) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("reviewList", ms.getReviewList(page, midx, type));
         return result;
     }
 

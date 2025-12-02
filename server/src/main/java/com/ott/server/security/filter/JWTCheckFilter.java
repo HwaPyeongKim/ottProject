@@ -97,7 +97,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if(path.startsWith("/member/getKakaoUser")){return true;}
         if(path.startsWith("/member/resetPwd")){return true;}
         if(path.startsWith("/member/checkPwd")){return true;}
-        
+        if(path.startsWith("/member/editKakao")){return true;}
+        if(path.startsWith("/member/getSnsUser")){return true;}
+
         if(path.startsWith("/admin/getMyQnaList")){return true;}
 
         if(path.startsWith("/admin/getReports")){return true;}

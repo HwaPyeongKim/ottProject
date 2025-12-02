@@ -13,16 +13,20 @@ import RatingSlider from './RatingSlider'
 function TitleRating() {
     
     const loginUser = useSelector( state=>state.user );
+    const {userMidx} = useParams();
+    const userId = Number(userMidx);
+
     const [movies, setMovies] = useState([]);
     const [sort, setSort] = useState("scoreDesc");
     const [listTab, setListTab] = useState('tab1')
     const [isAddListModal, setIsAddListModal] = useState(false);
+    const [chkMember, setChkMember] = useState([]);
     const [reviewList, setReviewList] = useState([]);
 
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-    const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [typeFilter, setTypeFilter] = useState("all");
 
     const loader = useRef(null);
     
@@ -36,9 +40,19 @@ function TitleRating() {
         if (loading || !hasMore) {return};
 
         setLoading(true);
+        let targetMidx;
 
         try{
-            const result = await jaxios.get('/api/member/getReviewList', {params:{page: page, midx:loginUser.midx}})
+            if( userId !== loginUser.midx ){
+                targetMidx = userId;
+                const res = await jaxios.post('/api/member/getCheckMember', null, {params:{midx:targetMidx}})
+                setChkMember(res.data.checkMember);
+            }else{
+                targetMidx = loginUser.midx;
+                setChkMember(loginUser);
+            }
+            console.log('해당 midx : ', targetMidx)
+            const result = await jaxios.get('/api/member/getReviewList', {params:{page: page, midx:targetMidx, type: typeFilter}})
             console.log('타이틀평점 : ', result.data.reviewList.reviewList)
             if (result.data.reviewList.reviewList.length === 0) {
                 setHasMore(false);
@@ -50,6 +64,7 @@ function TitleRating() {
             } else {
                 setReviewList(prev => [...prev, ...result.data.reviewList.reviewList]);
             }
+
         }catch(err){
             console.error(err)
         }
@@ -61,6 +76,13 @@ function TitleRating() {
             fetchReview(page);
         },[page]
     )
+
+    useEffect(() => {
+        setReviewList([]);  // 기존 데이터를 비움
+        setPage(1);
+        setHasMore(true);
+    }, [typeFilter]);  // type 변경 시 초기화
+    
     useEffect(() => {
         const observer = new IntersectionObserver(
         entries => {
@@ -109,6 +131,22 @@ function TitleRating() {
                 onClick={()=>{setListTab('tab1')}}>전체</button>
                 <button className={listTab === 'tab2' ? "active" : ""} 
                 onClick={()=>{setListTab('tab2')}}>별점 순</button>
+            </div>
+            <div className="type-filter">
+            <button 
+                    className={typeFilter === "all" ? "active" : ""} 
+                    onClick={() => { setTypeFilter("all"); setPage(1); setHasMore(true); }}
+                >전체</button>
+
+                <button 
+                    className={typeFilter === "movie" ? "active" : ""} 
+                    onClick={() => { setTypeFilter("movie"); setPage(1); setHasMore(true); }}
+                >영화</button>
+
+                <button 
+                    className={typeFilter === "tv" ? "active" : ""} 
+                    onClick={() => { setTypeFilter("tv"); setPage(1); setHasMore(true); }}
+                >TV</button>
             </div>
             {/* <div className="header-container">
                 <select value={sort} onChange={e => setSort(e.target.value)}>

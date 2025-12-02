@@ -114,11 +114,11 @@ function FollowMemberView() {
                         <h2 className="profile-name">{profile.nickname}</h2>
 
                         <div className="follow-stats">
-                            <span className="stat-item" onClick={()=>navigate('/')}>
+                            <span className="stat-item" onClick={()=>navigate(`/follow/${followMemberId}`)}>
                                 팔로잉 {followings.length}
                             </span>
                             <span className="separator">|</span>
-                            <span className="stat-item" onClick={()=>navigate('/')}>
+                            <span className="stat-item" onClick={()=>navigate(`/follower/${followMemberId}`)}>
                                 팔로워 {followers.length}
                             </span>
                         </div>
@@ -142,7 +142,7 @@ function FollowMemberView() {
 
                 {/* 하단 메뉴 */}
                 <div className="stats-container">
-                    <div className="stat-box stat-hover" onClick={()=>navigate('/')}>평점</div>
+                    <div className="stat-box stat-hover" onClick={()=>navigate(`/titleRating/${profile.midx}`)}>평점</div>
                     <div className="vertical-line"></div>
                     <div className="stat-box stat-hover" onClick={()=>navigate(`/titleReview/${profile.midx}`)}>후기</div>
                     <div className="vertical-line"></div>

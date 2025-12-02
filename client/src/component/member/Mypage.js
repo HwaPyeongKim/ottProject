@@ -67,8 +67,6 @@ function Mypage({onClose}) {
     async function updateUser(){
         //각 입력란 밸리데이션
         if(email===''){ return alert('이메일을 입력하세요');}
-        if( loginUser.provider != 'KAKAO' && !pwd){ return alert('패스워드를 입력하세요')}
-        if( loginUser.provider != 'KAKAO' && pwd!=pwdChk){ return alert('패스워드확인이 일치하지 않습니다')}
         if(nickname===''){ return alert('닉네임을 입력하세요');}
         if(phone===''){ return alert('닉네임을 입력하세요');}
         if(zipnum===''){ return alert('닉네임을 입력하세요');}

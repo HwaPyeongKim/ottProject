@@ -9,7 +9,7 @@ import "../../style/myListView.css";
 function MyListView() {
   const { listidx } = useParams();
   const numericListidx = Number(listidx);
-  const loginUser = useSelector(state=>state.user)
+  const loginUser = useSelector(state => state.user);
 
   const [myListView, setMyListView] = useState({});
   const [movieList, setMovieList] = useState([]);
@@ -18,11 +18,11 @@ function MyListView() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [reload, setReload] = useState(false);   // AddTitle 닫힐 때 재로드용 상태
+  const [reload, setReload] = useState(false);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
-  
+
   const loader = useRef(null);
 
   const baseUrl = "https://api.themoviedb.org/3";
@@ -32,42 +32,29 @@ function MyListView() {
   // -----------------------------
   const fetchMovies = async (pageNum) => {
     if (loading || !hasMore) return;
-
     setLoading(true);
 
     try {
-      console.log("listidx : " + numericListidx)
+      console.log("listidx : " + numericListidx);
+
       const result = await jaxios.get('/api/member/getMyListDetailView', {
         params: { page: pageNum, listidx: numericListidx }
       });
-      console.log('fetchMovies : ' + result.data.dbList)
+
+      console.log('fetchMovies : ', result.data.dbList);
 
       if (result.data.dbList.length === 0) {
         setHasMore(false);
         setLoading(false);
         return;
       }
+
       if (pageNum === 1) {
-        setMovieList(result.data.dbList);
+        setMovieList(result.data.dbList);   // 첫 페이지면 완전히 덮어쓰기
       } else {
         setMovieList(prev => [...prev, ...result.data.dbList]);
       }
-      
-      // const movies = await Promise.all(
-      //   result.data.dbList.map(async (movie) => {
-      //     const detail = await axios.get(
-      //       `${baseUrl}/movie/${movie.dbidx}?api_key=${process.env.REACT_APP_KEY}&language=ko-KR`
-      //     );
 
-      //     return {
-      //       ...movie,
-      //       poster_path: detail.data.poster_path,
-      //       title: detail.data.title
-      //     };
-      //   })
-      // );
-
-      // setMovieList(prev => [...prev, ...movies]);
     } catch (err) {
       console.error(err);
     }
@@ -104,15 +91,15 @@ function MyListView() {
   // -----------------------------
   useEffect(() => {
     if (reload) {
-      // 1) 모든 리스트 초기화
+      // 1) 상태 초기화
       setMovieList([]);
-      setPage(1);
       setHasMore(true);
 
-      // 2) 첫 페이지를 강제로 단 1번만 로드
-      fetchMovies(1);
+      // 2) page를 강제로 변경하여 useEffect(page)가 반드시 실행되도록 함
+      setPage(0);
+      setTimeout(() => setPage(1), 0);
 
-      // 3) 다시 false
+      // 3) 종료
       setReload(false);
     }
   }, [reload]);
@@ -122,25 +109,21 @@ function MyListView() {
   // -----------------------------
   const handleAddTitleClose = () => {
     setOpen(false);
-
-    // ★ 여기서 setPage 또는 fetchMovies 직접 호출 ❌
-    // 오직 reload만 true로 → 자동 리로드만 수행되도록
-    setReload(true);
+    setReload(true);   // reload 트리거
   };
 
   function deleteList() {
-    jaxios.delete("/api/member/deleteList", {data:{ midx: loginUser.midx ,listidx: numericListidx }})
-        .then(res => {
-            if(res.data.msg === "ok") {
-                alert("리스트가 삭제되었습니다");
-                setIsDeleteModalOpen(false);
-                navigate('/mylist');
-            } else {
-                alert('리스트 삭제에 실패했습니다');
-                return;
-            }
-        })
-        .catch(err => console.error(err));
+    jaxios.delete("/api/member/deleteList", { data: { midx: loginUser.midx, listidx: numericListidx } })
+      .then(res => {
+        if (res.data.msg === "ok") {
+          alert("리스트가 삭제되었습니다");
+          setIsDeleteModalOpen(false);
+          navigate('/mylist');
+        } else {
+          alert('리스트 삭제에 실패했습니다');
+        }
+      })
+      .catch(err => console.error(err));
   }
 
   return (
@@ -148,9 +131,11 @@ function MyListView() {
       <div className="list-header">
         <h1>{myListView.listname}</h1>
         <div className="list-menu">
-          <button onClick={() => {setOpen(true)}}>추가</button>
-          <button className="deleteButton"
-                onClick={() => {setIsDeleteModalOpen(true)}}>
+          <button onClick={() => setOpen(true)}>추가</button>
+          <button
+            className="deleteButton"
+            onClick={() => setIsDeleteModalOpen(true)}
+          >
             리스트 삭제
           </button>
         </div>
@@ -158,7 +143,10 @@ function MyListView() {
 
       {/* AddTitle 모달 */}
       {open && (
-        <AddTitle listidx={numericListidx} onClose={handleAddTitleClose} />
+        <AddTitle
+          listidx={numericListidx}
+          onClose={handleAddTitleClose}
+        />
       )}
 
       <div className="content-grid">
@@ -180,23 +168,31 @@ function MyListView() {
       </div>
 
       {isDeleteModalOpen && (
-          <div className="mlv-modalOverlay" onClick={() => setOpen(false)}>
-              <div className="mlv-modalContent" onClick={(e) => e.stopPropagation()}>
-                  
-                  <h3>리스트 삭제</h3>
-                  <p>이 작업은 취소할 수 없습니다. 정말 리스트를 삭제하시겠습니까?</p>
+        <div className="mlv-modalOverlay" onClick={() => setOpen(false)}>
+          <div
+            className="mlv-modalContent"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>리스트 삭제</h3>
+            <p>이 작업은 취소할 수 없습니다. 정말 리스트를 삭제하시겠습니까?</p>
 
-                  <div className="mlv-buttonWrap">
-                      <button className="mlv-cancelButton" onClick={() => setIsDeleteModalOpen(false)}>
-                          취소
-                      </button>
-                      <button className="mlv-deleteConfirmButton" onClick={deleteList}>
-                          삭제
-                      </button>
-                  </div>
+            <div className="mlv-buttonWrap">
+              <button
+                className="mlv-cancelButton"
+                onClick={() => setIsDeleteModalOpen(false)}
+              >
+                취소
+              </button>
+              <button
+                className="mlv-deleteConfirmButton"
+                onClick={deleteList}
+              >
+                삭제
+              </button>
+            </div>
 
-              </div>
           </div>
+        </div>
       )}
     </div>
   );

@@ -5,11 +5,6 @@ import { useDispatch } from 'react-redux';
 import { loginAction } from '../../store/userSlice';
 import axios from 'axios'
 import { Cookies } from 'react-cookie';
-import jaxios from '../../util/JWTUtil';
-import '../../style/join.css'
-
-import DaumPostcode from "react-daum-postcode";
-import Modal from 'react-modal'
 
 function KakaoIdLogin() {
 
@@ -18,197 +13,49 @@ function KakaoIdLogin() {
     const cookies = new Cookies()
     const dispatch = useDispatch();
 
-    const [name, setName] = useState('')
-    const [nickname, setNickname] = useState('')
-    const [email, setEmail] = useState('')
-    const [reid, setReid]=useState('')
-    const [pwd, setPwd] = useState('')
-    const [pwdChk, setPwdChk] = useState('');
-    //const [phone, setPhone] = useState('')
-    const [phone1, setPhone1] = useState('010')
-    const [phone2, setPhone2] = useState('')
-    const [phone3, setPhone3] = useState('')
-    const [zipnum, setZipnum] = useState('')
-    const [address1, setAddress1] = useState('')
-    const [address2, setAddress2] = useState('')
-    const [profileimg, setProfileimg] = useState('')
-    const [profilemsg, setProfilemsg] = useState('')
-    const [snsid, setSnsid] = useState('')
-    const [useridStyle, setUseridStyle] = useState({fontWeight:'bold', textalign:'center'})
-    const [message, setMessage] = useState('')
-
-    const [imgSrc, setImgSrc] = useState('')
-    const [imgStyle, setImgStyle] = useState({display:"none"});
-
-    const [isOpen, setIsOpen] = useState(false)
-
     useEffect(
         ()=>{
-            axios.post('/api/member/getKakaoUser', null, {params:{ snsid:userid, password:'KAKAO'}})
+            axios.get('/api/member/getSnsUser', {params:{snsid:userid}})
             .then((result)=>{
                 if( result.data.msg == 'no' ){
                     return alert("이메일 또는 패스워드 오류입니다");
+                }else{}
+                let LUser = result.data.snsUser
+                dispatch( loginAction( LUser ) )
+                cookies.set('user', JSON.stringify(LUser), {path:'/', })
+                console.log("에딧검사 : ", result.data.edit)
+                if( result.data.edit === 'no' ){
+                    navigate('/')
                 }else{
-                    setSnsid()
-                    console.log('KakaoUser', result.data.KakaoUser );
-                    // dispatch( loginAction( result.data ) );
-                    // cookies.set('user', JSON.stringify(result.data), {path:'/',});
-                    // navigate('/');
+                    navigate('/editKakao')
                 }
-            })
-        },[]
+            }).catch((err)=>{console.error(err)})
+        }, []
+        // ()=>{
+        //     axios.post('/api/member/getKakaoUser', null, {params:{ snsid:userid, password:'KAKAO'}})
+        //     .then((result)=>{
+        //         if( result.data.msg == 'no' ){
+        //             return alert("이메일 또는 패스워드 오류입니다");
+        //         }else{
+        //             setSnsid(result.data.KakaoUser.snsid)
+        //             setNickname(result.data.KakaoUser.nickname)
+        //             setProfileimg(result.data.KakaoUser.profileimg)
+        //             console.log('KakaoUser', result.data.KakaoUser );
+        //         }
+                
+        //         let res = await axios.get('/api/member/getSnsUser', {params:{snsid}})
+
+        //         let LUser = res.data.snsUser
+        //         cookies.set('user', JSON.stringify( LUser ) , {path:'/', } )
+        //         dispatch( loginAction( LUser ) )
+        //         navigate('/');
+        //     })
+        // },[]
     )
 
-    function fileUpload(e){
-        const formData = new FormData()
-        formData.append('image', e.target.files[0])
-        axios.post( '/api/member/upload', formData)
-        .then((result)=>{
-            setImgSrc(result.data.image);
-            setImgStyle({display:"block", width:"200px"});
-            setProfileimg(result.data.fidx)
-        }).catch((err)=>{console.error(err)})
-    }
-
-    function toggle(){
-        setIsOpen( !isOpen )
-    }
-    // 모달창을 위한 style
-    const customStyles = {
-        overlay: { backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", },
-        content: {
-            left: "0",
-            margin: "auto",
-            width: "500px",
-            height: "600px",
-            padding: "0",
-            overflow: "hidden",
-        },
-    };
-    const completeHandler=(data)=>{
-        setZipnum(data.zonecode)
-        setAddress1(data.address)
-        // if( data.buildingName !== ''){
-        //     setAddress3('(' + data.buildingName + ')')
-        // }else if( data.bname !== ''){
-        //     setAddress3('(' + data.bname + ')')
-        // }
-        setIsOpen(false);
-    }
-
-    function fileUpload(e){
-        const formData = new FormData()
-        formData.append('image', e.target.files[0])
-        axios.post( '/api/member/upload', formData)
-        .then((result)=>{
-            setImgSrc(result.data.image);
-            setImgStyle({display:"block", width:"200px"});
-            setProfileimg(result.data.fidx)
-        }).catch((err)=>{console.error(err)})
-    }
-
-    async function onSubmit(){
-        if(!email){ return alert('이메일을 입력하세요')}
-        if(!pwd){ return alert('패스워드를 입력하세요')}
-        if(!pwdChk){ return alert('패스워드 확인을 입력하세요')}
-        if(pwd !== pwdChk){ return alert('패스워드가 일치하지 않습니다')}
-        if(!name){ return alert('이름을 입력하세요')}
-        if(!nickname){ return alert('닉네임을 입력하세요')}
-        if(!phone1 || !phone2 || !phone3){ return alert('전화번호를 입력하세요')}
-        // 유효이메일 양식 체크
-        let regix = email.match( /\w+@(\w+[.])+\w+/g );
-        if( !regix ){  return alert('정확한 이메일을 입력하세요'); }
-        try{
-            // 이메일 중복체크
-            let result = await axios.post('/api/member/emailcheck', null, {params:{email}})
-            if(result.data.msg === 'no' ){ return alert('이메일이 중복됩니다'); }
-            // 닉네임 중복체크
-            result = await axios.post('/api/member/nicknamecheck', null, {params:{nickname}} );
-            if(result.data.msg === 'no' ){ return alert('닉네임이 중복됩니다'); }
-            // 회원가입
-            const phone = `${phone1}-${phone2}-${phone3}`
-            result = await axios.post('/api/member/join', {email, pwd, name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg});
-            if(result.data.msg =='ok'){
-                alert('회원 가입이 완료되었습니다. 로그인하세요');
-                navigate('/');
-            }
-        }catch(err){
-            console.error(err)
-        }        
-    }
-    
     return (
-        <div className="join-profile-form">
-            <div className="join-mpfield">
-                카카오 추가 로그인
-            </div>
-            <div className="join-mpfield">
-                <label>E-MAIL</label>
-                <input type='text' value={email} onChange={(e)=>{setEmail(e.currentTarget.value)}}/>
-            </div>
-            <div className="join-mpfield">
-                <label>PASSWORD</label>
-                <input type='password' value={pwd} onChange={(e)=>{setPwd(e.currentTarget.value)}}/>
-            </div>
-            <div className="join-mpfield">
-                <label>RETYPE PW</label>
-                <input type="password"  value={pwdChk} onChange={(e)=>{ setPwdChk(e.currentTarget.value )}}/>
-            </div>
-            <div className="join-mpfield">
-                <label>NAME</label>
-                <input type="text"  value={name} onChange={(e)=>{ setName(e.currentTarget.value )}}/>
-            </div>
-            <div className="join-mpfield">
-                <label>NICKNAME</label>
-                <input type="text"  value={nickname} onChange={(e)=>{ setNickname(e.currentTarget.value )}}/>
-            </div>
-            <div className="join-mpfield">
-                <label>PHONE</label>
-                <input type="text"  value={phone1} maxLength='3' onChange={(e)=>{ setPhone1(e.currentTarget.value )}}/>
-                -
-                <input type="text"  value={phone2} maxLength='4' onChange={(e)=>{ setPhone2(e.currentTarget.value )}}/>
-                -
-                <input type="text"  value={phone3} maxLength='4' onChange={(e)=>{ setPhone3(e.currentTarget.value )}}/>
-            </div>
-            <div className="join-mpfield">
-                <label>POST CODE</label>
-                <input type="text" value={zipnum} onChange={(e)=>{ setZipnum(e.currentTarget.value )}} readOnly/>
-                <button className="btn-highlight" onClick={ ()=>{ setIsOpen( !isOpen ) }}>SEARCH</button>
-            </div>
-
-            <div className="join-mpfield">
-                <Modal isOpen={isOpen}  ariaHideApp={false}  style={customStyles} >
-                    <DaumPostcode onComplete={completeHandler} /><br />
-                    <button onClick={()=>{ setIsOpen(false) }}>CLOSE</button>
-                </Modal>
-            </div>
-            <div className="join-mpfield">
-                <label>ADDRESS</label>
-                <input type="text"  value={address1} onChange={(e)=>{ setAddress1(e.currentTarget.value )}}/>
-            </div>
-
-            <div className="join-mpfield">
-                <label>DETAIL ADDRESS</label>
-                <input type="text"  value={address2} onChange={(e)=>{ setAddress2(e.currentTarget.value )}}/>
-            </div>
-            <div className="join-mpfield">
-                <label>INTRO</label>
-                <input type="text"  value={profilemsg} onChange={(e)=>{setProfilemsg(e.currentTarget.value)}}/>
-            </div>
-            <div className="join-mpfield">
-                <label>PROFILE IMG</label>
-                <input type="file" onChange={(e)=>{fileUpload(e)}}/>
-            </div>
-            <div className="join-mpfield">
-                <label>PROFILE IMG PREVIEW</label>
-                {
-                    (imgSrc)?(<div><img src={imgSrc} style={imgStyle} /></div>):(<p>이미지 로딩 중...</p>)
-                }
-            </div>
-            <div className="join-btn-group">
-                <button className="join-btn join-btn-primary" onClick={()=>{onSubmit()}}>JOIN</button>
-                <button className="join-btn join-btn-secondary" onClick={()=>{ navigate('/')}}>BACK</button>
-            </div>
+        <div>
+            
         </div>
     )
 }

@@ -42,10 +42,13 @@ import MyQna from "./component/customer/MyQna";
 //---------------------------------------------------- dg
 import Login from "./component/member/Login";
 import KakaoIdLogin from "./component/member/KakaoIdLogin";
+import EditKakao from "./component/member/EditKakao";
 import Join from "./component/member/Join";
 import MyList from "./component/member/MyList";
 import Myfollow from "./component/member/Myfollow";
 import Myfollower from "./component/member/Myfollower";
+import Follow from "./component/member/Follow";
+import Follower from "./component/member/Follower";
 import FollowMemberView from "./component/member/FollowMemberView";
 import SocialList from "./component/member/SocialList";
 import ConfirmEmailCode from "./component/member/ConfirmEmailCode";
@@ -95,19 +98,23 @@ function App() {
             {/* dg */}
             <Route path="/login" element={<Login />} />
             <Route path='/kakaoIdLogin/:userid' element={<KakaoIdLogin />} />
+            <Route path='/editKakao' element={<EditKakao />} />
             <Route path="/join/:confirmemail" element={<Join />} />
             <Route path="/mylist" element={<MyList />} />
             <Route path="/myfollow" element={<Myfollow />} />
             <Route path="/myfollower" element={<Myfollower />} />
+            <Route path="/follow/:userMidx" element={<Follow />} />
+            <Route path="/follower/:userMidx" element={<Follower />} />
             <Route path="/followMemberView/:followMemberId" element={<FollowMemberView />} />
             <Route path="/socialList/:socialId" element={<SocialList />} />
             <Route path="/confirmEmailCode" element={<ConfirmEmailCode />} />
             <Route path="/addTitle" element={<AddTitle />} />
             <Route path="/myListView/:listidx" element={<MyListView />} />
             <Route path="/mypageView" element={<MypageView />} />
-            <Route path="/titleRating" element={<TitleRating />} />
+            <Route path="/titleRating/:userMidx" element={<TitleRating />} />
             <Route path="/titleReview/:userMidx" element={<TitleReview />} />
             {/* dg */}
+            
         </Routes>
       </div>
     </div>
