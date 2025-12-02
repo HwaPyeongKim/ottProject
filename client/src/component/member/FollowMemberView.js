@@ -144,7 +144,7 @@ function FollowMemberView() {
                 <div className="stats-container">
                     <div className="stat-box stat-hover" onClick={()=>navigate('/')}>평점</div>
                     <div className="vertical-line"></div>
-                    <div className="stat-box stat-hover" onClick={()=>navigate('/')}>후기</div>
+                    <div className="stat-box stat-hover" onClick={()=>navigate(`/titleReview/${profile.midx}`)}>후기</div>
                     <div className="vertical-line"></div>
                     <div className="stat-box stat-hover" onClick={()=>navigate('/')}>커뮤니티</div>
                 </div>

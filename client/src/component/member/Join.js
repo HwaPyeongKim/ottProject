@@ -172,7 +172,7 @@ function Join() {
             <div className="join-mpfield">
                 <label></label>
                 {
-                    (imgSrc)?(<div><img src={imgSrc} style={imgStyle} /></div>):(<p></p>)
+                    (imgSrc)?(<div><img src={imgSrc} style={imgStyle} /></div>):(<p>이미지</p>)
                 }
             </div>
             <div className="join-btn-group">

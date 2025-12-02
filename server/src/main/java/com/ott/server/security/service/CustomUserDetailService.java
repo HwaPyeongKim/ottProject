@@ -43,8 +43,10 @@ public class CustomUserDetailService implements UserDetailsService {
                 member.getZipnum(),
                 member.getAddress1(),
                 member.getAddress2(),
+                member.getProvider(),
                 member.getProfileimg(),
                 member.getProfilemsg(),
+                member.getRole(),
                 member.getSnsid(),
                 list
         );

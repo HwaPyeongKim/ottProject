@@ -18,7 +18,7 @@ public class MemberDTO extends User {
 
     public MemberDTO(
             String username, String password, int midx, String name, String nickname, String phone, String zipnum,
-            String address1, String address2, String profileimg, String profilemsg, String snsid, List<String> authorities) {
+            String address1, String address2, String provider, String profileimg, String profilemsg, int role, String snsid, List<String> authorities) {
         super(username, password,
             authorities.stream().map( str -> new SimpleGrantedAuthority("ROLE_"+str) ).collect(Collectors.toList())
         );
@@ -31,8 +31,10 @@ public class MemberDTO extends User {
         this.zipnum = zipnum;
         this.address1 = address1;
         this.address2 = address2;
+        this.provider = provider;
         this.profileimg = profileimg;
         this.profilemsg = profilemsg;
+        this.role = role;
         this.snsid = snsid;
     }
 
@@ -45,8 +47,10 @@ public class MemberDTO extends User {
     private String zipnum;
     private String address1;
     private String address2;
+    private String provider;
     private String profileimg;
     private String profilemsg;
+    private int role;
     private String snsid;
 
     public Map<String, Object> getClaims() {
@@ -60,8 +64,10 @@ public class MemberDTO extends User {
         dataMap.put("zipnum", zipnum);
         dataMap.put("address1", address1);
         dataMap.put("address2", address2);
+        dataMap.put("provider", provider);
         dataMap.put("profileimg", profileimg);
         dataMap.put("profilemsg", profilemsg);
+        dataMap.put("role", role);
         dataMap.put("snsid", snsid);
         return dataMap;
     }
