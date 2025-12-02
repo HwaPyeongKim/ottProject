@@ -43,7 +43,10 @@
 .content_info .review {}
 .content_info .review h3 small {font-size: 0.8em;}
 .content_info .review .write {padding: 20px; background: #060d17;}
-.content_info .review .write .rating {font-size:1.5em;}
+.content_info .review .write .rating {display: flex; align-items: center; font-size:1.5em;}
+.content_info .review .write .rating div.spoiler {margin-left: 20px; font-size: 0.7em;}
+.content_info .review .write .rating div.spoiler input[type=checkbox] {display: none;}
+.content_info .review .write .rating div.spoiler input[type=checkbox]:checked+label p b {color: #f5c518;}
 .content_info .review .write .textBox {display: flex; justify-content: space-between;}
 .content_info .review .write .textBox textarea {flex: 10; height: 100px; padding: 10px; resize: none; margin-top: 10px; margin-right: 10px; background: #111924; border: none; outline: none; color: #fff;}
 .content_info .review .write .textBox button {flex: 1;}

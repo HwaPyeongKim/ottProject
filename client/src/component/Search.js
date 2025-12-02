@@ -366,7 +366,7 @@ function Search() {
           <p className={activeIndex === 0 ? "on" : ""} onClick={() => handlePClick(0)}>개봉 년도</p>
           <div className={`yearWrap ${activeIndex === 0 ? "on" : ""}`}>
             <label htmlFor="yearFilter">개봉년도</label>
-            <input type="number" min="1900" max="2100" onChange={(e) =>setTempFilters(prev => ({ ...prev, year: e.target.value }))} id="yearFilter" />
+            <input type="number" min="1900" max="2100" onChange={(e) =>setTempFilters(prev => ({ ...prev, year: e.target.value }))} id="yearFilter" className="custom-number" />
           </div>
         </li>
         <li>

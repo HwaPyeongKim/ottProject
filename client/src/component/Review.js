@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar, faStarHalfAlt } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
-import { faStar, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faEllipsis, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 const Review = ({ dbidx, season, refreshAverage, title, posterpath, type }) => {
   const loginUser = useSelector(state=>state.user);
@@ -25,6 +25,7 @@ const Review = ({ dbidx, season, refreshAverage, title, posterpath, type }) => {
   const [editScore, setEditScore] = useState(0); 
   const [editContent, setEditContent] = useState("");
   const [content, setContent] = useState("");
+  const [isSpoil, setIsSpoil] = useState("N");
 
   const [openMenuId, setOpenMenuId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -114,13 +115,14 @@ const Review = ({ dbidx, season, refreshAverage, title, posterpath, type }) => {
   function saveReview() {
     if (!score) {return alert("별점을 체크해주세요")}
 
-    jaxios.post("/api/review/saveReview", {midx:loginUser.midx, content, dbidx, score, season, title, posterpath, type})
+    jaxios.post("/api/review/saveReview", {midx:loginUser.midx, content, dbidx, score, season, title, posterpath, type, isspoil: isSpoil})
     .then((result)=>{
       if (result.data.msg === "ok") {
         alert("후기가 등록되었습니다");
         setScore(0);
         setHover(0);
         setContent("");
+        setIsSpoil("N");
         getReviews(1, true);
         if (refreshAverage) refreshAverage();
       } else {
@@ -205,6 +207,10 @@ const Review = ({ dbidx, season, refreshAverage, title, posterpath, type }) => {
         <h4>내 별점</h4>
         <div className="rating">
           <StarRating score={score} setScore={setScore} />
+          <div className="spoiler">
+            <input type="checkbox" checked={isSpoil === "Y"} onChange={(e) => setIsSpoil(e.target.checked ? "Y" : "N")} id="checkbox_spoiler" />
+            <label htmlFor="checkbox_spoiler"><p>스포일러 포함 <b><FontAwesomeIcon icon={faCheck} /></b></p></label>
+          </div>
         </div>
         <div className="textBox">
           <textarea value={content} onChange={(e)=>{setContent(e.currentTarget.value)}} placeholder="리뷰를 입력해주세요" ></textarea>

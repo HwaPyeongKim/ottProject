@@ -11,8 +11,9 @@
 .filter > li div input+label {cursor: pointer;}
 .filter > li div span {margin-left: 5px;}
 .filter > li div input:checked+label span {color: #f5c518;}
-.filter > li .yearWrap {}
+.filter > li .yearWrap {width: 100px;}
 .filter > li .yearWrap label {display: inline-block; margin-bottom: 10px;}
+.filter > li .yearWrap input[type=number] {outline: none; width: 80px; padding:0 10px; border-radius: 5px; font-size: 1.1em; line-height: 40px;}
 .filter > li .genreWrap {width: 330px;}
 .filter > li .certificationWrap {width: 140px;}
 .filter > li .certificationWrap li {margin-bottom: 10px;}
