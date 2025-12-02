@@ -189,7 +189,7 @@ function Genre() {
   useEffect(
     () => {
       const handleScroll = () => {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
           if (hasMore) setPage(prev => prev + 1);
         }
       };
@@ -270,7 +270,7 @@ function Genre() {
                 myList.length > 0 ? 
                   myList.map((mylist, lidx) => {
                     return (
-                      <li key={lidx} className="checkboxWrap">
+                      <li key={lidx} className="checkboxWrap selectList">
                         <input type="checkbox" value={mylist.listidx} id={`mylist_${mylist.listidx}`} onChange={(e)=>{const value = parseInt(e.target.value); if (e.target.checked) {setSelectedLists(prev => [...prev, value]);} else {setSelectedLists(prev => prev.filter(id => id !== value));}}} />
                         <label className="flex" htmlFor={`mylist_${mylist.listidx}`}><p>{mylist.title}</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
                       </li>

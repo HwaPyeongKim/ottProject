@@ -207,7 +207,7 @@ const ListCard = ({ lists, target, likes, setLikes, favorites, setFavorites }) =
                 myList.length > 0 ? 
                   myList.map((mylist, lidx) => {
                     return (
-                      <li key={lidx} className="checkboxWrap">
+                      <li key={lidx} className="checkboxWrap selectList">
                         <input type="checkbox" value={mylist.listidx} id={`mylist_${mylist.listidx}`} onChange={(e)=>{const value = parseInt(e.target.value); if (e.target.checked) {setSelectedLists(prev => [...prev, value]);} else {setSelectedLists(prev => prev.filter(id => id !== value));}}} />
                         <label className="flex" htmlFor={`mylist_${mylist.listidx}`}><p>{mylist.title}</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
                       </li>

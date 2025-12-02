@@ -191,7 +191,7 @@ function Search() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
         if (hasMoreMovie) setPageMovie(prev => prev + 1);
         if (hasMoreTV) setPageTV(prev => prev + 1);
       }
@@ -366,7 +366,7 @@ function Search() {
           <p className={activeIndex === 0 ? "on" : ""} onClick={() => handlePClick(0)}>개봉 년도</p>
           <div className={`yearWrap ${activeIndex === 0 ? "on" : ""}`}>
             <label htmlFor="yearFilter">개봉년도</label>
-            <input type="number" min="1900" max="2100" onChange={(e) =>setTempFilters(prev => ({ ...prev, year: e.target.value }))} id="yearFilter" />
+            <input type="number" min="1900" max="2100" onChange={(e) =>setTempFilters(prev => ({ ...prev, year: e.target.value }))} id="yearFilter" className="custom-number" />
           </div>
         </li>
         <li>

@@ -43,7 +43,10 @@
 .content_info .review {}
 .content_info .review h3 small {font-size: 0.8em;}
 .content_info .review .write {padding: 20px; background: #060d17;}
-.content_info .review .write .rating {font-size:1.5em;}
+.content_info .review .write .rating {display: flex; align-items: center; font-size:1.5em;}
+.content_info .review .write .rating div.spoiler {margin-left: 20px; font-size: 0.7em;}
+.content_info .review .write .rating div.spoiler input[type=checkbox] {display: none;}
+.content_info .review .write .rating div.spoiler input[type=checkbox]:checked+label p b {color: #f5c518;}
 .content_info .review .write .textBox {display: flex; justify-content: space-between;}
 .content_info .review .write .textBox textarea {flex: 10; height: 100px; padding: 10px; resize: none; margin-top: 10px; margin-right: 10px; background: #111924; border: none; outline: none; color: #fff;}
 .content_info .review .write .textBox button {flex: 1;}
@@ -95,8 +98,9 @@
 .modalContent ul li {padding: 20px 0; border-bottom: 1px solid #2a2a2a;}
 .modalContent ul li button {width: 20px; border: none; outline: none; background: transparent; color: #f5c518; font-size: 1.5em;}
 .modalContent div input[type=text] {width: 380px; margin-bottom: 20px; padding:0 10px; background: #10161d; border: 0; border-radius: 5px; color: #fff; font-size: 1.1em; line-height: 40px;}
+.modalContent .checkboxWrap.selectList p, .modalContent .checkboxWrap.selectList b {cursor: pointer;}
 .modalContent .checkboxWrap input[type=checkbox] {display: none;}
-.modalContent .checkboxWrap input[type=checkbox]:checked+label b {display: inline-block; width: 20px; color: #f5c518;}
+.modalContent .checkboxWrap input[type=checkbox]:checked+label p, .modalContent .checkboxWrap input[type=checkbox]:checked+label b {color: #f5c518;}
 .modalContent .checkboxWrap label {align-items: center;}
 .modalContent .buttonWrap {display: flex; justify-content: space-between; margin-top: 20px;}
 .modalContent .buttonWrap button {width: 49%; padding: 10px 0;}

@@ -71,7 +71,7 @@ function Header() {
   return (
     <header>
       <div className="logo">
-        <img src={logo} alt="logo" style={{width:'160px', height:'90px'}}/>
+        <img src={logo} alt="logo" style={{width:'160px', height:'90px'}} onClick={()=>{navigate("/")}} />
       </div>
 
       <ul className="gnb">
