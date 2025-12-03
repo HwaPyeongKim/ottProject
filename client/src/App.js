@@ -54,11 +54,13 @@ import Follower from "./component/member/Follower";
 import SocialList from "./component/member/SocialList";
 import ConfirmEmailCode from "./component/member/ConfirmEmailCode";
 import AddTitle from "./component/member/AddTitle";
-import MyListView from "./component/member/MyListView";
+import UserListView from "./component/member/UserListView";
+// import MyListView from "./component/member/MyListView";
 import PageView from "./component/member/PageView";
 // import MypageView from "./component/member/MypageView";
 import TitleRating from "./component/member/TitleRating";
 import TitleReview from "./component/member/TitleReview";
+import UserCommunity from "./component/member/UserCommunity";
 //---------------------------------------------------- dg
 
 
@@ -112,11 +114,13 @@ function App() {
             <Route path="/socialList/:socialId" element={<SocialList />} />
             <Route path="/confirmEmailCode" element={<ConfirmEmailCode />} />
             <Route path="/addTitle" element={<AddTitle />} />
-            <Route path="/myListView/:listidx" element={<MyListView />} />
+            <Route path="/userListView/:listidx/:userMidx" element={<UserListView />} />
+            {/* <Route path="/myListView/:listidx" element={<MyListView />} /> */}
             <Route path="/pageView/:userMidx" element={<PageView />} />
             {/* <Route path="/mypageView" element={<MypageView />} /> */}
             <Route path="/titleRating/:userMidx" element={<TitleRating />} />
             <Route path="/titleReview/:userMidx" element={<TitleReview />} />
+            <Route path="/userCommunity/:userMidx" element={<UserCommunity />} />
             {/* dg */}
             
         </Routes>

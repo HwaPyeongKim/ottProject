@@ -35,6 +35,8 @@ function UserList() {
             }
             setIsModalOpen(false);
             getMyLists();
+            console.log(loginUser.midx, targetMidx)
+            console.log(listTab)
         },[]
     )
 
@@ -70,14 +72,16 @@ function UserList() {
 
     return (
         <div className="mylist-container">
-            <div className="mylisttabs">
-                <button className={listTab === 'tab1' ? "active" : ""}  
-                onClick={()=>{setListTab('tab1')}}>나의 공개 리스트</button>
-                <button className={listTab === 'tab2' ? "active" : ""} 
-                onClick={()=>{setListTab('tab2')}}>나의 비밀 리스트</button>
-                <button style={{color:'#f5c518'}}
-                onClick={()=>{setIsAddListModal(true)}}>리스트 추가</button>
-            </div>
+            {loginUser.midx === targetMidx&&(
+                <div className="mylisttabs">
+                    <button className={listTab === 'tab1' ? "active" : ""}  
+                    onClick={()=>{setListTab('tab1')}}>나의 공개 리스트</button>
+                    <button className={listTab === 'tab2' ? "active" : ""} 
+                    onClick={()=>{setListTab('tab2')}}>나의 비밀 리스트</button>
+                    <button style={{color:'#f5c518'}}
+                    onClick={()=>{setIsAddListModal(true)}}>리스트 추가</button>
+                </div>
+            )}
 
             <div className="mylist-grid">
                 {  
@@ -88,7 +92,7 @@ function UserList() {
                     .map((mList, idx)=>{
                         return(
                             <div key={idx} className="mylist-card">
-                                <div className="mylist-info" onClick={()=>{navigate(`/myListView/${mList.listidx}`)}}>{mList.title}</div>      
+                                <div className="mylist-info" onClick={()=>{navigate(`/userListView/${mList.listidx}/${targetMidx}`)}}>{mList.title}</div>      
                             </div>
                         )
                     })

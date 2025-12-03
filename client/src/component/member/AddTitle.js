@@ -197,7 +197,7 @@ function AddTitle({ onClose, listidx }) {
 
     async function onSubmit(){
         onClose();
-        navigate(`/myListView/${listidx}`);
+        navigate(`/userListView/${listidx}`);
     }
 
     return (
