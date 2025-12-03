@@ -82,8 +82,8 @@ public class MemberService {
             //int count = fr.findAll().size();
             int count = fr.countByFromMember_Midx(midx);
             System.out.println("팔로우 카운트 : " + count);
-            paging.setDisplayRow(7);
-            paging.setDisplayPage(7);
+            paging.setDisplayRow(10);
+            paging.setDisplayPage(2);
             paging.setTotalCount(count);
             paging.calPaging();
             Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow() , Sort.by(Sort.Direction.DESC, "id"));
@@ -107,8 +107,8 @@ public class MemberService {
             //int count = fr.findAll().size();
             int count = fr.countByToMember_Midx(midx);
             System.out.println("팔로워 카운트 : " + count);
-            paging.setDisplayRow(7);
-            paging.setDisplayPage(7);
+            paging.setDisplayRow(10);
+            paging.setDisplayPage(2);
             paging.setTotalCount(count);
             paging.calPaging();
             Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "id"));

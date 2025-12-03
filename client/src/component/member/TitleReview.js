@@ -16,6 +16,7 @@ function TitleReview() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [typeFilter, setTypeFilter] = useState("all");
 
   const loader = useRef(null);
 
@@ -41,7 +42,7 @@ function TitleReview() {
             setChkMember(loginUser);
           }
           console.log('해당 midx : ', targetMidx)
-          const result = await jaxios.get('/api/member/getReviewList', {params:{page: page, midx:targetMidx}})
+          const result = await jaxios.get('/api/member/getReviewList', {params:{page: page, midx:targetMidx, type: typeFilter}})
           console.log('타이틀평점 : ', result.data.reviewList.reviewList)
           if (result.data.reviewList.reviewList.length === 0) {
               setHasMore(false);
@@ -81,7 +82,22 @@ function TitleReview() {
   return (
     <div style={{ paddingTop: "40px" }}>
         <h2 style={{ color: "white", textAlign: "center" }}>후기 목록</h2>
+        <div className="type-filter">
+            <button 
+                className={typeFilter === "all" ? "active" : ""} 
+                onClick={() => { setTypeFilter("all"); setPage(1); setHasMore(true); }}
+            >전체</button>
 
+            <button 
+                className={typeFilter === "movie" ? "active" : ""} 
+                onClick={() => { setTypeFilter("movie"); setPage(1); setHasMore(true); }}
+            >영화</button>
+
+            <button 
+                className={typeFilter === "tv" ? "active" : ""} 
+                onClick={() => { setTypeFilter("tv"); setPage(1); setHasMore(true); }}
+            >TV</button>
+        </div>
         {reviews.length === 0 && (
             <p style={{ color: "white", textAlign: "center", marginTop: "40px" }}>작성한 후기가 없습니다.</p>
         )}

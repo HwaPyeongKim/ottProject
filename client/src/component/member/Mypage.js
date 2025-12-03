@@ -198,7 +198,7 @@ function Mypage({onClose}) {
               {view === "menu" && (
                 <>
                   <div className="menu-item">
-                    <div onClick={() => { onClose(); navigate('/mypageView'); }}>마이페이지</div>
+                    <div onClick={() => { onClose(); navigate(`/pageView/${loginUser.midx}`); }}>마이페이지</div>
                     {/* <div onClick={() => { onClose(); navigate('/mylist'); }}>마이리스트</div> */}
                   </div>
                   {/* <hr className="menu-divider" />

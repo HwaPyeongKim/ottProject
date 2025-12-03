@@ -67,24 +67,6 @@ function MypageView() {
         },[loginUser]
     )
 
-    // async function checkFollow(){
-    //     await jaxios.post('/api/member/follow', { ffrom:loginUser.midx, fto:followMemberId });
-        
-    //     let result = await jaxios.get('/api/member/getFollowers', {params:{page:1, midx:followMemberId}})
-    //     setFollowers( [...result.data.followers] )
-    //     result = await jaxios.get('/api/member/getFollowings', {params:{page:1, midx:followMemberId}})
-    //     setFollowings( [...result.data.followings] )
-    // }
-    // async function noFollow(){
-    //     console.log('언팔로우 버튼')
-    //     await jaxios.delete('/api/member/nofollow', {data: { ffrom:loginUser.midx, fto:followMemberId }});
-        
-    //     let result = await jaxios.get('/api/member/getFollowers', {params:{page:1, midx:followMemberId}})
-    //     setFollowers( [...result.data.followers] )
-    //     result = await jaxios.get('/api/member/getFollowings', {params:{page:1, midx:followMemberId}})
-    //     setFollowings( [...result.data.followings] )
-    // }
-
     const onClickBtn = () => {
         navigate(-1); 
     };    
@@ -95,7 +77,7 @@ function MypageView() {
             {/* 상단 커버 */}
             <div className="cover-image-container">
                 <div className="cover-image-container-list">
-                    <div onClick={()=>navigate('/mylist')}>
+                    <div onClick={()=>navigate('/')}>
                         <FontAwesomeIcon icon={faBookmark} />&nbsp;나의 리스트&nbsp;&nbsp;&nbsp;
                     </div>
                 </div>
@@ -117,7 +99,7 @@ function MypageView() {
                                 팔로잉 { (followings)?(followingsCount):(0) }
                             </span>
                             <span className="separator">|</span>
-                            <span className="stat-item" onClick={()=>navigate('/follower/${loginUser.midx}')}>
+                            <span className="stat-item" onClick={()=>navigate(`/follower/${loginUser.midx}`)}>
                                 팔로워 { (followers)?(followersCount):(0) }
                             </span>
                         </div>

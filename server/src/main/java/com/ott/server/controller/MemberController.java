@@ -281,7 +281,7 @@ public class MemberController {
     }
 
     @GetMapping("/getFollowMember")
-    public HashMap<String, Object> getFollowMember(@RequestParam("followMemberId") int midx) {
+    public HashMap<String, Object> getFollowMember(@RequestParam("midx") int midx) {
         HashMap<String, Object> result = new HashMap<>();
         result.put("followMember", ms.getFollowMember(midx));
         return result;

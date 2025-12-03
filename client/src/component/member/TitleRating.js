@@ -32,7 +32,7 @@ function TitleRating() {
     
     useEffect(
         () => {
-            fetchReview()
+            fetchReview(1)
         }, []
     );
 
@@ -133,7 +133,7 @@ function TitleRating() {
                 onClick={()=>{setListTab('tab2')}}>별점 순</button>
             </div>
             <div className="type-filter">
-            <button 
+                <button 
                     className={typeFilter === "all" ? "active" : ""} 
                     onClick={() => { setTypeFilter("all"); setPage(1); setHasMore(true); }}
                 >전체</button>
