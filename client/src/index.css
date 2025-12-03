@@ -11,3 +11,110 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* 챗봇 */
+.chatbotbox{
+    position: fixed;
+    width:390px;
+    height:650px;
+    right:0px;
+    top:85px;
+    border:2px solid black;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.chat-box {
+    height: 450px;
+    width: 100%;
+    
+    margin: 5px 0;
+    overflow-y: auto;
+    border:1px dotted silver;
+    border-radius: 20px;
+    padding:20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.userMessage{
+    align-self: right;
+    display: flex;
+    background-color:antiquewhite;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 10px;
+    margin-left: auto;
+    max-width: 70%;
+}
+.senderUser{
+    font-weight: bold;
+    color:orangered;
+    text-align: right;
+}
+.userContent{
+    text-align: right;
+}
+.botMessage{
+    align-self: left;
+    display: flex;
+    background-color:aqua;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 10px;
+    margin-right: auto;
+    max-width: 70%;
+}
+.senderBot{
+    font-weight: bold;
+    color:blue;
+    text-align: left;
+}
+.botContent{
+    text-align: left;
+}
+
+.userQuestion{
+    display: flex;
+    width:100%;
+    margin-top: 5px;
+}
+.question{
+    flex:5; 
+    height:30px; 
+    font-size: 110%;
+}
+.sendBtn{
+    flex:1; 
+    background-color: blue; 
+    color:white;
+    font-size: 110%; 
+    font-weight: bold;
+}
+
+.chatbot-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    background: #ff4b4b;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.close-btn:hover {
+    background: #ff2f2f;
+}

@@ -61,6 +61,7 @@ import PageView from "./component/member/PageView";
 import TitleRating from "./component/member/TitleRating";
 import TitleReview from "./component/member/TitleReview";
 import UserCommunity from "./component/member/UserCommunity";
+import Chatbot from './component/Chatbot'
 //---------------------------------------------------- dg
 
 
@@ -72,6 +73,7 @@ function App() {
   return (
     <div>
       <div className="container">
+        {/* <div className='chatComponent'><Chatbot className='chatComponent'/></div> */}
         <Header />
 
         <Routes>

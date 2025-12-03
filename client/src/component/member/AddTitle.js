@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
 import { Cookies } from "react-cookie";
+import { useSelector } from 'react-redux';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
@@ -12,7 +13,7 @@ import jaxios from "../../util/JWTUtil";
 
 function AddTitle({ onClose, listidx }) {
     console.log('listidx : ', listidx)
-
+    const loginUser = useSelector( state=>state.user );
     const [keyword, setKeyword] = useState('')
 
     //const [sliderShow, setSliderShow] = useState(8);
@@ -197,7 +198,7 @@ function AddTitle({ onClose, listidx }) {
 
     async function onSubmit(){
         onClose();
-        navigate(`/userListView/${listidx}`);
+        navigate(`/userListView/${listidx}/${loginUser.midx}`);
     }
 
     return (

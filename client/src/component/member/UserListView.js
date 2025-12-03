@@ -4,7 +4,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/JWTUtil';
 import AddTitle from './AddTitle';
+import { Link } from "react-router-dom";
 import "../../style/myListView.css";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookmark, faThumbsUp, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 function UserListView() {
 
@@ -152,12 +156,23 @@ function UserListView() {
             <div className="content-grid">
             {titleList.map((t) => (
                 <div className="card" key={t.dbidx}>
-                <a href={`/movie/detail/${t.dbidx}`}>
+                <Link to={`/movie/detail/${t.dbidx}`}>
                     <img
                     src={`https://image.tmdb.org/t/p/w342/${t.posterpath}`}
                     alt={t.title}
                     />
-                </a>
+
+                    <div>
+                        {
+                        loginUser && loginUser.midx ?
+                        <>
+                            <button><FontAwesomeIcon icon={faBookmark} /></button>
+                            {/* <button className={`like${likes.includes(item.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(item.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button> */}
+                        </>
+                        : null
+                        }
+                    </div>
+                </Link>
                 </div>
             ))}
             </div>

@@ -12,8 +12,8 @@ function Follower() {
     const loginUser = useSelector( state=>state.user );
     const {userMidx} = useParams();
     const userId = Number(userMidx);
-    const [targetMidx, setTargetMidx] = useState(
-    userId === loginUser.midx ? loginUser.midx : userId);
+    const targetMidx = userId === loginUser.midx ? loginUser.midx : userId;
+
 
     const navigate = useNavigate();
     const [followersImg, setFollowersImg] = useState([])

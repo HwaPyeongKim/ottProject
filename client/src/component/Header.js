@@ -75,10 +75,10 @@ function Header() {
       </div>
 
       <ul className="gnb">
-        <li className={firstPath === "" || firstPath === "#" ? "on" : ""}><a href="/">홈</a></li>
-        <li className={firstPath === "movie" ? "on" : ""}><a href="/movie">영화</a></li>
-        <li className={firstPath === "tv" ? "on" : ""}><a href="/tv">티비</a></li>
-        <li className={firstPath === "community" ? "on" : ""}><a href="/community">커뮤니티</a></li>
+        <li className={firstPath === "" || firstPath === "#" ? "on" : ""}><Link to="/">홈</Link></li>
+        <li className={firstPath === "movie" ? "on" : ""}><Link to="/movie">영화</Link></li>
+        <li className={firstPath === "tv" ? "on" : ""}><Link to="/tv">티비</Link></li>
+        <li className={firstPath === "community" ? "on" : ""}><Link to="/community">커뮤니티</Link></li>
       </ul>
 
       <div className="search">

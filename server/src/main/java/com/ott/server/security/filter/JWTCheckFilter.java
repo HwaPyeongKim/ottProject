@@ -108,6 +108,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if(path.startsWith("/admin/getQna")){return true;}
         if(path.startsWith("/admin/confirmPass")){return true;}
 
+        if(path.startsWith("/question")){return true;}
 
         return false;
     }
