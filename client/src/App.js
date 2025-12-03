@@ -8,6 +8,9 @@ import "./style/common.css";
 import "./style/list.css";
 import 'swiper/css';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWeixin } from "@fortawesome/free-brands-svg-icons"
+
 
 import Header from "./component/Header";
 
@@ -126,6 +129,9 @@ function App() {
             {/* dg */}
             
         </Routes>
+      </div>
+      <div className="chatbot-floating-btn">
+        <FontAwesomeIcon icon={faWeixin} style={{color: "#f5c518",}} />
       </div>
     </div>
   );
