@@ -63,16 +63,6 @@ function Chatbot() {
     return (
         <div>
             <div className='chatbot' onClick={()=>{setChatView( !chatView )}}><FontAwesomeIcon icon={faWeixin} style={{color: "#f5c518"}} /></div>
-            {/* <div className='chatbotbox' style={chatStyle}>
-                <div className="chat-box" id="chatBox" >
-                    <div className="userMessage"><div className="userContent">질문입니다</div></div>
-                    <div className="botMessage"><div className="botContent">답변입니다</div></div>
-                </div>
-                 <div className="userQuestion">
-                    <input type='text' id="messageInput" className="question" placeholder="AI챗봇에게 질문해주세요" value={question} onChange={(e)=>{ setQuestion(e.currentTarget.value)}} />
-                    <button className="sendBtn" onClick={()=>{onsubmit()}}>Send</button>
-                </div>
-            </div> */}
             <div class="chatbot-box" style={chatStyle}>
                 <div class="chat-box" id="chatBox" dangerouslySetInnerHTML={{ __html: answer }}></div>
 

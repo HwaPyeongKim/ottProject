@@ -67,6 +67,8 @@ header .menu button {border: 0; background: transparent; color: #fff; line-heigh
 /* .custom-number::-webkit-inner-spin-button, .custom-number::-webkit-outer-spin-button {-webkit-appearance: none; margin: 0;}
 .custom-number {-moz-appearance: textfield;} */
 
+/* 챗봇 */
+
 /* 오른쪽 하단 고정 챗봇 아이콘 버튼 */
 .chatbot-floating-btn {
   position: fixed;
@@ -78,7 +80,6 @@ header .menu button {border: 0; background: transparent; color: #fff; line-heigh
   border: none;
   box-shadow: none;
 
-  cursor: pointer;
   z-index: 9999;
 
   /* 아이콘 크기 조절을 위해 flex central */
@@ -91,8 +92,7 @@ header .menu button {border: 0; background: transparent; color: #fff; line-heigh
 .chatbot-floating-btn svg {font-size: 55px;}
 .chatbot-floating-btn .chatbot {transition: transform 0.2s ease;}
 .chatbot-floating-btn:hover .chatbot {transform: scale(1.12);}
-
-/* 챗봇 */
+.chatbot-floating-btn .chatbot {cursor: pointer;}
 /* 전체 박스 */
 .chatbot-box {
   position: fixed;
