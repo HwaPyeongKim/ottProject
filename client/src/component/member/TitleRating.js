@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react'
 import axios from "axios";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/JWTUtil';
 import Slider from "react-slick";
@@ -165,12 +165,12 @@ function TitleRating() {
                         <div className="tr-content-grid">
                             {reviewList.map(review => (
                                 <div className="card" key={review.dbidx}>
-                                    <a href={`/movie/detail/${review.dbidx}`}>
+                                    <Link to={`/movie/detail/${review.dbidx}`}>
                                         <img
                                             src={`https://image.tmdb.org/t/p/w342/${review.posterpath}`}
                                             alt={review.title}
                                         />
-                                    </a>
+                                    </Link>
                                     <div style={{display:'flex', alignItems:'center', justifyContent:'center'}}>
                                         <div>
                                             {review.title.length > 15 

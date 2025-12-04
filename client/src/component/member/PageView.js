@@ -173,7 +173,7 @@ function PageView() {
                     <div className="vertical-line"></div>
                     <div className="stat-box stat-hover" onClick={()=>navigate(`/titleReview/${targetMidx}`)}>후기</div>
                     <div className="vertical-line"></div>
-                    <div className="stat-box stat-hover" onClick={()=>navigate('/')}>커뮤니티</div>
+                    <div className="stat-box stat-hover" onClick={()=>navigate(`/userCommunity/${targetMidx}`)}>커뮤니티</div>
                 </div>
             </div>
         </div>

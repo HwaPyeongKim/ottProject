@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/JWTUtil';
 import AddTitle from './AddTitle';
@@ -152,12 +152,12 @@ function MyListView() {
       <div className="content-grid">
         {movieList.map(movie => (
           <div className="card" key={movie.dbidx}>
-            <a href={`/movie/detail/${movie.dbidx}`}>
+            <Link to={`/movie/detail/${movie.dbidx}`}>
               <img
                 src={`https://image.tmdb.org/t/p/w342/${movie.posterpath}`}
                 alt={movie.title}
               />
-            </a>
+            </Link>
           </div>
         ))}
       </div>

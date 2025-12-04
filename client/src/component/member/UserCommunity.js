@@ -10,6 +10,11 @@ import Board from '../board/Board';
 function UserCommunity() {
 
     const loginUser = useSelector(state => state.user);
+    const {userMidx} = useParams();
+    const userId = Number(userMidx);
+    const [targetMidx, setTargetMidx] = useState(
+    userId === loginUser.midx ? loginUser.midx : userId);
+
     const navigate = useNavigate();
     const [boardList, setBoardList] = useState([]);
     const [paging, setPaging] = useState({});
@@ -112,14 +117,14 @@ function UserCommunity() {
 
     return (
         <div className='comment-section-container'>
-            <h2 className="section-title">지금 뜨는 토픽</h2>
-            <div className="tab-buttons">
+            <h2 className="section-title">커뮤니티 글 모음</h2>
+            {/* <div className="tab-buttons">
                 <div>
                     <button className={`tab-button ${sortType === 'latest' ? 'active' : ''}`} onClick={Latest}>최신</button>
                     <button className={`tab-button ${sortType === 'popular' ? 'active' : ''}`} onClick={Popular}>인기</button>
                 </div>
                 <button className='tab-button boardWrite' onClick={() => onWriteClick()}>글쓰기</button>
-            </div>
+            </div> */}
             <div className="search-bar">
                 <input
                     type="text"
@@ -130,13 +135,18 @@ function UserCommunity() {
                 <button className='search-btn' onClick={() => onSearch(1)}>검색</button>                
             </div>
             <div className="boardlist">
-                {boardList && boardList.length !== 0 ? (
-                    boardList.map((board, idx) => (
-                        <Board key={idx} board={board} deleteBoard={deleteBoard} />
-                    ))
-                ) : (
-                    <h3>검색된 피드가 없습니다</h3>
-                )}
+                {
+                    boardList && boardList.length > 0 && 
+                    boardList.some(board => board.midx === targetMidx) ? (
+                        boardList
+                        .filter(board => board.midx === targetMidx)
+                        .map((board, idx) => (
+                            <Board key={idx} board={board} deleteBoard={deleteBoard} />
+                        ))
+                    ) : (
+                        <h3>작성 내역이 없습니다. 작성해 주세요.</h3>
+                    )
+                }
             </div>
         </div>
     )

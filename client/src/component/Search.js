@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import jaxios from "../util/JWTUtil";
 import axios from "axios";
@@ -438,7 +438,7 @@ function Search() {
               <div className="list" key={idx}>
                 <div className="cover">
                   <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                  <a href={`/${item.media_type}/detail/${item.id}`}>
+                  <Link to={`/${item.media_type}/detail/${item.id}`}>
                     <div>
                       {
                         loginUser && loginUser.midx ?
@@ -466,7 +466,7 @@ function Search() {
                       )
                       : null
                     }
-                  </a>
+                  </Link>
                 </div>
               </div>
             )
