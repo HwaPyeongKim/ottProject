@@ -8,9 +8,6 @@ import "./style/common.css";
 import "./style/list.css";
 import 'swiper/css';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWeixin } from "@fortawesome/free-brands-svg-icons"
-
 
 import Header from "./component/Header";
 
@@ -76,7 +73,6 @@ function App() {
   return (
     <div>
       <div className="container">
-        {/* <div className='chatComponent'><Chatbot className='chatComponent'/></div> */}
         <Header />
 
         <Routes>
@@ -130,9 +126,8 @@ function App() {
             
         </Routes>
       </div>
-      <div className="chatbot-floating-btn">
-        <FontAwesomeIcon icon={faWeixin} style={{color: "#f5c518",}} />
-      </div>
+
+      <div className='chatbot-floating-btn'><Chatbot className='chatComponent'/></div>
     </div>
   );
 }

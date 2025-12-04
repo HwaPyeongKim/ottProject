@@ -1,6 +1,9 @@
-import {useState, useEffect, React} from 'react'
+import {useState, useEffect, React} from "react";
 import axios from "axios";
-import '../index.css'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWeixin } from "@fortawesome/free-brands-svg-icons"
+import "../index.css";
+
 
 function Chatbot() {
 
@@ -41,19 +44,9 @@ function Chatbot() {
             if(chatView){
                 setChatStyle(
                     {
-                        position: 'fixed',
-                        width:'390px',
-                        height:'650px',
-                        right:'0px',
-                        top:'85px',
-                        border:'2px solid black',
-                        padding: '10px',
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'center',
-                        padding: '20px',
-                        boxSizing: 'border-box',
-                        backgroundColor: 'white',
+                        alignItems: 'center'
                     }
                 )
             }else{
@@ -71,10 +64,10 @@ function Chatbot() {
 
     return (
         <div>
-            <div className='chatbot' onClick={()=>{setChatView( !chatView )}}>CHATBOT</div>
+            <div className='chatbot' onClick={()=>{setChatView( !chatView )}}><FontAwesomeIcon icon={faWeixin} style={{color: "#f5c518"}} /></div>
             <div className='chatbotbox' style={chatStyle}>
                 <h1 className="text-center">RAG기반 AI 챗봇 서비스</h1>
-                <div className="chat-box" id="chatBox"  dangerouslySetInnerHTML={{ __html: answer }} ></div>
+                <div className="chat-box" id="chatBox" dangerouslySetInnerHTML={{ __html: answer }} ></div>
                  <div className="userQuestion">
                     <input type='text' id="messageInput" className="question" placeholder="Type your message..." value={question} onChange={(e)=>{ setQuestion(e.currentTarget.value)}} />
                     <button className="sendBtn" onClick={()=>{onsubmit()}}>Send</button>
