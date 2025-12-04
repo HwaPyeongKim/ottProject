@@ -26,14 +26,12 @@ function Chatbot() {
 
     function appendMessage(sender, content){
         if( sender === 'User' ){
-            setAnswer( answer + `<div class="userMessage"><div class="senderUser">User</div><div class="userContent">${content}</div></div><br />`)
+            setAnswer( answer + `<div class="user-message"><div class="bubble user">${content}</div></div>`)
         }else{
             setAnswer( 
                 answer 
-                +`<div class="userMessage"><div class="senderUser">User</div>
-                <div className="userContent">${question}</div></div><br />`
-                + `<div class="botMessage"><div class="senderBot">Chatbot</div>
-                <div class="botContent">${content}</div></div><br />`
+                + `<div class="user-message"><div class="bubble user">${question}</div></div>`
+                + `<div class="bot-message"><div class="bubble bot">${content}</div></div>`
             )
         }
         setQuestion('')
@@ -41,15 +39,15 @@ function Chatbot() {
 
     useEffect(
         ()=>{
-            if(chatView){
+            if (chatView) {
                 setChatStyle(
                     {
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'center'
+                        alignItems: 'hidden'
                     }
                 )
-            }else{
+            } else {
                 setChatStyle({display:'none'})
             }
         },[chatView]
@@ -65,14 +63,25 @@ function Chatbot() {
     return (
         <div>
             <div className='chatbot' onClick={()=>{setChatView( !chatView )}}><FontAwesomeIcon icon={faWeixin} style={{color: "#f5c518"}} /></div>
-            <div className='chatbotbox' style={chatStyle}>
-                <h1 className="text-center">RAG기반 AI 챗봇 서비스</h1>
-                <div className="chat-box" id="chatBox" dangerouslySetInnerHTML={{ __html: answer }} ></div>
+            {/* <div className='chatbotbox' style={chatStyle}>
+                <div className="chat-box" id="chatBox" >
+                    <div className="userMessage"><div className="userContent">질문입니다</div></div>
+                    <div className="botMessage"><div className="botContent">답변입니다</div></div>
+                </div>
                  <div className="userQuestion">
-                    <input type='text' id="messageInput" className="question" placeholder="Type your message..." value={question} onChange={(e)=>{ setQuestion(e.currentTarget.value)}} />
+                    <input type='text' id="messageInput" className="question" placeholder="AI챗봇에게 질문해주세요" value={question} onChange={(e)=>{ setQuestion(e.currentTarget.value)}} />
                     <button className="sendBtn" onClick={()=>{onsubmit()}}>Send</button>
                 </div>
+            </div> */}
+            <div class="chatbot-box" style={chatStyle}>
+                <div class="chat-box" id="chatBox" dangerouslySetInnerHTML={{ __html: answer }}></div>
+
+                <div class="chat-input-area">
+                    <input type="text" id="messageInput" class="chat-input" placeholder="AI챗봇에게 질문해주세요" value={question} onChange={(e)=>{ setQuestion(e.currentTarget.value)}} />
+                    <button class="send-btn" onClick={()=>{onsubmit()}}>Send</button>
+                </div>
             </div>
+            
         </div>
     )
 }
