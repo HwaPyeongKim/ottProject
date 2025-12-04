@@ -1,7 +1,7 @@
 import React , {useState, useEffect} from 'react'
 import axios from 'axios'
 import {Cookies, useCookies} from 'react-cookie'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAction } from '../store/userSlice';
 // 아래는 기존 Main 컴포넌트에 "신작 영화", "신작 TV" 섹션을 추가한 완성 코드입니다.
@@ -71,14 +71,14 @@ function Main() {
         <Slider {...settings}>
           {lists.slice(0, 10).map((item, idx) => (
             <div className="top10-card" key={item.id}>
-              <a href={`/${target}/detail/${item.id}`}>
+              <Link to={`/${target}/detail/${item.id}`}>
                 {top10 && <div className="rank-number">{idx + 1}</div>}
                 <img
                   src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
                   alt={item.title || item.name}
                   className="top10-poster"
                 />
-              </a>
+              </Link>
             </div>
           ))}
         </Slider>

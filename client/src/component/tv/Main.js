@@ -4,6 +4,7 @@ import jaxios from "../../util/JWTUtil";
 import axios from "axios";
 import Slider from "react-slick";
 import ListCard from '../ListCard';
+import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
@@ -181,13 +182,13 @@ function Main() {
           onAir.map((item, idx)=>{
             return (
               <div className="list">
-                <a href={`/tv/Detail/${item.id}`} key={idx}>
+                <Link to={`/tv/Detail/${item.id}`} key={idx}>
                   <div>
                     <h4>{item.title}</h4>
                     <p>{item.overview}</p>
                   </div>
                   <img src={`https://image.tmdb.org/t/p/w342${item.poster_path}`} alt={`${item.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                </a>
+                </Link>
               </div>
             )
           })
@@ -203,31 +204,31 @@ function Main() {
       <h3 className="genre_title">평점 높은 TV 시리즈</h3>
       <ListCard lists={topRated} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">액션 &amp; 어드밴쳐 <a href="/tv/genre/10759">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">액션 &amp; 어드밴쳐 <Link to="/tv/genre/10759">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={action} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">애니메이션 <a href="/tv/genre/16">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">애니메이션 <Link to="/tv/genre/16">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={animation} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">코미디 <a href="/tv/genre/35">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">코미디 <Link to="/tv/genre/35">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={comedy} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">범죄 <a href="/tv/genre/80">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">범죄 <Link to="/tv/genre/80">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={crime} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">드라마 <a href="/tv/genre/18">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">드라마 <Link to="/tv/genre/18">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={drama} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">SF &amp; 판타지 <a href="/tv/genre/10765">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">SF &amp; 판타지 <Link to="/tv/genre/10765">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={SF} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">리얼리티 <a href="/tv/genre/10764">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">리얼리티 <Link to="/tv/genre/10764">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={reality} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">가족 <a href="/tv/genre/10751">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">가족 <Link to="/tv/genre/10751">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={family} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">키즈 <a href="/tv/genre/10762">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">키즈 <Link to="/tv/genre/10762">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={kids} target="tv" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
     </div>
   )

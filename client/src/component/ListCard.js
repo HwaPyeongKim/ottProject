@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Slider from "react-slick";
 import jaxios from "../util/JWTUtil";
 import { ottInfos } from "../constants/ottInfos";
+import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faThumbsUp, faCheck } from "@fortawesome/free-solid-svg-icons";
@@ -149,7 +150,7 @@ const ListCard = ({ lists, target, likes, setLikes, favorites, setFavorites }) =
                   <div className="list" key={idx}>
                     <div className="cover">
                       <img src={`https://image.tmdb.org/t/p/w185${item.poster_path}`} alt={`${item.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                      <a href={`/${target}/detail/${item.id}`}>
+                      <Link to={`/${target}/detail/${item.id}`}>
                         <div>
                           {
                             loginUser && loginUser.midx ?
@@ -177,7 +178,7 @@ const ListCard = ({ lists, target, likes, setLikes, favorites, setFavorites }) =
                           )
                           : null
                         }
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 )

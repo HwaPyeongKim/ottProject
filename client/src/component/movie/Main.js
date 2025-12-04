@@ -4,6 +4,7 @@ import jaxios from "../../util/JWTUtil";
 import axios from "axios";
 import Slider from "react-slick";
 import ListCard from '../ListCard';
+import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
@@ -194,13 +195,13 @@ function Main() {
           now.map((item, idx)=>{
             return (
               <div className="list">
-                <a href={`/movie/detail/${item.id}`} key={idx}>
+                <Link to={`/movie/detail/${item.id}`} key={idx}>
                   <div>
                     <h4>{item.title}</h4>
                     <p>{item.overview}</p>
                   </div>
                   <img src={`https://image.tmdb.org/t/p/w342${item.poster_path}`} alt={`${item.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                </a>
+                </Link>
               </div>
             )
           })
@@ -213,34 +214,34 @@ function Main() {
       <h3 className="genre_title">인기 영화</h3>
       <ListCard lists={popular} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">액션 영화 <a href="/movie/genre/28">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">액션 영화 <Link to="/movie/genre/28">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={action} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">모험 영화 <a href="/movie/genre/12">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">모험 영화 <Link to="/movie/genre/12">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={adventure} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">코미디 영화 <a href="/movie/genre/35">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">코미디 영화 <Link to="/movie/genre/35">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={comedy} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">로맨스 영화 <a href="/movie/genre/10749">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">로맨스 영화 <Link to="/movie/genre/10749">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={romance} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">드라마 영화 <a href="/movie/genre/18">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">드라마 영화 <Link to="/movie/genre/18">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={drama} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">다큐멘터리 영화 <a href="/movie/genre/99">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">다큐멘터리 영화 <Link to="/movie/genre/99">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={documentary} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">공포 영화 <a href="/movie/genre/27">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">공포 영화 <Link to="/movie/genre/27">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={horror} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">스릴러 영화 <a href="/movie/genre/53">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">스릴러 영화 <Link to="/movie/genre/53">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={thriller} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">SF 영화 <a href="/movie/genre/878">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">SF 영화 <Link to="/movie/genre/878">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={SF} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
-      <h3 className="genre_title">음악 영화 <a href="/movie/genre/10402">모두 보기<FontAwesomeIcon icon={faAngleRight} /></a></h3>
+      <h3 className="genre_title">음악 영화 <Link to="/movie/genre/10402">모두 보기<FontAwesomeIcon icon={faAngleRight} /></Link></h3>
       <ListCard lists={music} target="movie" likes={likes} setLikes={setLikes} favorites={favorites} setFavorites={setFavorites} />
 
       <h3 className="genre_title">평점 높은 영화</h3>
