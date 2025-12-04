@@ -2,14 +2,19 @@ import Slider from "react-slick";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 
-function RatingSlider({title, movies}) {
+function RatingSlider({ title, movies }) {
+
     const settings = {
         dots: false,
         infinite: false,
         speed: 400,
-        slidesToShow: 6,
-        slidesToScroll: 6,
+        slidesToShow: 8,
+        slidesToScroll: 8,
     };
+
+    // 🔥 부족한 슬라이드 만큼 dummy 카드 추가
+    const dummyCount = Math.max(0, 8 - movies.length);
+    const dummyArray = Array(dummyCount).fill(null);
 
     return (
         <div className="tr-slider-grid">
@@ -22,15 +27,21 @@ function RatingSlider({title, movies}) {
                             src={`https://image.tmdb.org/t/p/w342/${m.posterpath}`}
                             alt={m.title}
                         />
-                        <div style={{ display: "flex", justifyContent: "center", gap: 4 }}>
-                            <FontAwesomeIcon icon={solidStar} style={{ color: "gold" }} />
-                            <span>{m.score}</span>
+                        <div className="title-text">
+                            {m.title.length > 15 
+                                ? m.title.substring(0, 15) + "..." 
+                                : m.title}
                         </div>
                     </div>
                 ))}
+
+                {/* 🔥 dummy 카드 삽입 (빈칸 유지용) */}
+                {dummyArray.map((_, idx) => (
+                    <div className="card dummy" key={`dummy-${idx}`}></div>
+                ))}
             </Slider>
         </div>
-    )
+    );
 }
 
-export default RatingSlider
+export default RatingSlider;
