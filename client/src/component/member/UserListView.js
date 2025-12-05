@@ -6,6 +6,9 @@ import jaxios from '../../util/JWTUtil';
 import AddTitle from './AddTitle';
 import "../../style/myListView.css";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookmark, faThumbsUp, faCheck } from "@fortawesome/free-solid-svg-icons";
+
 function UserListView() {
 
     const loginUser = useSelector( state=>state.user );
@@ -14,8 +17,15 @@ function UserListView() {
 
     const {userMidx} = useParams();
     const userId = Number(userMidx);
-    const [targetMidx, setTargetMidx] = useState(
-    userId === loginUser.midx ? loginUser.midx : userId);
+
+    const [targetMidx, setTargetMidx] = useState(userId);
+    useEffect(() => {
+    if (loginUser?.midx) {
+        setTargetMidx(
+        userId === loginUser.midx ? loginUser.midx : userId
+        );
+    }
+    }, [loginUser, userId]);
 
     const [dbidx, setDbidx] = useState('')
 
@@ -133,7 +143,9 @@ function UserListView() {
         .then((result)=>{
             console.log('타이틀삭제 : ', result.data.msg)
             if(result.data.msg === 'ok'){
-                navigate(`/userListView/${numericListidx}/${loginUser.midx}`);
+                setIsTitleDeleteModal(false)
+                setReload(true)
+                // navigate(`/userListView/${numericListidx}/${loginUser.midx}`);
             }else{
                 alert('잘못된 삭제입니다.')
             }
@@ -145,7 +157,7 @@ function UserListView() {
             <div className="list-header">
             <h1>{myListView.listname}</h1>
 
-            {loginUser.midx === targetMidx && (
+            {loginUser?.midx === targetMidx && (
                 <div className="list-menu">
                     <button onClick={() => setOpen(true)}>추가</button>
                     <button

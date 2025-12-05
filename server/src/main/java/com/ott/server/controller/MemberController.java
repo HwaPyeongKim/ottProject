@@ -381,11 +381,11 @@ public class MemberController {
     }
 
     @DeleteMapping("/deleteTitle")
-    public HashMap<String, Object> deleteTitle(@RequestParam("listidx") int listidx, @RequestParam("dbidx") int dbidx) {
+    public HashMap<String, Object> deleteTitle(@RequestBody DbList dblist) {
         HashMap<String, Object> result = new HashMap<>();
-        System.out.println("deleteTitle : " + listidx);
-        System.out.println("dbidx = " + dbidx);
-        ms.deleteTitle(listidx, dbidx);
+        System.out.println("listidx : " + dblist.getListidx());
+        System.out.println("dbidx = " + dblist.getDbidx());
+        ms.deleteTitle(dblist.getListidx(), dblist.getDbidx());
         result.put("msg", "ok");
         return result;
     }

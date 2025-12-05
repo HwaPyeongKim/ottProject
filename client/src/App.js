@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 import Slider from "react-slick";
 import axios from "axios";
 
+import { useDispatch } from "react-redux";
+import { loginAction } from "./store/userSlice";
+import { Cookies } from "react-cookie";
+
 import "./style/reset.css";
 import "./style/common.css";
 import "./style/list.css";
@@ -45,19 +49,12 @@ import KakaoIdLogin from "./component/member/KakaoIdLogin";
 import EditKakao from "./component/member/EditKakao";
 import Join from "./component/member/Join";
 import UserList from "./component/member/UserList";
-import MyList from "./component/member/MyList";
-// import Myfollow from "./component/member/Myfollow";
-// import Myfollower from "./component/member/Myfollower";
 import Follow from "./component/member/Follow";
 import Follower from "./component/member/Follower";
-// import FollowMemberView from "./component/member/FollowMemberView";
-import SocialList from "./component/member/SocialList";
 import ConfirmEmailCode from "./component/member/ConfirmEmailCode";
 import AddTitle from "./component/member/AddTitle";
 import UserListView from "./component/member/UserListView";
-// import MyListView from "./component/member/MyListView";
 import PageView from "./component/member/PageView";
-// import MypageView from "./component/member/MypageView";
 import TitleRating from "./component/member/TitleRating";
 import TitleReview from "./component/member/TitleReview";
 import UserCommunity from "./component/member/UserCommunity";
@@ -69,6 +66,23 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 function App() {
+
+  // 새로고침 시 쿠키 -> redux 자동 복구
+  const dispatch = useDispatch();
+  const cookies = new Cookies();
+
+  useEffect(() => {
+    const cookieUser = cookies.get("user");
+
+    if (cookieUser) {
+      const parsed =
+        typeof cookieUser === "string"
+          ? JSON.parse(cookieUser)
+          : cookieUser;
+
+      dispatch(loginAction(parsed));
+    }
+  }, []);
 
   return (
     <div>
@@ -106,19 +120,12 @@ function App() {
             <Route path='/editKakao' element={<EditKakao />} />
             <Route path="/join/:confirmemail" element={<Join />} />
             <Route path="/userList/:userMidx" element={<UserList />} />
-            {/* <Route path="/mylist" element={<MyList />} /> */}
-            {/* <Route path="/myfollow" element={<Myfollow />} />
-            <Route path="/myfollower" element={<Myfollower />} /> */}
             <Route path="/follow/:userMidx" element={<Follow />} />
             <Route path="/follower/:userMidx" element={<Follower />} />
-            {/* <Route path="/followMemberView/:followMemberId" element={<FollowMemberView />} /> */}
-            <Route path="/socialList/:socialId" element={<SocialList />} />
             <Route path="/confirmEmailCode" element={<ConfirmEmailCode />} />
             <Route path="/addTitle" element={<AddTitle />} />
             <Route path="/userListView/:listidx/:userMidx" element={<UserListView />} />
-            {/* <Route path="/myListView/:listidx" element={<MyListView />} /> */}
             <Route path="/pageView/:userMidx" element={<PageView />} />
-            {/* <Route path="/mypageView" element={<MypageView />} /> */}
             <Route path="/titleRating/:userMidx" element={<TitleRating />} />
             <Route path="/titleReview/:userMidx" element={<TitleReview />} />
             <Route path="/userCommunity/:userMidx" element={<UserCommunity />} />

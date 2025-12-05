@@ -14,8 +14,14 @@ function UserList() {
     const loginUser = useSelector( state=>state.user );
     const {userMidx} = useParams();
     const userId = Number(userMidx);
-    const [targetMidx, setTargetMidx] = useState(
-    userId === loginUser.midx ? loginUser.midx : userId);
+    const [targetMidx, setTargetMidx] = useState(userId);
+    useEffect(() => {
+    if (loginUser?.midx) {
+        setTargetMidx(
+        userId === loginUser.midx ? loginUser.midx : userId
+        );
+    }
+    }, [loginUser, userId]);
 
     const [myList, setMyList] = useState([])
     const [listTab, setListTab] = useState('tab1')
