@@ -1,70 +1,19 @@
-/* .movie-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 20px;
-  padding: 20px;
-}
-
-.movie-card {
-  cursor: pointer;
-}
-
-.poster {
-  width: 100%;
-  border-radius: 4px;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-}
-
-.title {
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-.score {
-  font-size: 13px;
-  color: #f5c518;
-} */
-
+/* -----------------------------
+   TitleRating 전체 컨테이너
+------------------------------*/
 .tr-container {
   padding: 40px;
 }
 
-.tr-grid {
-  display: flex;
-  gap: 20px;
-  margin-top: 30px;
-}
-
-.tr-card {
-  width: 320px;
-  background-color: #1a1a1d;
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform .2s;
-}
-
-.tr-card:hover {
-  transform: scale(1.05);
-}
-
-.tr-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  filter: brightness(70%);
-}
-
-.tr-info {
-  padding: 15px;
-}
-
+/* -----------------------------
+   탭 버튼
+------------------------------*/
 .tr-tabs {
   display: flex;
   gap: 20px;
   margin-bottom: 20px;
 }
+
 .tr-tabs button {
   background-color: transparent;
   color: gray;
@@ -75,18 +24,151 @@
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   font-weight: bold;
 }
+
 .tr-tabs .active {
-  color: #f3d45c; /* 노란색 강조 */
+  color: #f3d45c;
   border-bottom: 3px solid #f3d45c;
 }
 
-/* 콘텐츠 그리드 */
+/* -----------------------------
+   콘텐츠 그리드
+------------------------------*/
 .tr-content-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 20px;
 }
 
-.tr-slider-grid {
-  
+/* -----------------------------
+   카드 공통 스타일 (그리드 + 슬라이더 공통)
+------------------------------*/
+.tr-card-common {
+  width: 160px;
+  cursor: pointer;
 }
+
+.tr-card-common img {
+  width: 100%;
+  border-radius: 4px;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+}
+
+/* 제목 */
+.tr-card-title {
+  font-size: 14px;
+  margin-top: 6px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 별점 */
+.tr-card-score {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  margin-top: 4px;
+  color: #f5c518;
+}
+
+/* -----------------------------
+   타입 필터
+------------------------------*/
+.type-filter {
+  margin-bottom: 20px;
+}
+
+.type-filter button {
+  background-color: var(--text-color);
+  color: #000;
+  border: none;
+  padding: 8px 14px;
+  margin-right: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.type-filter button:hover:not(.active) {
+  background-color: #e5e5e5;
+}
+
+.type-filter button.active {
+  background-color: #f5c518;
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 0 6px rgba(0,0,0,0.15);
+}
+
+/* =============================
+   RatingSlider 슬라이더 카드 스타일
+   → TitleRating(tr-content-grid) 카드와 100% 동일하게 맞춘 버전
+=============================*/
+
+/* 슬라이더 전체 컨테이너 */
+.tr-slider-grid {
+  margin-bottom: 30px;
+}
+
+/* 카드 공통 스타일 (슬라이더 카드) */
+.tr-slider-grid .card {
+  width: 160px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px; /* ← 여기서 padding 적용 */
+  box-sizing: border-box; /* padding으로 인해 크기 안 커지도록 */
+}
+
+/* 이미지 */
+.tr-slider-grid .card img {
+  width: 100%;
+  border-radius: 9px;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* hover */
+.tr-slider-grid .card:hover img {
+  transform: scale(1.005);
+}
+
+
+/* 카드 제목 (공통 스타일) */
+.tr-slider-grid .card div.title-text {
+  font-size: 14px;
+  margin-top: 6px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 슬라이더 내부 정렬 */
+.tr-slider-grid .slick-slide {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/* dummy 카드 (빈칸 유지용) */
+.tr-slider-grid .card.dummy {
+  width: 160px;
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+
+/* dummy 카드 (빈칸) */
+.tr-slider-grid .card.dummy {
+  width: 150px;
+  height: 0;
+  visibility: hidden; /* 화면에는 안 보이지만 자리 차지함 */
+}
+

@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react'
 import axios from "axios";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import jaxios from '../../util/JWTUtil';
 import Slider from "react-slick";
@@ -52,7 +52,7 @@ function TitleRating() {
                 setChkMember(loginUser);
             }
             console.log('해당 midx : ', targetMidx)
-            const result = await jaxios.get('/api/member/getReviewList', {params:{page: page, midx:targetMidx, type: typeFilter}})
+            const result = await jaxios.get('/api/member/getReviewList', {params:{page: pageNum, midx:targetMidx, type: typeFilter}})
             console.log('타이틀평점 : ', result.data.reviewList.reviewList)
             if (result.data.reviewList.reviewList.length === 0) {
                 setHasMore(false);
@@ -81,6 +81,7 @@ function TitleRating() {
         setReviewList([]);  // 기존 데이터를 비움
         setPage(1);
         setHasMore(true);
+        fetchReview(1);
     }, [typeFilter]);  // type 변경 시 초기화
     
     useEffect(() => {
@@ -146,7 +147,8 @@ function TitleRating() {
                 <button 
                     className={typeFilter === "tv" ? "active" : ""} 
                     onClick={() => { setTypeFilter("tv"); setPage(1); setHasMore(true); }}
-                >TV</button>
+                >티비</button>
+
             </div>
             {/* <div className="header-container">
                 <select value={sort} onChange={e => setSort(e.target.value)}>
@@ -163,12 +165,19 @@ function TitleRating() {
                         <div className="tr-content-grid">
                             {reviewList.map(review => (
                                 <div className="card" key={review.dbidx}>
-                                    <a href={`/movie/detail/${review.dbidx}`}>
+                                    <Link to={`/movie/detail/${review.dbidx}`}>
                                         <img
                                             src={`https://image.tmdb.org/t/p/w342/${review.posterpath}`}
                                             alt={review.title}
                                         />
-                                    </a>
+                                    </Link>
+                                    <div style={{display:'flex', alignItems:'center', justifyContent:'center'}}>
+                                        <div>
+                                            {review.title.length > 15 
+                                            ? review.title.substring(0, 15) + "..." 
+                                            : review.title}
+                                        </div>
+                                    </div>
                                     <div style={{display:'flex', alignItems:'center', justifyContent:'center'}}>
                                         <div>평가함</div>&nbsp;
                                         <FontAwesomeIcon icon={solidStar} style={{ color: "gold" }} />&nbsp;
@@ -184,14 +193,12 @@ function TitleRating() {
                                     ? ( // 조건이 참일 때: RatingSlider 렌더링
                                         <RatingSlider
                                             key={rating}
-                                            title={`${rating} 평점`}
+                                            title={`${rating} 평가함`}
                                             movies={grouped[rating]}
                                         />
                                     )
                                     : ( // 조건이 거짓일 때: 목록 없음 메시지 렌더링
-                                        <div className="lists noFind" key={rating}>
-                                            {rating}점 목록을 찾을 수 없습니다
-                                        </div>
+                                        <div></div>
                                     )
                             ))}
                         </>

@@ -1,6 +1,9 @@
-import {useState, useEffect, React} from 'react'
+import {useState, useEffect, React} from "react";
 import axios from "axios";
-import '../index.css'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWeixin } from "@fortawesome/free-brands-svg-icons"
+import "../index.css";
+
 
 function Chatbot() {
 
@@ -23,14 +26,12 @@ function Chatbot() {
 
     function appendMessage(sender, content){
         if( sender === 'User' ){
-            setAnswer( answer + `<div class="userMessage"><div class="senderUser">User</div><div class="userContent">${content}</div></div><br />`)
+            setAnswer( answer + `<div class="user-message"><div class="bubble user">${content}</div></div>`)
         }else{
             setAnswer( 
                 answer 
-                +`<div class="userMessage"><div class="senderUser">User</div>
-                <div className="userContent">${question}</div></div><br />`
-                + `<div class="botMessage"><div class="senderBot">Chatbot</div>
-                <div class="botContent">${content}</div></div><br />`
+                + `<div class="user-message"><div class="bubble user">${question}</div></div>`
+                + `<div class="bot-message"><div class="bubble bot">${content}</div></div>`
             )
         }
         setQuestion('')
@@ -38,25 +39,15 @@ function Chatbot() {
 
     useEffect(
         ()=>{
-            if(chatView){
+            if (chatView) {
                 setChatStyle(
                     {
-                        position: 'fixed',
-                        width:'390px',
-                        height:'650px',
-                        right:'0px',
-                        top:'85px',
-                        border:'2px solid black',
-                        padding: '10px',
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'center',
-                        padding: '20px',
-                        boxSizing: 'border-box',
-                        backgroundColor: 'white',
+                        alignItems: 'hidden'
                     }
                 )
-            }else{
+            } else {
                 setChatStyle({display:'none'})
             }
         },[chatView]
@@ -71,15 +62,16 @@ function Chatbot() {
 
     return (
         <div>
-            <div className='chatbot' onClick={()=>{setChatView( !chatView )}}>CHATBOT</div>
-            <div className='chatbotbox' style={chatStyle}>
-                <h1 className="text-center">RAG기반 AI 챗봇 서비스</h1>
-                <div className="chat-box" id="chatBox"  dangerouslySetInnerHTML={{ __html: answer }} ></div>
-                 <div className="userQuestion">
-                    <input type='text' id="messageInput" className="question" placeholder="Type your message..." value={question} onChange={(e)=>{ setQuestion(e.currentTarget.value)}} />
-                    <button className="sendBtn" onClick={()=>{onsubmit()}}>Send</button>
+            <div className='chatbot' onClick={()=>{setChatView( !chatView )}}><FontAwesomeIcon icon={faWeixin} style={{color: "#f5c518"}} /></div>
+            <div class="chatbot-box" style={chatStyle}>
+                <div class="chat-box" id="chatBox" dangerouslySetInnerHTML={{ __html: answer }}></div>
+
+                <div class="chat-input-area">
+                    <input type="text" id="messageInput" class="chat-input" placeholder="AI챗봇에게 질문해주세요" value={question} onChange={(e)=>{ setQuestion(e.currentTarget.value)}} />
+                    <button class="send-btn" onClick={()=>{onsubmit()}}>Send</button>
                 </div>
             </div>
+            
         </div>
     )
 }

@@ -8,6 +8,7 @@ import com.ott.server.security.util.CustomJWTException;
 import com.ott.server.security.util.JWTUtil;
 import com.ott.server.service.MemberService;
 import com.ott.server.service.S3UploadService;
+import com.ott.server.util.FileUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +106,7 @@ public class MemberController {
     }
 
     @RequestMapping("/kakaoLogin")
-    public void kakaoLogin(HttpServletRequest request, HttpServletResponse response ) throws IOException, MalformedURLException {
+    public void kakaoLogin(HttpServletRequest request, HttpServletResponse response ) throws Exception {
         String code = request.getParameter("code");
         String endpoint = "https://kauth.kakao.com/oauth/token";
         URL url = new URL(endpoint);
@@ -156,7 +157,15 @@ public class MemberController {
             member.setSnsid( kakaoProfile.getId() );
             //member.setEmail( ac.getEmail() );
             member.setNickname( pf.getNickname() );
-            member.setProfileimg( pf.getProfile_image_url());
+//            member.setProfileimg( pf.getProfile_image_url());
+
+            MultipartFile multipartFile = FileUtils.urlToMultipartFile(
+                    pf.getProfile_image_url(),
+                    kakaoProfile.getId() + ".jpg"
+            );
+            int fidx = sus.saveFile(multipartFile);
+            member.setProfileimg(String.valueOf(fidx));
+
             member.setPwd( "KAKAO" );
             member.setProvider( "KAKAO" );
             ms.insertMember(member);

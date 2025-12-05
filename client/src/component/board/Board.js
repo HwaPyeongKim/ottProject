@@ -169,9 +169,9 @@ function Board(props) {
         <div className="comment-section-container">
             <div className="comment-item">
                 <div className="comment-header">
-                    <img className="profile-image" src={profileImgSrc} alt="프로필 이미지" style={{cursor: 'pointer'}} onClick={() => navigate(`/FollowMemberView/${props.board.boardMember.midx}`)}/>
+                    <img className="profile-image" src={profileImgSrc} alt="프로필 이미지" style={{cursor: 'pointer'}} onClick={() => navigate(`/pageView/${props.board.boardMember.midx}`)}/>
                     <div className="user-info">
-                        <span className="username" style={{cursor: 'pointer'}} onClick={() => navigate(`/FollowMemberView/${props.board.boardMember.midx}`)}>{props.board.boardMember.nickname}</span>
+                        <span className="username" style={{cursor: 'pointer'}} onClick={() => navigate(`/pageView/${props.board.boardMember.midx}`)}>{props.board.boardMember.nickname}</span>
                         <span className="timestamp">{timeAgo(props.board.writedate)}</span>
                     </div>
                 </div>

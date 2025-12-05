@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import { Link } from 'react-router-dom'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faBars } from "@fortawesome/free-solid-svg-icons";
@@ -149,16 +148,10 @@ function Header() {
         ref={submenuRef}
       >
         <ul>
-          <li><a href="/company">회사소개</a></li>
-          <li><a href="/qna">Q & A</a></li>
+          <li><Link to="/company">회사소개</Link></li>
+          <li><Link to="/qna">Q & A</Link></li>
           <li>
-            <a
-              href="http://localhost:3001"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              관리자 페이지
-            </a>
+            <a href="http://localhost:3001" target="_blank" rel="noopener noreferrer">관리자 페이지</a>
           </li>
         </ul>
       </div>

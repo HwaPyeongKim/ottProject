@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Navigation } from 'swiper/modules';
 import { useSelector } from "react-redux";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -525,12 +525,12 @@ function Detail() {
                       <SwiperSlide className="list" key={idx}>
                         <div className="cover">
                           <img src={`https://image.tmdb.org/t/p/w185${similar.poster_path}`} alt={`${similar.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                          <a href={`/movie/detail/${similar.id}`}>
+                          <Link to={`/movie/detail/${similar.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
                               <button className={`like${likes.includes(similar.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(similar.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button>
                             </div>
-                          </a>
+                          </Link>
                         </div>
                       </SwiperSlide>
                     ))}
@@ -567,12 +567,12 @@ function Detail() {
                       <SwiperSlide className="list" key={idx}>
                         <div className="cover">
                           <img src={`https://image.tmdb.org/t/p/w185${recommendation.poster_path}`} alt={`${recommendation.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                          <a href={`/movie/detail/${recommendation.id}`}>
+                          <Link to={`/movie/detail/${recommendation.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
                               <button className={`like${likes.includes(recommendation.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(recommendation.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button>
                             </div>
-                          </a>
+                          </Link>
                         </div>
                       </SwiperSlide>
                     ))}
