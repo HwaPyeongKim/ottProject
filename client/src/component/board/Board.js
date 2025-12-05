@@ -220,10 +220,21 @@ function Board(props) {
                                 <button className="icon-button" onClick={() => setMenuOpen(prev => !prev)}>⋯</button>
                                 <div className={`dropdown_menu ${menuOpen ? 'open' : ''}`}>
                                     <button onClick={() => navigate(`/updateForm/${props.board.bidx}`)}>수정</button>
+                                    {/* <button onClick={()=>{reportBoard(); setMenuOpen(false);}} disabled={reported} >스포일러 신고</button> */}
                                     <button onClick={() => {props.deleteBoard(props.board.bidx); setMenuOpen(false);}}>삭제</button>
                                 </div>
                             </div>
                         )}
+
+                        {loginUser?.midx && Number(loginUser.midx) !== Number(props.board.boardMember.midx) && (
+                            <div className="update-button" ref={updateButtonRef}>
+                                <button className="icon-button" onClick={() => setMenuOpen(prev => !prev)}>⋯</button>
+                                <div className={`dropdown_menu ${menuOpen ? 'open' : ''}`}>
+                                    <button onClick={()=>{reportBoard(); setMenuOpen(false);}} disabled={reported} >스포일러 신고</button>
+                                </div>
+                            </div>
+                        )}
+
                     </div>
                 </div>
 
