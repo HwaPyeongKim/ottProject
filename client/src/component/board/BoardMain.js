@@ -110,13 +110,13 @@ function BoardMain() {
 
     return (
         <div className='comment-section-container'>
-            <h2 className="section-title">지금 뜨는 토픽</h2>
+            <h2 className="section-title" style={{marginLeft: "10px", marginBottom: "40px"}}>영화가 이어주는 우리들의 이야기</h2>
             <div className="tab-buttons">
                 <div>
                     <button className={`tab-button ${sortType === 'latest' ? 'active' : ''}`} onClick={Latest}>최신</button>
                     <button className={`tab-button ${sortType === 'popular' ? 'active' : ''}`} onClick={Popular}>인기</button>
                 </div>
-                <button className='tab-button boardWrite' onClick={() => onWriteClick()}>글쓰기</button>
+                <button className='write-button' onClick={() => onWriteClick()}>글쓰기</button>
             </div>
             <div className="search-bar">
                 <input
