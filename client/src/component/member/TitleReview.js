@@ -42,7 +42,7 @@ function TitleReview() {
             setChkMember(loginUser);
           }
           console.log('해당 midx : ', targetMidx)
-          const result = await jaxios.get('/api/member/getReviewList', {params:{page: page, midx:targetMidx, type: typeFilter}})
+          const result = await jaxios.get('/api/member/getReviewList', {params:{page: pageNum, midx:targetMidx, type: typeFilter}})
           console.log('타이틀평점 : ', result.data.reviewList.reviewList)
           if (result.data.reviewList.reviewList.length === 0) {
               setHasMore(false);
@@ -65,6 +65,15 @@ function TitleReview() {
           fetchReview(page);
       },[page]
   )
+
+  useEffect(() => {
+        setReviews([]);  // 기존 데이터를 비움
+        setPage(1);
+        setHasMore(true);
+        fetchReview(1);
+    }, [typeFilter]);  // type 변경 시 초기화
+
+    
   useEffect(() => {
       const observer = new IntersectionObserver(
       entries => {
@@ -82,7 +91,7 @@ function TitleReview() {
   return (
     <div style={{ paddingTop: "40px" }}>
         <h2 style={{ color: "white", textAlign: "center" }}>후기 목록</h2>
-        <div className="type-filter">
+        <div className="type-filter" style={{paddingLeft: "27.5%"}}>
             <button 
                 className={typeFilter === "all" ? "active" : ""} 
                 onClick={() => { setTypeFilter("all"); setPage(1); setHasMore(true); }}
@@ -96,7 +105,7 @@ function TitleReview() {
             <button 
                 className={typeFilter === "tv" ? "active" : ""} 
                 onClick={() => { setTypeFilter("tv"); setPage(1); setHasMore(true); }}
-            >TV</button>
+            >티비</button>
         </div>
         {reviews.length === 0 && (
             <p style={{ color: "white", textAlign: "center", marginTop: "40px" }}>작성한 후기가 없습니다.</p>
