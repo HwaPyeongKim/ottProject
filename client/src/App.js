@@ -110,7 +110,7 @@ function App() {
             <Route path='/editKakao' element={<EditKakao />} />
             <Route path="/join/:confirmemail" element={<Join />} />
             <Route path="/userList/:userMidx" element={<UserList />} />
-            <Route path="/mylist" element={<MyList />} />
+            {/* <Route path="/mylist" element={<MyList />} /> */}
             {/* <Route path="/myfollow" element={<Myfollow />} />
             <Route path="/myfollower" element={<Myfollower />} /> */}
             <Route path="/follow/:userMidx" element={<Follow />} />

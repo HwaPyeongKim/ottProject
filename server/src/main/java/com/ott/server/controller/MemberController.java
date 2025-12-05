@@ -371,6 +371,16 @@ public class MemberController {
         return result;
     }
 
+    @DeleteMapping("/deleteTitle")
+    public HashMap<String, Object> deleteTitle(@RequestParam("listidx") int listidx, @RequestParam("dbidx") int dbidx) {
+        HashMap<String, Object> result = new HashMap<>();
+        System.out.println("deleteTitle : " + listidx);
+        System.out.println("dbidx = " + dbidx);
+        ms.deleteTitle(listidx, dbidx);
+        result.put("msg", "ok");
+        return result;
+    }
+
 //    @PostMapping("/toggleTitle")
 //    public HashMap<String, Object> toggleTitle(@RequestParam("listidx") int listidx, @RequestParam("dbidx") int dbidx) {
 //        HashMap<String, Object> result = new HashMap<>();

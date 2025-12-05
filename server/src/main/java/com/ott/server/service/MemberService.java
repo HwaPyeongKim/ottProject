@@ -329,4 +329,9 @@ public class MemberService {
         }
 
     }
+
+    public void deleteTitle(int listidx, int dbidx) {
+        DbList dl = dlr.findByListidxAndDbidx(listidx, dbidx);
+        dlr.delete(dl);
+    }
 }
