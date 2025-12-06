@@ -6,6 +6,9 @@ import jaxios from '../../util/JWTUtil';
 import AddTitle from './AddTitle';
 import "../../style/myListView.css";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookmark, faThumbsUp, faCheck } from "@fortawesome/free-solid-svg-icons";
+
 function UserListView() {
 
     const loginUser = useSelector( state=>state.user );
@@ -14,8 +17,17 @@ function UserListView() {
 
     const {userMidx} = useParams();
     const userId = Number(userMidx);
-    const [targetMidx, setTargetMidx] = useState(
-    userId === loginUser.midx ? loginUser.midx : userId);
+
+    const [targetMidx, setTargetMidx] = useState(userId);
+    useEffect(() => {
+    if (loginUser?.midx) {
+        setTargetMidx(
+        userId === loginUser.midx ? loginUser.midx : userId
+        );
+    }
+    }, [loginUser, userId]);
+
+    const [dbidx, setDbidx] = useState('')
 
     const [myListView, setMyListView] = useState({});
     const [titleList, setTitleList] = useState([]);
@@ -27,6 +39,7 @@ function UserListView() {
     const [reload, setReload] = useState(false);
 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isTitleDeleteModal, setIsTitleDeleteModal] = useState(false);
     const navigate = useNavigate();
 
     const loader = useRef(null);
@@ -115,12 +128,28 @@ function UserListView() {
             if (res.data.msg === "ok") {
             alert("리스트가 삭제되었습니다");
             setIsDeleteModalOpen(false);
-            navigate('/mylist');
+            navigate(`/userList/${loginUser.midx}`);
             } else {
             alert('리스트 삭제에 실패했습니다');
             }
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
+    }
+
+    function deleteTitle(dbidx, numericListidx){
+        console.log('dbidx:',dbidx)
+        console.log('listidx:',numericListidx)
+        jaxios.delete("/api/member/deleteTitle", { data: { listidx:numericListidx, dbidx:dbidx } })
+        .then((result)=>{
+            console.log('타이틀삭제 : ', result.data.msg)
+            if(result.data.msg === 'ok'){
+                setIsTitleDeleteModal(false)
+                setReload(true)
+                // navigate(`/userListView/${numericListidx}/${loginUser.midx}`);
+            }else{
+                alert('잘못된 삭제입니다.')
+            }
+        }).catch((err)=>{console.error(err)})
     }
 
     return (
@@ -128,7 +157,7 @@ function UserListView() {
             <div className="list-header">
             <h1>{myListView.listname}</h1>
 
-            {loginUser.midx === targetMidx && (
+            {loginUser?.midx === targetMidx && (
                 <div className="list-menu">
                     <button onClick={() => setOpen(true)}>추가</button>
                     <button
@@ -152,11 +181,21 @@ function UserListView() {
             <div className="content-grid">
             {titleList.map((t) => (
                 <div className="card" key={t.dbidx}>
-                <Link to={`/movie/detail/${t.dbidx}`}>
+                <Link className="card-link" to={`/movie/detail/${t.dbidx}`}>
                     <img
                     src={`https://image.tmdb.org/t/p/w342/${t.posterpath}`}
                     alt={t.title}
                     />
+                    <div>
+                        {
+                            loginUser && loginUser.midx ?
+                            <>
+                                <button onClick={async (e)=>{ e.stopPropagation(); e.preventDefault(); setIsTitleDeleteModal(true); setDbidx(t.dbidx);} }><FontAwesomeIcon icon={faBookmark} /></button>
+                                {/* <button className={`like${likes.includes(item.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(item.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button> */}
+                            </>
+                            : null
+                        }
+                    </div>
                 </Link>
                 </div>
             ))}
@@ -194,6 +233,25 @@ function UserListView() {
                 </div>
             </div>
             )}
+
+            {isTitleDeleteModal && (
+                <div className="modalOverlay" onClick={() => setIsTitleDeleteModal(false)}>
+                    <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+                        <h3>타이틀 삭제</h3>
+                        {/* <div>
+                        <input type="text" value={listTitle} onChange={(e)=>{setListTitle(e.currentTarget.value)}} />
+                        <div className="checkboxWrap">
+                            <input type="checkbox" value={security} onChange={(e)=>setSecurity(e.target.checked ? "Y" : "N")} id="checkbox_security" />
+                            <label htmlFor="checkbox_security" className="flex"><p>리스트 노출 여부</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
+                        </div>
+                        </div> */}
+                        <div className="buttonWrap">
+                        <button className="mainButton" onClick={()=>{deleteTitle(dbidx, numericListidx)}}>삭제하기</button>
+                        <button className="mainButton" onClick={()=>setIsTitleDeleteModal(false)}>닫기</button>
+                        </div>
+                    </div>
+                </div>
+            )}      
         </div>
     )
 }
