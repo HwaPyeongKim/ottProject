@@ -38,19 +38,16 @@ function TitleReview() {
         if (loading || !hasMore) {return};
 
         setLoading(true);
-        let targetMidx;
         console.log('리뷰 유저아이디 : ',userId);
         try{
-            if( userId !== loginUser.midx ){
-            targetMidx = userId;
-            const res = await jaxios.post('/api/member/getCheckMember', null, {params:{midx:targetMidx}})
-            setChkMember(res.data.checkMember);
+            if( targetMidx !== loginUser.midx ){
+                const res = await jaxios.post('/api/member/getCheckMember', null, {params:{midx:targetMidx}})
+                setChkMember(res.data.checkMember);
             }else{
-            targetMidx = loginUser.midx;
-            setChkMember(loginUser);
+                setChkMember(loginUser);
             }
             console.log('해당 midx : ', targetMidx)
-            const result = await jaxios.get('/api/member/getReviewList', {params:{page: page, midx:targetMidx, type: typeFilter}})
+            const result = await jaxios.get('/api/member/getReviewList', {params:{page: pageNum, midx:targetMidx, type: typeFilter}})
             console.log('타이틀평점 : ', result.data.reviewList.reviewList)
             if (result.data.reviewList.reviewList.length === 0) {
                 setHasMore(false);

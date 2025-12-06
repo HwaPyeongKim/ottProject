@@ -305,9 +305,10 @@ public class MemberService {
 
     public void editKakao(Member member) {
         Member mem = mr.findBySnsid(member.getSnsid());
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
         if(mem != null){
             mem.setEmail(member.getEmail());
-            mem.setPwd("EDITKAKAO");
+            mem.setPwd(pe.encode("EDITKAKAO"));
             mem.setName(member.getName());
             mem.setNickname(member.getNickname());
             mem.setPhone(member.getPhone());

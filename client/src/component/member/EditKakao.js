@@ -110,7 +110,7 @@ function EditKakao() {
             if(result.data.msg === 'no' ){ return alert('닉네임이 중복됩니다'); }
             // 회원가입
             const phone = `${phone1}-${phone2}-${phone3}`
-            result = await axios.post('/api/member/editKakao', {email, name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg, snsid});
+            result = await axios.post('/api/member/editKakao', {email, name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg, snsid:loginUser.snsid});
             if(result.data.msg === 'ok'){
                 let res = await axios.get('/api/member/getSnsUser', {params:{snsid: loginUser.snsid}})
 

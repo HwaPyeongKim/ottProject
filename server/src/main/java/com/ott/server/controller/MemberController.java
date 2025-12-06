@@ -171,7 +171,6 @@ public class MemberController {
             ms.insertMember(member);
         }
         response.sendRedirect("http://localhost:3000/kakaoIdLogin/"+member.getSnsid());
-
     }
 
     @GetMapping("/refresh/{refreshToken}")
@@ -241,7 +240,6 @@ public class MemberController {
     @PostMapping("/checkPwd")
     public HashMap<String, Object> checkPwd(@RequestParam("midx") int midx, @RequestParam("pwd") String pwd) {
         HashMap<String, Object> result = ms.checkPwd(midx, pwd);
-        System.out.println("11111111111111111111111111111111111111111111111111111111111");
         System.out.println("checkPwd result : " + result.get("msg"));
         return result;
     }
@@ -463,6 +461,13 @@ public class MemberController {
     public HashMap<String, Object> getCheckMember(@RequestParam("midx") int midx) {
         System.out.println("checkMember = " + midx);
         HashMap<String, Object> result = ms.getCheckMember(midx);
+        return result;
+    }
+
+    @DeleteMapping("/deleteAccount")
+    public HashMap<String, Object> deleteAccount(@RequestBody Member member) {
+        HashMap<String, Object> result = new HashMap<>();
+
         return result;
     }
 }

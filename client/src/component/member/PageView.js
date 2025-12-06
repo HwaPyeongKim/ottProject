@@ -161,7 +161,7 @@ function PageView() {
                     </div>
                 </div>
 
-                {loginUser.midx !== targetMidx && (
+                {loginUser?.midx !== targetMidx && (
                     followers.some(f => String(f.ffrom) === String(loginUser.midx)) ? (
                         <button className="follow-button" onClick={noFollow}>
                             언팔로우
