@@ -1,68 +1,88 @@
+/* ============================
+   Review Card (Dark Theme)
+   ============================ */
 .rc-review-card {
-    background: #111827;
-    color: white;
-    padding: 20px;
-    border-radius: 16px;
-    width: 650px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    padding: 1.4rem;
+    border-radius: var(--border-radius);
+    width: 100%;
+    max-width: 700px;
     margin: 20px auto;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
 }
 
+.rc-review-card:hover {
+    background-color: #242424;
+}
+
+/* ============================
+   Header
+   ============================ */
 .rc-review-header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    position: relative; /* ⭐ 별점을 오른쪽 상단 절대위치로 하기 위해 필요 */
+    gap: 16px;
 }
 
-.rc-profile-img {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
+/* 포스터 */
+.rc-poster-img {
+    width: 95px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
 }
 
-.rc-review-user-info {
+.rc-review-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
     flex: 1;
-    margin-left: 12px;
 }
 
-.rc-review-nickname {
-    font-size: 18px;
-    font-weight: bold;
+/* 제목 */
+.rc-review-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--highlight-color);
 }
 
+/* 날짜 */
 .rc-review-date {
-    font-size: 14px;
-    color: #aaa;
+    font-size: 0.85rem;
+    color: var(--subtext-color);
 }
 
-.rc-review-rating {
-    background: rgba(255,255,255,0.1);
+/* ============================
+   ⭐ 오른쪽 상단 평점
+   ============================ */
+.rc-review-rating-top {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #262626;
+    border: 1px solid var(--border-color);
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    font-weight: 600;
 }
 
+.rc-star-icon {
+    color: var(--highlight-color);
+}
+
+/* ============================
+   Content
+   ============================ */
 .rc-review-content {
-    margin-top: 18px;
-    line-height: 1.6;
-    font-size: 17px;
-}
-
-.rc-review-footer {
-    margin-top: 18px;
-    border-top: 1px solid #333;
-    padding-top: 12px;
-    display: flex;
-    gap: 20px;
-    font-size: 15px;
-}
-
-.rc-review-like, .review-share {
-    cursor: pointer;
-    color: #ccc;
-}
-
-.rc-review-like:hover, .review-share:hover {
-    color: white;
+    margin-top: 1rem;
+    line-height: 1.7;
+    font-size: 1rem;
+    color: var(--text-color);
+    white-space: pre-line;
 }
