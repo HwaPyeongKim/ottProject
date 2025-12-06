@@ -12,8 +12,14 @@ function UserCommunity() {
     const loginUser = useSelector(state => state.user);
     const {userMidx} = useParams();
     const userId = Number(userMidx);
-    const [targetMidx, setTargetMidx] = useState(
-    userId === loginUser.midx ? loginUser.midx : userId);
+    const [targetMidx, setTargetMidx] = useState(userId);
+    useEffect(() => {
+    if (loginUser?.midx) {
+        setTargetMidx(
+        userId === loginUser.midx ? loginUser.midx : userId
+        );
+    }
+    }, [loginUser, userId]);
 
     const navigate = useNavigate();
     const [boardList, setBoardList] = useState([]);
@@ -117,7 +123,7 @@ function UserCommunity() {
 
     return (
         <div className='comment-section-container'>
-            <h2 className="section-title">커뮤니티 글 모음</h2>
+            <h2 className="section-title">내 커뮤니티 글 모음</h2>
             {/* <div className="tab-buttons">
                 <div>
                     <button className={`tab-button ${sortType === 'latest' ? 'active' : ''}`} onClick={Latest}>최신</button>
