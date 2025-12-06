@@ -32,6 +32,7 @@ function Mypage({onClose}) {
 
     const [isOpen, setIsOpen] = useState(false)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isCheckPwdModal, setIsCheckPwdModal] = useState(false);
 
     const cookies = new Cookies()
     const dispatch = useDispatch()
@@ -182,6 +183,19 @@ function Mypage({onClose}) {
         navigate('/')
     }
 
+    async function checkPwd(){
+      let result = await axios.post('/api/member/checkPwd', null, {params:{midx:loginUser.midx, pwd:currentPwd}})
+        if(result.data.msg === 'ok'){
+          alert('일치되었습니다')
+          setCurrentPwd('')
+          setMessage('')
+          setIsCheckPwdModal(false)
+          setView("profile"); 
+        }else{
+          setMessage('일치하지 않습니다.')
+        }
+    }
+
     function deleteAccount(){
       // 비밀번호를 입력받아 한번 더 확인작업 필요
       // deleteyn 이 있는 곳에는 모두 Y로 변경
@@ -194,7 +208,6 @@ function Mypage({onClose}) {
           navigate('/')
         }
       }).catch((err)=>{console.error(err)})
-
     }
 
     return (
@@ -218,7 +231,7 @@ function Mypage({onClose}) {
                   </div>
                   <hr className="menu-divider" />
                   <div className="menu-item">
-                    <div onClick={() => setView("profile")} style={{ cursor: 'pointer' }}>회원 정보 변경</div>
+                    <div onClick={() => {setIsCheckPwdModal(true)}} style={{ cursor: 'pointer' }}>회원 정보 변경</div>
                   </div>
                   <hr className="menu-divider" />
                   <div className='menu-item'>
@@ -344,6 +357,21 @@ function Mypage({onClose}) {
               )}
             </div>
           </div>
+          {isCheckPwdModal && (
+              <div className="mpe-modalOverlay" onClick={() => setIsCheckPwdModal(false)}>
+                  <div className="mpe-modalContent" onClick={(e) => e.stopPropagation()}>
+                      <h3>회원정보 변경 비밀번호 확인</h3>
+                      <div className="mpfield">
+                        <input type="text" placeholder="비밀번호를 입력해주세요" onChange={(e)=>{setCurrentPwd(e.currentTarget.value)}} />
+                      </div>
+                      <h3 style={{color:'coral'}}>{message}</h3>
+                      <div className="btn-group">
+                        <button className="btn-highlight" onClick={()=>{checkPwd()}}>확인</button>
+                        <button className="btn btn-secondary" onClick={()=>setIsCheckPwdModal(false)}>닫기</button>
+                      </div>
+                  </div>
+              </div>
+          )}
 
           {isDeleteModalOpen && (
             <div className="mpe-modalOverlay" onClick={() => setIsOpen(false)}>

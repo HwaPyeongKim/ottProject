@@ -239,6 +239,7 @@ public class MemberController {
 
     @PostMapping("/checkPwd")
     public HashMap<String, Object> checkPwd(@RequestParam("midx") int midx, @RequestParam("pwd") String pwd) {
+        System.out.println("checkPwd : " + pwd);
         HashMap<String, Object> result = ms.checkPwd(midx, pwd);
         System.out.println("checkPwd result : " + result.get("msg"));
         return result;

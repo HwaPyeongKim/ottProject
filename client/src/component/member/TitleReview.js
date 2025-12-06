@@ -93,7 +93,7 @@ function TitleReview() {
 
   return (
     <div style={{ paddingTop: "40px" }}>
-        <h2 style={{ color: "white", textAlign: "center" }}>후기 목록</h2>
+        <h2 style={{ color: "white", textAlign: "center" }}>{chkMember.nickname} 님의 후기 목록</h2>
         <div className="type-filter" style={{paddingLeft: "27.5%"}}>
             <button 
                 className={typeFilter === "all" ? "active" : ""} 

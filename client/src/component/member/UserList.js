@@ -25,6 +25,7 @@ function UserList() {
 
     const [myList, setMyList] = useState([])
     const [listTab, setListTab] = useState('tab1')
+    const [chkMember, setChkMember] = useState([]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate()
@@ -46,15 +47,21 @@ function UserList() {
         },[]
     )
 
-    function getMyLists() {
-        jaxios.get('/api/member/getList', {params:{midx:targetMidx}})
-        .then((result)=>{
+    async function getMyLists() {
+        try{
+            if( targetMidx !== loginUser.midx ){
+                const res = await jaxios.post('/api/member/getCheckMember', null, {params:{midx:targetMidx}})
+                setChkMember(res.data.checkMember);
+            }else{
+                setChkMember(loginUser);
+            }
+            const result = await jaxios.get('/api/member/getList', {params:{midx:targetMidx}})
             if(result.data.msg === 'ok'){
                 setMyList([...result.data.myList])
-            }else{
-
             }
-        }).catch((err)=>{console.error(err)})
+        }catch(err){
+            console.error(err)
+        }
     }
 
     function addList() {
@@ -76,32 +83,52 @@ function UserList() {
         });
     }
 
+    const filteredList = myList.filter(mList => 
+        listTab === 'tab1' ? mList.security === 'N' : mList.security === 'Y'
+    );
+
     return (
         <div className="mylist-container">
-            {loginUser.midx === targetMidx&&(
-                <div className="mylisttabs">
-                    <button className={listTab === 'tab1' ? "active" : ""}  
-                    onClick={()=>{setListTab('tab1')}}>나의 공개 리스트</button>
-                    <button className={listTab === 'tab2' ? "active" : ""} 
-                    onClick={()=>{setListTab('tab2')}}>나의 비밀 리스트</button>
-                    <button style={{color:'#f5c518'}}
-                    onClick={()=>{setIsAddListModal(true)}}>리스트 추가</button>
-                </div>
-            )}
+            <div className="mylisttabs">
+                {
+                    (loginUser.midx === targetMidx)?(
+                        <button className={listTab === 'tab1' ? "active" : ""}  
+                        onClick={()=>{setListTab('tab1')}}>나의 공개 리스트</button>
+                    ):(
+                        <button className={listTab === 'tab1' ? "active" : ""}  
+                        onClick={()=>{setListTab('tab1')}}>{chkMember.nickname} 님의 공개 리스트</button>
+                    )
+                }
+                
+                {
+                    loginUser.midx === targetMidx&&(
+                    <>
+                        <button className={listTab === 'tab2' ? "active" : ""} 
+                        onClick={()=>{setListTab('tab2')}}>나의 비밀 리스트</button>
+                        <button style={{color:'#f5c518'}}
+                        onClick={()=>{setIsAddListModal(true)}}>리스트 추가</button>
+                    </>
+                )}
+            </div>
 
             <div className="mylist-grid">
                 {  
-                    myList
-                    .filter(mList => 
-                        listTab === 'tab1' ? mList.security === 'N' : mList.security === 'Y'
-                    )
-                    .map((mList, idx)=>{
-                        return(
+                    filteredList.length > 0 ? (
+                        filteredList.map((mList, idx) => (
                             <div key={idx} className="mylist-card">
-                                <div className="mylist-info" onClick={()=>{navigate(`/userListView/${mList.listidx}/${targetMidx}`)}}>{mList.title}</div>      
+                                <div className="mylist-info" onClick={() => navigate(`/userListView/${mList.listidx}/${targetMidx}`)}>
+                                    {mList.title}
+                                </div>      
                             </div>
-                        )
-                    })
+                        ))
+                    ) : (
+                        <div className="mylist-info" 
+                        style={
+                            {display:'flex', alignItems:'center', justifyContent:'center',
+                            width:'100%', height:'100%',
+                            fontSize:'40px', fontWeight:'bold', color:'coral'}
+                        }>생성된 리스트가 없습니다</div>
+                    )
                 }
             </div>
 
