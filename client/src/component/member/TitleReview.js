@@ -8,8 +8,14 @@ function TitleReview() {
   const loginUser = useSelector( state=>state.user );
   const {userMidx} = useParams();
   const userId = Number(userMidx);
-//   const {writeridx: paramMidx} = useParams();
-//   const targetMidx = paramMidx ? Number(paramMidx) : loginUser?.midx;
+    const [targetMidx, setTargetMidx] = useState(userId);
+        useEffect(() => {
+        if (loginUser?.midx) {
+            setTargetMidx(
+            userId === loginUser.midx ? loginUser.midx : userId
+            );
+        }
+        }, [loginUser, userId]);
   const [chkMember, setChkMember] = useState([]);
   const [reviews, setReviews] = useState([]);
 
