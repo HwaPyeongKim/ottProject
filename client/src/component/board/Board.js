@@ -9,6 +9,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Cookies } from 'react-cookie';
 import parse from 'html-react-parser';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart, faCommentDots } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
+
 Modal.setAppElement('#root');
 
 function Board(props) {
@@ -204,11 +208,11 @@ function Board(props) {
                     <div className="action-buttons">
                         <div className='left-buttons'>
                             {likeList.some(like => Number(like.midx) === Number(loginUser?.midx)) ? (
-                                <button className="icon-button" onClick={() => onLike()}>❤️ {likeList.length}</button>
+                                <button className="icon-button" onClick={() => onLike()}><FontAwesomeIcon icon={faHeartSolid} style={{color: "#ff0000",}} /> {likeList.length}</button>
                             ) : (
-                                <button className="icon-button" onClick={() => onLike()}>🤍 {likeList.length}</button>
+                                <button className="icon-button" onClick={() => onLike()}><FontAwesomeIcon icon={faHeart} /> {likeList.length}</button>
                             )}
-                            <button className="icon-button" onClick={() => setIsOpen(true)}>💬 {commentCount}</button>
+                            <button className="icon-button" onClick={() => setIsOpen(true)}><FontAwesomeIcon icon={faCommentDots} /> {commentCount}</button>
                         </div>
 
                         {Number(loginUser?.midx) === Number(props.board.boardMember.midx) && (
@@ -216,10 +220,21 @@ function Board(props) {
                                 <button className="icon-button" onClick={() => setMenuOpen(prev => !prev)}>⋯</button>
                                 <div className={`dropdown_menu ${menuOpen ? 'open' : ''}`}>
                                     <button onClick={() => navigate(`/updateForm/${props.board.bidx}`)}>수정</button>
+                                    {/* <button onClick={()=>{reportBoard(); setMenuOpen(false);}} disabled={reported} >스포일러 신고</button> */}
                                     <button onClick={() => {props.deleteBoard(props.board.bidx); setMenuOpen(false);}}>삭제</button>
                                 </div>
                             </div>
                         )}
+
+                        {loginUser?.midx && Number(loginUser.midx) !== Number(props.board.boardMember.midx) && (
+                            <div className="update-button" ref={updateButtonRef}>
+                                <button className="icon-button" onClick={() => setMenuOpen(prev => !prev)}>⋯</button>
+                                <div className={`dropdown_menu ${menuOpen ? 'open' : ''}`}>
+                                    <button onClick={()=>{reportBoard(); setMenuOpen(false);}} disabled={reported} >스포일러 신고</button>
+                                </div>
+                            </div>
+                        )}
+
                     </div>
                 </div>
 

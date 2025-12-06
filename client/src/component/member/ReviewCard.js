@@ -1,43 +1,43 @@
 import '../../style/reviewCard.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faHeart, faShare } from "@fortawesome/free-solid-svg-icons";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
-function ReviewCard({ review, user }) {
+function ReviewCard({ review }) {
 
     const date = new Date(review.writedate);
     const timeAgo = formatDistanceToNow(date, { 
-        addSuffix: true, // "전" 또는 "후" 접미사 추가
-        locale: ko,      // 한국어 로케일 적용
+        addSuffix: true,
+        locale: ko,
     });
 
     return (
         <div className="rc-review-card">
-            <div className="rc-review-header">
-                <img src={`https://image.tmdb.org/t/p/w342/${review.posterpath}`} className="rc-profile-img" alt="" />
 
-                <div className="rc-review-user-info">
-                    <div className="rc-review-nickname">{user.nickname}</div>
+            {/* 헤더 영역 */}
+            <div className="rc-review-header">
+
+                <img
+                    src={`https://image.tmdb.org/t/p/w342/${review.posterpath}`}
+                    className="rc-poster-img"
+                    alt="poster"
+                />
+
+                <div className="rc-review-info">
+                    <div className="rc-review-title">{review.title}</div>
                     <div className="rc-review-date">{timeAgo}</div>
                 </div>
 
-                <div className="rc-review-rating">
-                    <FontAwesomeIcon icon={faStar} />
+                {/* 오른쪽 상단 평점 */}
+                <div className="rc-review-rating-top">
+                    <FontAwesomeIcon icon={faStar} className="rc-star-icon" />
                     <span>{review.score}</span>
                 </div>
             </div>
 
+            {/* 리뷰 내용 */}
             <div className="rc-review-content">{review.content}</div>
-
-            {/* <div className="rc-review-footer">
-                <span className="rc-review-like">
-                    <FontAwesomeIcon icon={faHeart} /> {review.likeCount}
-                </span>
-                <span className="rc-review-share">
-                    <FontAwesomeIcon icon={faShare} /> 공유하기
-                </span>
-            </div> */}
         </div>
     );
 }

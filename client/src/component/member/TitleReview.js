@@ -5,37 +5,29 @@ import { useSelector } from 'react-redux';
 import { useParams } from "react-router-dom";
 
 function TitleReview() {
-    const loginUser = useSelector( state=>state.user );
-    const {userMidx} = useParams();
-    const userId = Number(userMidx);
+  const loginUser = useSelector( state=>state.user );
+  const {userMidx} = useParams();
+  const userId = Number(userMidx);
+//   const {writeridx: paramMidx} = useParams();
+//   const targetMidx = paramMidx ? Number(paramMidx) : loginUser?.midx;
+  const [chkMember, setChkMember] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
-    const [targetMidx, setTargetMidx] = useState(userId);
-    useEffect(() => {
-    if (loginUser?.midx) {
-        setTargetMidx(
-        userId === loginUser.midx ? loginUser.midx : userId
-        );
-    }
-    }, [loginUser, userId]);
-      
-    const [chkMember, setChkMember] = useState([]);
-    const [reviews, setReviews] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [typeFilter, setTypeFilter] = useState("all");
 
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const [loading, setLoading] = useState(false);
-    const [typeFilter, setTypeFilter] = useState("all");
+  const loader = useRef(null);
 
-    const loader = useRef(null);
-
-    useEffect(
+  useEffect(
     ()=>{
-        fetchReview(1)
+      fetchReview(1)
     },[]
-    )
+  )
 
-    const fetchReview = async (pageNum) => {
-        if (loading || !hasMore) {return};
+  const fetchReview = async (pageNum) => {
+      if (loading || !hasMore) {return};
 
         setLoading(true);
         console.log('리뷰 유저아이디 : ',userId);
@@ -65,29 +57,38 @@ function TitleReview() {
         setLoading(false);
     }
 
-    useEffect(
-        ()=>{
-            fetchReview(page);
-        },[page]
-    )
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-        entries => {
-            if (entries[0].isIntersecting && hasMore && !loading) {
-            setPage(prev => prev + 1);
-            }
-        },
-        { threshold: 0.7 }
-        );
+  useEffect(
+      ()=>{
+          fetchReview(page);
+      },[page]
+  )
 
-        if (loader.current) observer.observe(loader.current);
-        return () => observer.disconnect();
-    }, [hasMore, loading]);
+  useEffect(() => {
+        setReviews([]);  // 기존 데이터를 비움
+        setPage(1);
+        setHasMore(true);
+        fetchReview(1);
+    }, [typeFilter]);  // type 변경 시 초기화
 
-    return (
+    
+  useEffect(() => {
+      const observer = new IntersectionObserver(
+      entries => {
+          if (entries[0].isIntersecting && hasMore && !loading) {
+          setPage(prev => prev + 1);
+          }
+      },
+      { threshold: 0.7 }
+      );
+
+      if (loader.current) observer.observe(loader.current);
+      return () => observer.disconnect();
+  }, [hasMore, loading]);
+
+  return (
     <div style={{ paddingTop: "40px" }}>
         <h2 style={{ color: "white", textAlign: "center" }}>후기 목록</h2>
-        <div className="type-filter">
+        <div className="type-filter" style={{paddingLeft: "27.5%"}}>
             <button 
                 className={typeFilter === "all" ? "active" : ""} 
                 onClick={() => { setTypeFilter("all"); setPage(1); setHasMore(true); }}
@@ -101,7 +102,7 @@ function TitleReview() {
             <button 
                 className={typeFilter === "tv" ? "active" : ""} 
                 onClick={() => { setTypeFilter("tv"); setPage(1); setHasMore(true); }}
-            >TV</button>
+            >티비</button>
         </div>
         {reviews.length === 0 && (
             <p style={{ color: "white", textAlign: "center", marginTop: "40px" }}>작성한 후기가 없습니다.</p>
@@ -117,7 +118,7 @@ function TitleReview() {
             {loading && "Loading..."}
         </div>
     </div>
-    )
+  )
 }
 
 export default TitleReview

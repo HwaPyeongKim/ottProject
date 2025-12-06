@@ -29,29 +29,43 @@
   /* 가운데 정렬을 위한 Flex */
   display: flex;
   justify-content: space-between;
+  padding: 0px 5px;
 }
 
 .tab-button {
   padding: 8px 20px;
   margin: 0 5px;  
   border: 1px solid #ddd;  
-  border-radius: 20px;
-  background-color: rgb(122, 108, 108);
-  color: white;
-  border-color: black;
+  border-radius: 8px;
+  background-color: #2e2e2e;
+  color: #f5f5f7;
+  border: none;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: bold;
   transition: all 0.2s; /* 부드러운 전환 효과 */
 }
-.boardWrite{
-  background-color: var(--highlight-color);
+.tab-button.active {
+  background-color: #fff;
+  color: #000;
+}
+.tab-button:hover {
+  background-color: #ffffffe5;
   color: #000;
 }
 
-.tab-button.active {
-  background-color: white;
+.write-button{
+  padding: 8px 20px;
+  margin: 0 5px;  
+  border: 1px solid #f5c518;  
+  border-radius: 8px;
+  background-color: #f5c518;
   color: #000;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: all 0.2s;
 }
 
 /* 개별 댓글 아이템 스타일 */
@@ -251,7 +265,7 @@
 }
 
 .search-bar .search-btn {
-  flex: 0.5;
+  flex: 0.3;
   padding: 10px;
   background-color: #3b82f6;
   color: white;
