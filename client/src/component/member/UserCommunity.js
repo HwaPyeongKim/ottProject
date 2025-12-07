@@ -123,7 +123,14 @@ function UserCommunity() {
 
     return (
         <div className='comment-section-container'>
-            <h2 className="section-title">커뮤니티 글 모음</h2>
+            <h2 className="section-title" style={{marginLeft: "10px", marginBottom: "40px"}}>커뮤니티 글 모음</h2>
+            {/* <div className="tab-buttons">
+                <div>
+                    <button className={`tab-button ${sortType === 'latest' ? 'active' : ''}`} onClick={Latest}>최신</button>
+                    <button className={`tab-button ${sortType === 'popular' ? 'active' : ''}`} onClick={Popular}>인기</button>
+                </div>
+                <button className='tab-button boardWrite' onClick={() => onWriteClick()}>글쓰기</button>
+            </div> */}
             <div className="search-bar">
                 <input
                     type="text"
@@ -143,7 +150,7 @@ function UserCommunity() {
                             <Board key={idx} board={board} deleteBoard={deleteBoard} />
                         ))
                     ) : (
-                        <h3>작성 내역이 없습니다. 작성해 주세요.</h3>
+                        <><br /> <h3>&nbsp;&nbsp;작성 내역이 없습니다</h3></>
                     )
                 }
             </div>
