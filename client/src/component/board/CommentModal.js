@@ -66,6 +66,11 @@ const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
         if (!content.trim()) return;
         await jaxios.post("/api/bcomment/addComment", {boardId: bidx, memberId: loginUser.midx, content})
         .then((result)=>{
+            if (result.data.msg !== "ok") {
+                alert(result.data.msg); 
+                return;
+            }
+
             setContent("");
             fetchComments();
         console.log("onCommentAdded 호출 전"); 
@@ -85,6 +90,11 @@ const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
 
         await jaxios.post("/api/bcomment/addReply", {boardId: bidx, memberId: loginUser.midx, content: replyText, pcidx: parentIdx})
         .then((result) => {
+            if (result.data.msg !== "ok") {
+                alert(result.data.msg); 
+                return;
+            }
+
             fetchComments();   // 작성 후 다시 불러오기
             onCommentAdded && onCommentAdded();
         })
@@ -102,7 +112,13 @@ const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
         }
 
         try {
-            await jaxios.post(`/api/bcomment/updateReply/${bcidx}`, {content: editText});
+            const result = await jaxios.post(`/api/bcomment/updateReply/${bcidx}`, {content: editText})
+
+            if (result.data.msg !== "ok") {
+                alert(result.data.msg); 
+                return;
+            }
+
             fetchComments();  // 수정 후 댓글 리스트 갱신
         } catch (err) {
             console.error(err);

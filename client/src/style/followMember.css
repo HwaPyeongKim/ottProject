@@ -114,8 +114,11 @@
 }
 
 .stat-item {
-  cursor: pointer;
   color: #000 !important;
+}
+
+.follow-stats .stat-item {
+  cursor: pointer;
 }
 
 .stat-item:hover {

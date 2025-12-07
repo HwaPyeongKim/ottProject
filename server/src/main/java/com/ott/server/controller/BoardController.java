@@ -5,6 +5,7 @@ import com.ott.server.entity.Board;
 import com.ott.server.entity.FileEntity;
 import com.ott.server.entity.Member;
 import com.ott.server.repository.BoardRepository;
+import com.ott.server.service.BadWordFilterService;
 import com.ott.server.service.BoardService;
 import com.ott.server.service.S3UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class BoardController {
     @Autowired
     BoardService bs;
 
+    @Autowired
+    BadWordFilterService bws;
+
     @GetMapping("/getBoardList/{page}")
     public HashMap<String, Object> getBoardList(
             @PathVariable("page") int page,
@@ -33,7 +37,16 @@ public class BoardController {
     @PostMapping("/writeForm")
     public HashMap<String, Object> writeForm(@RequestBody Board board){
         HashMap<String, Object> result = new HashMap<>();
+
+        // 비속어 체크
+        if (bws.containsBadWord(board.getTitle()) ||
+                bws.containsBadWord(board.getContent())) {
+            result.put("msg", "비속어가 포함된 게시글은 작성할 수 없습니다.");
+            return result; // 저장하지 않음
+        }
+
         result.put("board", bs.insertBoard(board));
+        result.put("msg", "ok");
         return result;
     }
 
@@ -82,6 +95,13 @@ public class BoardController {
     @PostMapping("/updateBoard")
     public HashMap<String, Object> updateBoard(@RequestBody Board board){
         HashMap<String, Object> result = new HashMap<>();
+
+        if (bws.containsBadWord(board.getTitle()) ||
+                bws.containsBadWord(board.getContent())) {
+            result.put("msg", "비속어가 포함되어 있어 수정할 수 없습니다.");
+            return result;
+        }
+
         bs.updateBoard(board);
         result.put("msg","ok");
         return result;

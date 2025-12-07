@@ -30,7 +30,6 @@ import TvGenre from "./component/tv/Genre";
 //---------------------------------------------------- gy
 import BoardMain from "./component/board/BoardMain";
 import WriteForm from "./component/board/WriteForm";
-import ModalTest from "./component/board/ModalTest";
 import UpdateForm from "./component/board/UpdateForm";
 //---------------------------------------------------- gy
 
@@ -104,7 +103,6 @@ function App() {
             {/* gy */}
             <Route path="/community" element={<BoardMain />} />
             <Route path="/writeForm" element={<WriteForm />} />
-            <Route path="/test" element={<ModalTest />} />
             <Route path="/updateForm/:bidx" element={<UpdateForm />} />
             {/* gy */}
 

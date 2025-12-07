@@ -57,6 +57,10 @@ function UpdateForm() {
   
         jaxios.post('/api/board/updateBoard', {bidx: bidx, title, content, userid:loginUser.email, midx:loginUser.midx, fidx: fidx})
         .then((result)=>{
+            if(result.data.msg !== "ok"){
+                alert(result.data.msg);
+                return;
+            }
             alert('게시글 작성이 완료되었습니다');
             navigate('/community');
         }).catch((err)=>{console.error(err)});
