@@ -111,6 +111,8 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if(path.startsWith("/question")){return true;}
         if(path.startsWith("/tmdb-test")){return true;}
 
+        if(path.startsWith("/public/main.png")){return true;}
+
         return false;
     }
 }
