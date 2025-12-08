@@ -20,8 +20,8 @@ function Board(props) {
     const closeModal = () => setIsOpen(false);
     const loginUser = useSelector(state => state.user);
     const [likeList, setLikeList] = useState([]);
-    const [imgSrc, setImgSrc] = useState('');
-    const [profileImgSrc, setProfileImgSrc] = useState('');
+    const [imgSrc, setImgSrc] = useState(null);
+    const [profileImgSrc, setProfileImgSrc] = useState(null);
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
     const updateButtonRef = useRef(null);
@@ -72,19 +72,6 @@ function Board(props) {
         return `${Math.floor(days / 365)}년 전`;
     }
 
-    // // 게시글 overflow 체크
-    // useEffect(() => {
-    //     if (!contentRef.current) return;
-
-    //     const el = contentRef.current;
-    //     const style = window.getComputedStyle(el);
-    //     const lineHeight = parseFloat(style.lineHeight); // line-height 값 가져오기
-    //     const maxLines = 3; // 3줄 제한
-    //     const maxHeight = lineHeight * maxLines;
-    //     setIsOverflowing(el.scrollHeight > maxHeight);
-    // }, [props.board.content, showFullContent]);
-
-
     // 게시글 overflow 체크
     useEffect(() => {
         if (!contentRef.current) return;
@@ -103,9 +90,8 @@ function Board(props) {
         const lines = el.scrollHeight / lineHeight;
 
         // 3줄 "초과"일 때만 더보기 버튼 표시
-        // (소수점 오차 감안해서 3.1 기준으로)
         setIsOverflowing(lines > 3.1);
-    }, [props.board.content]);
+    }, [props.board.bidx, props.board.content, showFullContent]);
 
 
 
@@ -116,14 +102,20 @@ function Board(props) {
     }, []);
 
     useEffect(() => {
-        if (!props.board.fidx) return setImgSrc('');
+        if (!props.board.fidx) {
+            setImgSrc(null);   
+            return;
+        }
         axios.get(`/api/file/url/${props.board.fidx}`)
             .then(res => setImgSrc(res.data.image))
             .catch(err => console.error(err));
     }, [props.board.fidx]);
 
     useEffect(() => {
-        if (!props.board.boardMember.profileimg) return;
+        if (!props.board.boardMember.profileimg) {
+            setProfileImgSrc(null);
+            return;
+        }
         axios.get(`/api/file/url/${props.board.boardMember.profileimg}`)
             .then(res => setProfileImgSrc(res.data.image))
             .catch(err => console.error(err));
@@ -196,7 +188,10 @@ function Board(props) {
         <div className="comment-section-container">
             <div className="comment-item">
                 <div className="comment-header">
-                    <img className="profile-image" src={profileImgSrc} alt="프로필 이미지" style={{cursor: 'pointer'}} onClick={() => navigate(`/pageView/${props.board.boardMember.midx}`)}/>
+                    {profileImgSrc && (
+                        <img className="profile-image" src={profileImgSrc} alt="프로필 이미지" style={{cursor: 'pointer'}} onClick={() => navigate(`/pageView/${props.board.boardMember.midx}`)}/>
+                    )}
+
                     <div className="user-info">
                         <span className="username" style={{cursor: 'pointer'}} onClick={() => navigate(`/pageView/${props.board.boardMember.midx}`)}>{props.board.boardMember.nickname}</span>
                         <span className="timestamp">{timeAgo(props.board.writedate)}</span>
@@ -205,27 +200,52 @@ function Board(props) {
 
                 <div className="comment-body">
                     <div className="review-content">
-                        {imgSrc && <img className="review-image" src={imgSrc} alt="영화포스터 / 자유게시물 등" />}
-                        
-                        {isBlurred && !showSpoiler ? (
-                            <div className="spoiler-warning" onClick={() => setShowSpoiler(true)}>
-                                ⚠️ 스포성 내용이 포함된 게시글입니다. (클릭하여 보기)
-                            </div>
-                        ) : (
-                            <div>
+
+                        {imgSrc && (
+                            <img
+                                className="review-image"
+                                src={imgSrc}
+                                alt="영화포스터 / 자유게시물 등"
+                            />
+                        )}
+
+                        <div className="spoiler-container">
+
+                            {/* 오버레이 (스포일러 숨김 상태일 때만 보임) */}
+                            {isBlurred && !showSpoiler && (
+                                <div className="spoiler-overlay" onClick={() => setShowSpoiler(true)}>
+                                    ⚠️ 스포일러가 포함된 게시글입니다<br/>
+                                    (클릭하여 보기)
+                                </div>
+                            )}
+
+                            {/* 실제 내용 (스포 상태라면 blur 처리) */}
+                            <div className={isBlurred && !showSpoiler ? "spoiler-blur" : ""}>
                                 <p className="review-text boardtitle">{props.board.title}</p>
-                            <div ref={contentRef} className={`review-text ${!showFullContent ? 'clamp' : ''}`} style={{ whiteSpace: "pre-wrap" }}>
-                                {parse(props.board.content || '')}
-                            </div>
+
+                                <div
+                                    ref={contentRef}
+                                    className={`review-text ${!showFullContent ? 'clamp' : ''}`}
+                                    style={{ whiteSpace: "pre-wrap" }}
+                                >
+                                    {parse(props.board.content || '')}
+                                </div>
+
                                 {isOverflowing && (
-                                    <button className="show-more-button" onClick={() => setShowFullContent(prev => !prev)}>
+                                    <button
+                                        className="show-more-button"
+                                        onClick={() => setShowFullContent(prev => !prev)}
+                                    >
                                         {showFullContent ? "접기" : "더보기"}
                                     </button>
                                 )}
                             </div>
-                        )}
+
+                        </div>
                     </div>
                 </div>
+
+
 
                 <div className="comment-actions">
                     <div className="action-buttons">

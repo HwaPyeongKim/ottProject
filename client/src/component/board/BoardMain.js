@@ -126,7 +126,7 @@ function BoardMain() {
             <div className="search-bar">
                 <input
                     type="text"
-                    placeholder="검색어를 입력하세요"
+                    placeholder="찾고 싶은 이야기가 있으신가요?"
                     value={searchWord}
                     onChange={(e) => setSearchWord(e.target.value)}
                 />

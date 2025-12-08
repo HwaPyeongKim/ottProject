@@ -150,3 +150,148 @@
   max-width: 100%;
 
 }
+
+/* ----------------------------------------
+   메인 안내 카드 섹션
+---------------------------------------- */
+.intro-section {
+  display: flex;
+  justify-content: center;
+  gap: 70px;
+  margin: 120px 0 100px;
+}
+
+.intro-card {
+  width: 400px;
+  height: 500px;
+  background: #0f1b25;
+  border-radius: 22px;
+  padding: 38px 30px;
+  text-align: center;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+  transition: transform .25s, box-shadow .25s;
+}
+
+.intro-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 22px 45px rgba(0,0,0,0.5);
+}
+
+/* 카드 안 이미지 */
+.intro-icons {
+  width: 230px;
+  margin-bottom: 18px;
+}
+
+.intro-thumb {
+  width: 180px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+
+/* 텍스트 */
+.intro-sub {
+  font-size: 15px;
+  color: #97b8d4;
+}
+
+.intro-title {
+  font-size: 23px;
+  font-weight: 700;
+  margin: 8px 0 14px;
+  color: #ffffff;
+}
+
+/* 제목 + 챗봇 버튼 정렬 */
+.intro-subject-wrap {
+  position: absolute;
+  top: -50px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.intro-card {
+  position: relative;
+}
+
+/* 제목 */
+.intro-subject {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.85);
+  padding-bottom: 3px;
+}
+
+/* 버튼 → 텍스트만 */
+.subject-btn {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff98;
+  cursor: pointer;
+  transition: 0.25s;
+  white-space: nowrap;
+}
+
+/* 🔥 글씨만 커지는 hover 효과 */
+.subject-btn:hover {
+  font-size: 16px;
+  color: white;
+}
+
+.intro-desc {
+  font-size: 15px;
+  color: #d3d3d3;
+  line-height: 1.45;
+}
+
+/* 반응형 */
+@media (max-width: 1100px) {
+  .intro-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+}
+
+/* ===========================
+   메인 히어로 섹션
+=========================== */
+.hero-section {
+  width: 100%;
+  text-align: center;
+  padding: 150px 0 60px;
+  color: #fff;
+  position: relative;
+  z-index: 5;
+}
+
+.hero-title {
+  font-size: 55px;
+  font-weight: 800;
+  margin-bottom: 22px;
+}
+
+.hero-desc {
+  font-size: 20px;
+  line-height: 1.6;
+  color: #d2d2d2;
+  margin-bottom: 38px;
+}
+
+/* 반응형 */
+@media (max-width: 900px) {
+  .hero-title { font-size: 42px; }
+  .hero-desc { font-size: 18px; }
+}
+@media (max-width: 600px) {
+  .hero-title { font-size: 32px; }
+  .hero-desc { font-size: 16px; }
+}
