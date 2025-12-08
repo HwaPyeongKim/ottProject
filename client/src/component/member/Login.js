@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Cookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
@@ -7,12 +7,22 @@ import { loginAction } from '../../store/userSlice'
 import '../../style/login.css'
 
 function Login() {
+
   const [email, setEmail] = useState('')
   const [pwd, setPwd] = useState('')
   const navigate = useNavigate()
   const cookies = new Cookies()
   const dispatch = useDispatch()
   const [message, setMessage] = useState('')
+
+  useEffect(
+    ()=>{
+      const user = cookies.get('user') 
+      if(user){
+        navigate('/')
+      }
+    },[]
+  )
 
   function onLoginlocal() {
     if (!email) return alert('이메일을 입력하세요')

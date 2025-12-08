@@ -28,17 +28,29 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query("SELECT r FROM Review r " + "WHERE r.isspoil = 'Y' AND r.content LIKE %:key%")
     Page<Review> searchByKeyAndIsspoil(String key, Pageable pageable);
 
-    Page<Review> findByMidx(int midx, Pageable pageable);
-
-    List<Review> findAllByMidx(int midx, Sort writedate);
-
-    int countByMidx(int midx);
+//    Page<Review> findByMidx(int midx, Pageable pageable);
+//
+//    List<Review> findAllByMidx(int midx, Sort writedate);
+//
+//    int countByMidx(int midx);
 
     Review findByDbidxAndSeasonAndMidxAndDeleteyn(int dbidx, int season, int midx, String n);
 
-    List<Review> findAllByMidxAndType(int midx, String type, Sort writedate);
+//    List<Review> findAllByMidxAndType(int midx, String type, Sort writedate);
+//
+//    int countByMidxAndType(int midx, String type);
+//
+//    Page<Review> findByMidxAndType(int midx, String type, Pageable pageable);
 
-    int countByMidxAndType(int midx, String type);
+    List<Review> findAllByMidxAndTypeAndDeleteyn(int midx, String type, String deleteYn, Sort writedate);
 
-    Page<Review> findByMidxAndType(int midx, String type, Pageable pageable);
+    List<Review> findAllByMidxAndDeleteyn(int midx, String deleteYn, Sort writedate);
+
+    int countByMidxAndTypeAndDeleteyn(int midx, String type, String deleteYn);
+
+    int countByMidxAndDeleteyn(int midx, String deleteYn);
+
+    Page<Review> findByMidxAndTypeAndDeleteyn(int midx, String type, String deleteYn, Pageable pageable);
+
+    Page<Review> findByMidxAndDeleteyn(int midx, String deleteYn, Pageable pageable);
 }

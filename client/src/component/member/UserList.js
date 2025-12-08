@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 import jaxios from '../../util/JWTUtil';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import '../../style/myList.css'
 
