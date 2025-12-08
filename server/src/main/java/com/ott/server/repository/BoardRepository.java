@@ -34,4 +34,5 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     @Query("SELECT COUNT(b) FROM Board b " + "WHERE b.status = 'BLURRED' " + "AND (b.title LIKE %:key% " + "OR b.content LIKE %:key% " + "OR b.boardMember.nickname LIKE %:key%)")
     int countByKeyAndStatus(@Param("key") String key);
 
+    List<Board> findByBoardMember_Midx(int midx);
 }

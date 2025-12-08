@@ -22,4 +22,16 @@ public interface FollowRepository extends JpaRepository<Follow, Integer> {
     int countByFromMember_Midx(int midx);
 
     int countByToMember_Midx(int midx);
+
+    List<Follow> findAllByFfromAndToMember_Deleteyn(int midx, String n);
+
+    int countByFfromAndToMember_Deleteyn(int midx, String n);
+
+    Page<Follow> findByFfromAndToMember_Deleteyn(int midx, String n, Pageable pageable);
+
+    List<Follow> findAllByFtoAndFromMember_Deleteyn(int midx, String n);
+
+    int countByFtoAndFromMember_Deleteyn(int midx, String n);
+
+    Page<Follow> findByFtoAndFromMember_Deleteyn(int midx, String n, Pageable pageable);
 }

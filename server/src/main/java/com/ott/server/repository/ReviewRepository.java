@@ -1,5 +1,6 @@
 package com.ott.server.repository;
 
+import com.ott.server.entity.Member;
 import com.ott.server.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,4 +54,6 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Page<Review> findByMidxAndTypeAndDeleteyn(int midx, String type, String deleteYn, Pageable pageable);
 
     Page<Review> findByMidxAndDeleteyn(int midx, String deleteYn, Pageable pageable);
+
+    List<Review> findByMember_Midx(int midx);
 }

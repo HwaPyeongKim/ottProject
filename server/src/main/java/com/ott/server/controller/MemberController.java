@@ -468,7 +468,11 @@ public class MemberController {
     @DeleteMapping("/deleteAccount")
     public HashMap<String, Object> deleteAccount(@RequestBody Member member) {
         HashMap<String, Object> result = new HashMap<>();
-
+        ms.deleteMember(member);
+        ms.deleteBcomment(member);
+        ms.deleteReview(member);
+        ms.deleteBoard(member);
+        result.put("msg", "ok");
         return result;
     }
 }

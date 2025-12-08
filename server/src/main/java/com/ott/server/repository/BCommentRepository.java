@@ -23,5 +23,7 @@ public interface BCommentRepository extends JpaRepository<BComment, Integer> {
     List<BComment> findByPcidx(int bcidx);
 
     List<BComment> findByBoard(Board board);
+
+    List<BComment> findByMember_Midx(int midx);
 //    List<BComment> findAllByBoard(Board boardEntity);
 }

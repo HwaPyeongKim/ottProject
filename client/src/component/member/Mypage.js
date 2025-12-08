@@ -96,7 +96,7 @@ function Mypage({onClose}) {
         }
 
         // 회원정보 수정
-        let result = await jaxios.post('/api/member/updateMember', { midx:loginUser.midx, email, pwd, nickname, phone, zipnum, address1, address2, profileimg, profilemsg });
+        let result = await jaxios.post('/api/member/updateMember', { midx:loginUser.midx, email, pwd:loginUser.pwd, nickname, phone, zipnum, address1, address2, profileimg, profilemsg });
 
         if( result.data.msg === 'ok'){
             alert('회원 정보 수정이 완료되었습니다.')
@@ -199,7 +199,7 @@ function Mypage({onClose}) {
     function deleteAccount(){
       // 비밀번호를 입력받아 한번 더 확인작업 필요
       // deleteyn 이 있는 곳에는 모두 Y로 변경
-      jaxios.delete("/api/member/deleteAccount", { params : { midx:loginUser.midx }})
+      jaxios.delete("/api/member/deleteAccount", { data : { midx:loginUser.midx }})
       .then((result)=>{
         if(result.data.msg === 'ok'){
           dispatch( logoutAction() );

@@ -28,4 +28,6 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
             String name, String nickname, String email, String address1,
             Pageable pageable
     );
+
+    Optional<Member> findByMidxAndDeleteynNot(int midx, String y);
 }

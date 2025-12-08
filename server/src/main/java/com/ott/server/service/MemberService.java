@@ -32,6 +32,8 @@ public class MemberService {
     private final FollowRepository fr;
     private final DbListRepository dlr;
     private final ReviewRepository rr;
+    private final BCommentRepository bcr;
+    private final BoardRepository br;
 
     public Member checkEmail(String email) {
         return mr.findByEmail(email);
@@ -72,22 +74,23 @@ public class MemberService {
 
     public HashMap<String, Object> getFollowings(int page, int midx) {
         //return fr.findByFromMember_Midx(midx);
+        final String deleteYn = "N";
         HashMap<String , Object> result = new HashMap<>();
         if( (Integer)page == null || page < 1 ){
-            result.put("followings", fr.findAllByFromMember_Midx(midx));
+            result.put("followings", fr.findAllByFfromAndToMember_Deleteyn(midx, "N"));
         }else{
             Paging paging = new Paging();
             paging.setPage(page);
 
             //int count = fr.findAll().size();
-            int count = fr.countByFromMember_Midx(midx);
+            int count = fr.countByFfromAndToMember_Deleteyn(midx, "N");
             System.out.println("팔로우 카운트 : " + count);
             paging.setDisplayRow(10);
             paging.setDisplayPage(2);
             paging.setTotalCount(count);
             paging.calPaging();
             Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow() , Sort.by(Sort.Direction.DESC, "id"));
-            Page<Follow> follows = fr.findByFromMember_Midx(midx, pageable);
+            Page<Follow> follows = fr.findByFfromAndToMember_Deleteyn(midx, "N", pageable);
             result.put("followings", follows.getContent());
             result.put("paging",  paging);
             result.put("totalFollowingsCount", count);
@@ -97,22 +100,23 @@ public class MemberService {
 
     public HashMap<String, Object> getFollowers(int page, int midx) {
         //return fr.findByToMember_Midx(midx);
+        final String deleteYn = "N";
         HashMap<String , Object> result = new HashMap<>();
         if( (Integer)page == null || page < 1 ){
-            result.put("followers", fr.findAllByToMember_Midx(midx));
+            result.put("followers", fr.findAllByFtoAndFromMember_Deleteyn(midx, "N"));
         }else {
             Paging paging = new Paging();
             paging.setPage(page);
 
             //int count = fr.findAll().size();
-            int count = fr.countByToMember_Midx(midx);
+            int count = fr.countByFtoAndFromMember_Deleteyn(midx, "N");
             System.out.println("팔로워 카운트 : " + count);
             paging.setDisplayRow(10);
             paging.setDisplayPage(2);
             paging.setTotalCount(count);
             paging.calPaging();
             Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "id"));
-            Page<Follow> follows = fr.findByToMember_Midx(midx, pageable);
+            Page<Follow> follows = fr.findByFtoAndFromMember_Deleteyn(midx, "N", pageable);
             result.put("followers", follows.getContent());
             result.put("paging", paging);
             result.put("totalFollowersCount", count);
@@ -121,8 +125,7 @@ public class MemberService {
     }
 
     public Optional<Member> getFollowMember(int midx) {
-        Optional<Member> member = mr.findByMidx(midx);
-        return member;
+        return mr.findByMidxAndDeleteynNot(midx, "Y");
     }
 
     public void insertFollow(Follow follow) {
@@ -335,5 +338,44 @@ public class MemberService {
     public void deleteTitle(int listidx, int dbidx) {
         DbList dl = dlr.findByListidxAndDbidx(listidx, dbidx);
         dlr.delete(dl);
+    }
+
+    public void deleteMember(Member member) {
+        Optional<Member> mem = mr.findByMidx(member.getMidx());
+        if (mem.isPresent()) {
+            Member deleteMem = mem.get();
+            deleteMem.setDeleteyn("Y");
+            mr.save(deleteMem);
+        }
+    }
+
+    public void deleteBcomment(Member member) {
+        List<BComment> bcomment = bcr.findByMember_Midx(member.getMidx());
+        if( bcomment != null){
+            for( BComment comment : bcomment ){
+                comment.setDeleteyn("Y");
+                bcr.save(comment);
+            }
+        }
+    }
+
+    public void deleteReview(Member member) {
+        List<Review> review = rr.findByMember_Midx(member.getMidx());
+        if( review != null ){
+            for ( Review rv : review ) {
+                rv.setDeleteyn("Y");
+                rr.save(rv);
+            }
+        }
+    }
+
+    public void deleteBoard(Member member) {
+        List<Board> board = br.findByBoardMember_Midx(member.getMidx());
+        if(board != null){
+            for( Board b : board ){
+                b.setStatus(BoardStatus.DELETED);
+                br.save(b);
+            }
+        }
     }
 }
