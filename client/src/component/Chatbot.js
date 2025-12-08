@@ -1,9 +1,8 @@
-import {useState, useEffect, React} from "react";
+import {useState, useEffect, React, useRef} from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWeixin } from "@fortawesome/free-brands-svg-icons"
+import { faWeixin } from "@fortawesome/free-brands-svg-icons";
 import "../index.css";
-
 
 function Chatbot() {
 
@@ -13,67 +12,59 @@ function Chatbot() {
     const [question, setQuestion] = useState('')
     const [answer, setAnswer] = useState('')
 
+    const chatBoxRef = useRef(null);
+
     function onsubmit(){
         if(!question){ return alert('질문을 입력하세요') };
         appendMessage('User', question);
         setQuestion('');
         axios.post('/api/question', null, {params:{question}})
         .then((result)=>{
-            appendMessage('ChatBot', result.data.answer, question);
+            appendMessage('ChatBot', result.data.answer);
         })
         .catch((err)=>{console.error(err)})
     }
 
     function appendMessage(sender, content){
-        if( sender === 'User' ){
-            setAnswer( answer + `<div class="user-message"><div class="bubble user">${content}</div></div>`)
-        }else{
-            setAnswer( 
-                answer 
-                + `<div class="user-message"><div class="bubble user">${question}</div></div>`
-                + `<div class="bot-message"><div class="bubble bot">${content}</div></div>`
-            )
-        }
-        setQuestion('')
+        setAnswer(prev => {
+            if(sender === 'User'){
+                return prev + `<div class="user-message"><div class="bubble user">${content}</div></div>`;
+            } else {
+                return prev + `<div class="bot-message"><div class="bubble bot">${content}</div></div>`;
+            }
+        });
     }
 
-    useEffect(
-        ()=>{
-            if (chatView) {
-                setChatStyle(
-                    {
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'hidden'
-                    }
-                )
-            } else {
-                setChatStyle({display:'none'})
-            }
-        },[chatView]
-    )
+    useEffect(() => {
+        if (chatView) {
+            setChatStyle({display: 'flex', flexDirection: 'column'});
+        } else {
+            setChatStyle({display:'none'});
+        }
+    }, [chatView]);
 
-    // useEffect(
-    //     ()=>{
-    //         document.getElementById('dialogBox').scrollTop = document.getElementById
-    //         ('dialogBox').scrollHeight
-    //     },[answer]
-    // )
+    useEffect(() => {
+        if (chatBoxRef.current) {
+            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+        }
+    }, [answer]);
 
     return (
         <div>
-            <div className='chatbot' onClick={()=>{setChatView( !chatView )}}><FontAwesomeIcon icon={faWeixin} style={{color: "#f5c518"}} /></div>
-            <div class="chatbot-box" style={chatStyle}>
-                <div class="chat-box" id="chatBox" dangerouslySetInnerHTML={{ __html: answer }}></div>
+            <div className='chatbot' onClick={()=>{setChatView( !chatView )}}>
+                <FontAwesomeIcon icon={faWeixin} style={{color: "#f5c518"}} />
+            </div>
 
-                <div class="chat-input-area">
-                    <input type="text" id="messageInput" class="chat-input" placeholder="AI챗봇에게 질문해주세요" value={question} onChange={(e)=>{ setQuestion(e.currentTarget.value)}} />
-                    <button class="send-btn" onClick={()=>{onsubmit()}}>Send</button>
+            <div className="chatbot-box" style={chatStyle}>
+                <div className="chat-box" id="chatBox" ref={chatBoxRef} dangerouslySetInnerHTML={{ __html: answer }}></div>
+
+                <div className="chat-input-area">
+                    <input type="text" className="chat-input" placeholder="AI챗봇에게 질문해주세요" value={question} onChange={(e)=>{ setQuestion(e.currentTarget.value) }}/>
+                    <button className="send-btn" onClick={onsubmit}>Send</button>
                 </div>
             </div>
-            
         </div>
     )
 }
 
-export default Chatbot
+export default Chatbot;

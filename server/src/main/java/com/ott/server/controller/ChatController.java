@@ -52,33 +52,68 @@ public class ChatController {
 
         System.out.println(" RAG 결과 개수: " + results.size());
 
-//  2단계: RAG 결과가 없을 때만 TMDB 호출
+
+
+        //  Top10 또는 인기 콘텐츠 요청인지 판단
+        boolean isTop10Request =
+                question.contains("탑") ||
+                        question.contains("top") ||
+                        question.contains("TOP") ||
+                        question.contains("인기") ||
+                        question.contains("랭킹") ||
+                        question.contains("top10") ||
+                        question.contains("Top10");
+
+        //  2단계: TMDB 데이터 가져오기
         String tmdbJson = "";
-        if(results.isEmpty()) {
-            try {
-                String apiUrl = "https://api.themoviedb.org/3/search/tv"
-                        + "?query=" + URLEncoder.encode(question, "UTF-8")
-                        + "&language=ko-KR"
+
+        try {
+
+            String apiUrl;
+
+            // ★ 1) Top10 요청일 경우: popular API 강제 사용
+            if (isTop10Request) {
+                apiUrl = "https://api.themoviedb.org/3/tv/popular"
+                        + "?language=ko-KR"
                         + "&api_key=" + tmdbApiKey;
 
-                RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<String> response =
-                        restTemplate.getForEntity(apiUrl, String.class);
+                System.out.println(" ▶ TOP10 요청 감지 → TMDB popular API 호출");
 
-                tmdbJson = response.getBody();
-                System.out.println(" TMDB 응답 원본 JSON = " + tmdbJson);
+            } else {
+                // ★ 2) 일반 검색 요청일 경우: search API 사용
+                // 단, RAG가 없을 때만
+                if(results.isEmpty()) {
 
-            } catch (Exception e) {
-                System.out.println(" TMDB 호출 중 예외 발생");
-                e.printStackTrace();
-                tmdbJson = "TMDB 데이터 없음";
+                    apiUrl = "https://api.themoviedb.org/3/search/tv"
+                            + "?query=" + URLEncoder.encode(question, "UTF-8")
+                            + "&language=ko-KR"
+                            + "&api_key=" + tmdbApiKey;
+
+                    System.out.println(" ▶ RAG 없음 → TMDB 검색 API 호출: " + apiUrl);
+
+                } else {
+                    System.out.println(" ▶ RAG 존재 → TMDB 호출 스킵");
+                    apiUrl = null; // TMDB 호출 안 함
+                }
             }
-        } else {
-            System.out.println(" RAG 데이터가 존재하므로 TMDB는 호출하지 않음");
+
+            // 실제 호출
+            if (apiUrl != null) {
+                RestTemplate restTemplate = new RestTemplate();
+                ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
+                tmdbJson = response.getBody();
+
+                System.out.println(" TMDB 응답 JSON = " + tmdbJson);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            tmdbJson = "TMDB 데이터 없음";
         }
 
-//  람다용 final
+        // 람다용 final
         final String finalTmdbJson = tmdbJson;
+
 
         /* ================================
             3단계: GPT 프롬프트
@@ -133,7 +168,7 @@ public class ChatController {
         • 예: "드라마 장르 작품을 찾고 계시는군요! 아래 작품들을 추천드립니다."
         
         ----------------------------------------
-        [2] 리스트 출력 규칙 (GPT가 반드시 지켜야 함)
+        [2] TMDB 관련 질문(recommend, top10, genre, search) (GPT가 반드시 지켜야 함)
         ----------------------------------------
         아래 형식을 그대로 사용해 주세요.
         
@@ -141,7 +176,7 @@ public class ChatController {
            장르: (장르)
            평점: (평점)
         
-        2) 제목: (제목))
+        2) 제목: (제목)
            장르: (장르)
            평점: (평점)
         
@@ -158,8 +193,17 @@ public class ChatController {
         평점: X.X  
         줄거리:  
         
+         ----------------------------------------
+        [4] 내부 서비스 질문(context 기반 답변)
+        ----------------------------------------        
+          예: 커뮤니티 사용법, 내 리스트 기능, 로그인, 정책, 이용 방법 등
+          → 절대로 영화 추천 형식을 사용하지 말고,
+            자연스러운 문장 형태로 설명한다.
+          → 번호 리스트 형태가 필요하면 "1. 2. 3." 을 사용한다.
+          → "제목/장르/평점" 같은 영화 형식은 절대 사용하지 않는다.
+                  
         ----------------------------------------
-        [4] 기타 규칙
+        [5] 기타 규칙
         ----------------------------------------
         • TMDB 데이터가 부족해도 형식을 유지한 채 자연스럽게 보완합니다.  
         • OTT/로그인/내부 정책 관련 질문은 context 기반으로 답변합니다.  
