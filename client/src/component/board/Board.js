@@ -72,17 +72,40 @@ function Board(props) {
         return `${Math.floor(days / 365)}년 전`;
     }
 
+    // // 게시글 overflow 체크
+    // useEffect(() => {
+    //     if (!contentRef.current) return;
+
+    //     const el = contentRef.current;
+    //     const style = window.getComputedStyle(el);
+    //     const lineHeight = parseFloat(style.lineHeight); // line-height 값 가져오기
+    //     const maxLines = 3; // 3줄 제한
+    //     const maxHeight = lineHeight * maxLines;
+    //     setIsOverflowing(el.scrollHeight > maxHeight);
+    // }, [props.board.content, showFullContent]);
+
+
     // 게시글 overflow 체크
     useEffect(() => {
         if (!contentRef.current) return;
 
         const el = contentRef.current;
         const style = window.getComputedStyle(el);
-        const lineHeight = parseFloat(style.lineHeight); // line-height 값 가져오기
-        const maxLines = 3; // 3줄 제한
-        const maxHeight = lineHeight * maxLines;
-        setIsOverflowing(el.scrollHeight > maxHeight);
-    }, [props.board.content, showFullContent]);
+        const lineHeight = parseFloat(style.lineHeight);
+
+        // line-height 못 구하면 그냥 더보기 안 보이게
+        if (!lineHeight || Number.isNaN(lineHeight)) {
+            setIsOverflowing(false);
+            return;
+        }
+
+        // 실제 줄 수 계산
+        const lines = el.scrollHeight / lineHeight;
+
+        // 3줄 "초과"일 때만 더보기 버튼 표시
+        // (소수점 오차 감안해서 3.1 기준으로)
+        setIsOverflowing(lines > 3.1);
+    }, [props.board.content]);
 
 
 
@@ -190,7 +213,7 @@ function Board(props) {
                             </div>
                         ) : (
                             <div>
-                            <p className="review-text boardtitle">{props.board.title}</p>
+                                <p className="review-text boardtitle">{props.board.title}</p>
                             <div ref={contentRef} className={`review-text ${!showFullContent ? 'clamp' : ''}`} style={{ whiteSpace: "pre-wrap" }}>
                                 {parse(props.board.content || '')}
                             </div>

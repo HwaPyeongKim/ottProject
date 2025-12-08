@@ -52,33 +52,68 @@ public class ChatController {
 
         System.out.println(" RAG 결과 개수: " + results.size());
 
-//  2단계: RAG 결과가 없을 때만 TMDB 호출
+
+
+        //  Top10 또는 인기 콘텐츠 요청인지 판단
+        boolean isTop10Request =
+                question.contains("탑") ||
+                        question.contains("top") ||
+                        question.contains("TOP") ||
+                        question.contains("인기") ||
+                        question.contains("랭킹") ||
+                        question.contains("top10") ||
+                        question.contains("Top10");
+
+        //  2단계: TMDB 데이터 가져오기
         String tmdbJson = "";
-        if(results.isEmpty()) {
-            try {
-                String apiUrl = "https://api.themoviedb.org/3/search/tv"
-                        + "?query=" + URLEncoder.encode(question, "UTF-8")
-                        + "&language=ko-KR"
+
+        try {
+
+            String apiUrl;
+
+            // ★ 1) Top10 요청일 경우: popular API 강제 사용
+            if (isTop10Request) {
+                apiUrl = "https://api.themoviedb.org/3/tv/popular"
+                        + "?language=ko-KR"
                         + "&api_key=" + tmdbApiKey;
 
-                RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<String> response =
-                        restTemplate.getForEntity(apiUrl, String.class);
+                System.out.println(" ▶ TOP10 요청 감지 → TMDB popular API 호출");
 
-                tmdbJson = response.getBody();
-                System.out.println(" TMDB 응답 원본 JSON = " + tmdbJson);
+            } else {
+                // ★ 2) 일반 검색 요청일 경우: search API 사용
+                // 단, RAG가 없을 때만
+                if(results.isEmpty()) {
 
-            } catch (Exception e) {
-                System.out.println(" TMDB 호출 중 예외 발생");
-                e.printStackTrace();
-                tmdbJson = "TMDB 데이터 없음";
+                    apiUrl = "https://api.themoviedb.org/3/search/tv"
+                            + "?query=" + URLEncoder.encode(question, "UTF-8")
+                            + "&language=ko-KR"
+                            + "&api_key=" + tmdbApiKey;
+
+                    System.out.println(" ▶ RAG 없음 → TMDB 검색 API 호출: " + apiUrl);
+
+                } else {
+                    System.out.println(" ▶ RAG 존재 → TMDB 호출 스킵");
+                    apiUrl = null; // TMDB 호출 안 함
+                }
             }
-        } else {
-            System.out.println(" RAG 데이터가 존재하므로 TMDB는 호출하지 않음");
+
+            // 실제 호출
+            if (apiUrl != null) {
+                RestTemplate restTemplate = new RestTemplate();
+                ResponseEntity<String> response = restTemplate.getForEntity(apiUrl, String.class);
+                tmdbJson = response.getBody();
+
+                System.out.println(" TMDB 응답 JSON = " + tmdbJson);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            tmdbJson = "TMDB 데이터 없음";
         }
 
-//  람다용 final
+        // 람다용 final
         final String finalTmdbJson = tmdbJson;
+
 
         /* ================================
             3단계: GPT 프롬프트
@@ -101,117 +136,85 @@ public class ChatController {
         
         【AI 행동 지침】
         
-        당신은 사용자의 질문을 다음 5개의 유형 중 하나로 분류하여 답변해야 합니다.
+        사용자의 질문은 아래 5개의 유형 중 하나로 분류하여 답변하세요.
         
         1) 추천 요청 (recommend)
-        예시:
-        - "재밌는 영화 추천해줘"
-        - "지금 인기 있는 드라마 뭐야?"
-        - "평점 좋은 스릴러 추천해줘"
-        설명:
-        TMDB 데이터에서 인기(popularity) 또는 평점(vote_average)을 참고하여 
-        3개의 작품을 요약해 추천합니다.
+         - 예: "재밌는 영화 추천해줘", "지금 인기 있는 드라마 뭐야?"
+         - TMDB의 평점 / 인기(popularity)를 참고해 3개 추천
         
         2) TOP 10 / 인기 콘텐츠 (top10)
-        예시:
-        - "오늘의 TOP 10 알려줘"
-        - "영화 랭킹 보여줘"
-        방식:
-        TMDB의 popular 혹은 top_rated 데이터를 기반으로 
-        상위 10개의 콘텐츠를 정리해 보여줍니다.
+         - popular/top_rated 기준 상위 10개 정리
         
         3) 장르별 추천 (genre)
-        예시:
-        - "로맨스 영화 추천해줘"
-        - "공포 영화 뭐가 재밌어?"
-        - "애니메이션 추천"
-        방식:
-        TMDB 데이터의 genre 정보를 기반으로 
-        해당 장르의 인기 작품을 3개 정리하여 추천합니다.
+         - 장르 관련 인기 작품 3개 추천
         
         4) OTT 플랫폼 기반 추천 (ott)
-        예시:
-        - "넷플릭스에서 볼만한 영화"
-        - "디즈니+ 인기작 알려줘"
-        - "왓챠에서 인기 있는 드라마"
-        방식:
-        tmdb 데이터 중 해당 ott 제공작(provider)을 기준으로 
-        3개의 작품을 추천합니다.
+         - Netflix/Disney+/왓챠 등 provider 기준 추천 3개
         
         5) 특정 작품 검색 (search)
-        예시:
-        - "원피스 알려줘"
-        - "범죄도시 평점 알려줘"
-        방식:
-        가장 관련 있는 작품을 찾아 다음 항목을 포함하여 상세 설명합니다:
-        - 제목
-        - 장르
-        - 줄거리 요약
-        - 평점
+         - 제목, 장르, 평점, 줄거리 형식으로 상세 출력
+         
+        ────────────────────────────────
+        【출력 형식 규칙 — 매우 중요】
         
-                ────────────────────────────────
-                【출력 형식 규칙 — 매우 중요】
-                
-                GPT가 출력할 내용은 '멘트 + 리스트' 두 영역으로 구성됩니다.
-                
-                ----------------------------------------
-                [1] 서론 멘트 규칙
-                ----------------------------------------
-                
-                • 사용자의 질문 의도를 자연스럽게 요약하고 \s
-                  "아래 작품들을 추천드립니다!" 같은 부드러운 문장 1~2줄만 출력하세요.
-                
-                예시:
-                "드라마 장르 작품을 찾고 계시군요! 아래 인기 작품들을 추천드립니다."
-                
-                ----------------------------------------
-                [2] 리스트 출력 규칙 (절대 어기면 안 됨)
-                ----------------------------------------
-                
-                • 추천, TOP10, 장르, OTT 추천은 아래 형식을 반드시 따르세요:
-                
-                1) 제목: 
-                   장르: 
-                   평점: 
-                
-                2) 제목: 
-                   장르: 
-                   평점:
-                
-                • 항목 사이에는 반드시 '빈 줄 1줄(\\\\n\\\\n)'을 넣어야 합니다.
-                
-                • 절대 한 줄에 여러 항목을 붙여 쓰지 마세요.
-                
-                • 절대 "•", "-", "①" 같은 기호는 사용하지 않고 \s
-                  반드시 "1)", "2)" 같은 형식만 사용하세요.
-                
-                • TOP10은 동일한 형식으로 10개 출력합니다.
-                
-                ----------------------------------------
-                [3] 작품 검색(search) 형식
-                ----------------------------------------
-                
-                제목:  \s
-                장르:  \s
-                평점: X.X \s
-                줄거리:  \s
-                
-                ----------------------------------------
-                [4] 기타 규칙
-                ----------------------------------------
-                
-                • TMDB 데이터가 충분하지 않거나 누락된 부분이 있어도 \s
-                  형식을 유지한 채 자연스럽게 설명하며 보완하세요.
-                
-                • OTT 이용 문의/로그인/내부 정책 질문은 TMDB가 아닌 컨텍스트를 기반으로 답하세요.
-                
-                • 정보가 아주 부족하면 \s
-                "해당 질문에 대한 정확한 정보를 찾지 못했습니다." 라고 답한 뒤 \s
-                대체 추천 1~2개를 제시하세요.
-                
-                ────────────────────────────────
-                【최종 답변 시작】
+        답변은 반드시 아래 두 부분으로 구성합니다:
+        1) 부드러운 서론 멘트 1~2줄
+        2) 번호 리스트 형태의 콘텐츠 정보
+        
+        ----------------------------------------
+        [1] 서론 멘트 규칙
+        ----------------------------------------
+        • 질문 의도를 자연스럽게 요약한 1~2줄 멘트를 작성합니다.
+        • 예: "드라마 장르 작품을 찾고 계시는군요! 아래 작품들을 추천드립니다."
+        
+        ----------------------------------------
+        [2] TMDB 관련 질문(recommend, top10, genre, search) (GPT가 반드시 지켜야 함)
+        ----------------------------------------
+        아래 형식을 그대로 사용해 주세요.
+        
+        1) 제목: (제목)
+           장르: (장르)
+           평점: (평점)
+        
+        2) 제목: (제목)
+           장르: (장르)
+           평점: (평점)
+        
+        • 모든 항목 사이에는 '빈 줄 1줄(\\n\\n)'을 반드시 넣습니다.  
+        • 항목을 한 줄에 붙여 쓰지 않습니다.  
+        • 불릿(•, -, ① 등)은 절대 사용하지 않고, 반드시 "1)", "2)" 형식을 사용합니다.  
+        • TOP10일 경우 동일 형식으로 10개 출력합니다.  
+        
+        ----------------------------------------
+        [3] 특정 작품 검색(search)일 때 형식
+        ----------------------------------------
+        제목:  
+        장르:  
+        평점: X.X  
+        줄거리:  
+        
+         ----------------------------------------
+        [4] 내부 서비스 질문(context 기반 답변)
+        ----------------------------------------        
+          예: 커뮤니티 사용법, 내 리스트 기능, 로그인, 정책, 이용 방법 등
+          → 절대로 영화 추천 형식을 사용하지 말고,
+            자연스러운 문장 형태로 설명한다.
+          → 번호 리스트 형태가 필요하면 "1. 2. 3." 을 사용한다.
+          → "제목/장르/평점" 같은 영화 형식은 절대 사용하지 않는다.
+                  
+        ----------------------------------------
+        [5] 기타 규칙
+        ----------------------------------------
+        • TMDB 데이터가 부족해도 형식을 유지한 채 자연스럽게 보완합니다.  
+        • OTT/로그인/내부 정책 관련 질문은 context 기반으로 답변합니다.  
+        • 정보를 찾지 못하면:
+          "해당 질문에 대한 정확한 정보를 찾지 못했습니다."  
+          이후 대체 추천 1~2개 제공.
+        
+        ────────────────────────────────
+        【최종 답변 시작】
         """;
+
 
 
 

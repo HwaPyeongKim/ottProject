@@ -5,6 +5,7 @@ import com.ott.server.dto.BCommentResponseDTO;
 import com.ott.server.dto.BReplyRequestDTO;
 import com.ott.server.entity.BComment;
 import com.ott.server.service.BCommentService;
+import com.ott.server.service.BadWordFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,9 @@ public class BCommentController {
     @Autowired
     BCommentService cs;
 
+    @Autowired
+    BadWordFilterService bws;
+
     @GetMapping("/getCommentList/{bidx}")
     public HashMap<String, Object> getCommentList(@PathVariable int bidx) {
         HashMap<String, Object> result = new HashMap<>();
@@ -30,6 +34,13 @@ public class BCommentController {
     @PostMapping("/addComment")
     public HashMap<String, Object> addComment(@RequestBody BCommentRequestDTO reqDto) {
         HashMap<String, Object> result = new HashMap<>();
+
+        // 비속어 체크
+        if (bws.containsBadWord(reqDto.getContent())) {
+            result.put("msg", "비속어가 포함된 댓글은 작성할 수 없습니다.");
+            return result;
+        }
+
         try {
              cs.addComment(reqDto);
             result.put("msg",  "ok");
@@ -43,6 +54,12 @@ public class BCommentController {
     @PostMapping("/addReply")
     public HashMap<String, Object> addReply(@RequestBody BReplyRequestDTO reqDto) {
         HashMap<String, Object> result = new HashMap<>();
+
+        if (bws.containsBadWord(reqDto.getContent())) {
+            result.put("msg", "비속어가 포함된 답글은 작성할 수 없습니다.");
+            return result;
+        }
+
         try {
             cs.addReply(reqDto);
             result.put("msg", "ok");
@@ -65,6 +82,12 @@ public class BCommentController {
     @PostMapping("/updateReply/{bcidx}")
     public HashMap<String, Object> updateReply(@PathVariable int bcidx, @RequestBody HashMap<String, String> body) {
         HashMap<String, Object> result = new HashMap<>();
+
+        if (bws.containsBadWord(body.get("content"))) {
+            result.put("msg", "비속어가 포함된 댓글은 수정할 수 없습니다.");
+            return result;
+        }
+
         try {
             cs.updateReply(bcidx, body.get("content"));
             result.put("msg", "ok");
