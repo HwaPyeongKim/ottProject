@@ -4,13 +4,14 @@ import jaxios from '../../util/JWTUtil';
 
 function MemberList() {
     const [memberList, setMemberList] = useState([]);
+    const [selected, setSelected] = useState([]);
     const [paging, setPaging] = useState({});
     const [beginEnd, setBeginEnd] = useState([]);
     const [key, setKey] = useState("");
 
     // 🔥 추가된 부분
-    const [sortField, setSortField] = useState("midx");
-    const [sortDir, setSortDir] = useState("DESC");
+    const [sortField, setSortField] = useState("nickname");
+    const [sortDir, setSortDir] = useState("ASC");
 
     useEffect(() => {
         loadData(1, key, sortField, sortDir);
@@ -48,6 +49,38 @@ function MemberList() {
         loadData(1, key, field, direction);
     }
 
+    const handleSelectAll = (e) => {
+        if (e.target.checked) {
+            const allIds = memberList.map(member => member.midx);
+            setSelected(allIds);
+        } else {
+            setSelected([]);
+        }
+    };
+
+    const handleSelectOne = (midx) => {
+        setSelected(prev =>
+            prev.includes(midx)
+            ? prev.filter(item => item !== midx)
+            : [...prev, midx]
+        );
+    };
+
+    async function setAdmin(role) {
+        if (selected.length === 0) {
+            return alert("변경할 회원을 체크해주세요");
+        }
+        jaxios.post("/api/admin/setAdmin", null, {params:{selected, role}})
+        .then((result)=>{
+            if (result.data.msg === "ok") {
+                alert("관리자 권한이 변경 되었습니다");
+                loadData(1, key, sortField, sortDir);
+                setSelected([]);
+            }
+        })
+        .catch((err)=>{console.error(err)})
+    }
+
     return (
         <div className="admin-container">
 
@@ -62,12 +95,9 @@ function MemberList() {
                         placeholder="검색어 입력 (성명, 닉네임, 이메일, 주소)"
                         onChange={(e) => setKey(e.target.value)}
                     />
-                    <button
-                        className="admin-btn primary"
-                        onClick={() => loadData(1, key, sortField, sortDir)}
-                    >
-                        검색
-                    </button>
+                    <button className="admin-btn primary" onClick={() => loadData(1, key, sortField, sortDir)}>검색</button>
+                    <button className="admin-btn" onClick={()=>{setAdmin(2)}}>관리자 추가</button>
+                    <button className="admin-btn" onClick={()=>{setAdmin(1)}}>관리자 해제</button>
                 </div>
             </div>
 
@@ -75,9 +105,7 @@ function MemberList() {
             <table className="admin-table">
                 <thead>
                     <tr>
-                        <th onClick={() => handleSort("midx")}>
-                            NO. {sortField === "midx" && (sortDir === "ASC" ? "▲" : "▼")}
-                        </th>
+                        <th><input type="checkbox" onChange={handleSelectAll} checked={selected.length === memberList.length && memberList.length > 0} /></th>
                         <th onClick={() => handleSort("name")}>
                             성명 {sortField === "name" && (sortDir === "ASC" ? "▲" : "▼")}
                         </th>
@@ -88,17 +116,18 @@ function MemberList() {
                             이메일 {sortField === "email" && (sortDir === "ASC" ? "▲" : "▼")}
                         </th>
                         <th onClick={() => handleSort("phone")}>
-                            Phone {sortField === "phone" && (sortDir === "ASC" ? "▲" : "▼")}
+                            전화번호 {sortField === "phone" && (sortDir === "ASC" ? "▲" : "▼")}
                         </th>
                         <th onClick={() => handleSort("address1")}>
                             주소 {sortField === "address1" && (sortDir === "ASC" ? "▲" : "▼")}
                         </th>
                         <th onClick={() => handleSort("provider")}>
-                            Provider {sortField === "provider" && (sortDir === "ASC" ? "▲" : "▼")}
+                            가입경로 {sortField === "provider" && (sortDir === "ASC" ? "▲" : "▼")}
                         </th>
                         <th onClick={() => handleSort("indate")}>
                             가입일 {sortField === "indate" && (sortDir === "ASC" ? "▲" : "▼")}
                         </th>
+                        <th>권한</th>
                     </tr>
                 </thead>
 
@@ -106,7 +135,7 @@ function MemberList() {
                     {memberList.length > 0 ? (
                         memberList.map((member, idx) => (
                             <tr key={idx}>
-                                <td>{member.midx}</td>
+                                <td><input type="checkbox" checked={selected.includes(member.midx)} onChange={() => handleSelectOne(member.midx)} /></td>
                                 <td>{member.name}</td>
                                 <td>{member.nickname}</td>
                                 <td>{member.email}</td>
@@ -114,6 +143,7 @@ function MemberList() {
                                 <td>{member.address1} {member.address2}</td>
                                 <td>{member.provider}</td>
                                 <td>{member.indate.substring(2, 10)}</td>
+                                <td>{member.role === 1 ? "일반" : "관리자"}</td>
                             </tr>
                         ))
                     ) : (
