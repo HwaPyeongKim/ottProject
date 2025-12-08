@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { logoutAction } from '../store/userSlice'
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Cookies } from 'react-cookie'
+import axios from 'axios'
 
 function SubMenu() {
+    const loginUser = useSelector(state=>state.user);
     const navigate = useNavigate()
     const cookies = new Cookies()
     const dispatch = useDispatch()

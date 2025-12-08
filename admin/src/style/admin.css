@@ -286,6 +286,32 @@
   margin-right: 6px;
 }
 
+/* 로그인폼 */
+.login-form {background-color: var(--card-bg); border-radius: var(--border-radius); border: 1px solid var(--border-color); max-width: 400px; margin: 200px auto 0; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem;}
+.login-form h2 {color: var(--text-color); text-align: center; font-size: 1.5rem; margin-bottom: 1rem;}
+.login-form .field {display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0; align-items: normal;}
+.login-form .field label {font-weight: 600; color: var(--text-color); font-size: 0.9rem;}
+.login-form .field input {background-color: #1c1c1c; border: 1px solid var(--border-color); border-radius: var(--border-radius); color: var(--text-color); padding: 0.8rem; font-size: 0.95rem; transition: var(--transition);}
+.login-form .field input:focus {outline: none; border-color: var(--highlight-color);}
+.login-form .btns, .login-form .sns-btns {display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;}
+.login-form .btn {padding: 0.6rem 1.2rem; border-radius: var(--border-radius); cursor: pointer; transition: var(--transition); font-weight: 600; border: none;}
+.login-form .btn-primary {background-color: var(--text-color); color: #000;}
+.login-form .btn-primary:hover {background-color: #ffffff;}
+.login-form .btn-secondary {background-color: #444; color: #fff;}
+.login-form .btn-secondary:hover {background-color: #666;}
+
+.login-form .btn-sns {flex: 1; min-width: 80px; padding: 0.6rem; color: #000; font-weight: 600; border-radius: var(--border-radius); cursor: pointer; border: none; transition: var(--transition);}
+.login-form .btn-sns.kakao {background-color: #f5c518;}
+.login-form .btn-sns.kakao:hover {opacity: 0.8;}
+
+.login-form .notice {color: #f5c518; text-align: center;}
+
+/* 로그인폼 반응형 */
+@media (max-width: 480px) {
+  .login-form {padding: 1.5rem; gap: 1rem; }
+  .login-form .btns, .login-form .sns-btns {flex-direction: column; gap: 8px;}
+}
+
 /* 스포일러 시작 */
 .admin-table.spoiler {}
 .admin-table.spoiler th.content {width: 50%;}

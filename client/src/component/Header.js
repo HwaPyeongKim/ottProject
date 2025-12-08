@@ -150,9 +150,13 @@ function Header() {
         <ul>
           <li><Link to="/company">회사소개</Link></li>
           <li><Link to="/qna">Q & A</Link></li>
-          <li>
-            <a href="http://localhost:3001" target="_blank" rel="noopener noreferrer">관리자 페이지</a>
-          </li>
+          {
+            (loginUser && loginUser.midx && loginUser.role > 1) ?
+            <li>
+              <a href="http://localhost:3001" target="_blank" rel="noopener noreferrer">관리자 페이지</a>
+            </li>
+            : null
+          }
         </ul>
       </div>
     </header>
