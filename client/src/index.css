@@ -11,3 +11,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+/* 챗봇 줄 건너뛰기 */
+
+.bubble.bot {
+    white-space: pre-line;
+}
+
+.bubble.user {
+    white-space: pre-line;
+}

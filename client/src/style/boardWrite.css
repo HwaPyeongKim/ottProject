@@ -138,9 +138,9 @@
     background-color: #666666;
 }
 
-.boardwriteform p{
+/* .boardwriteform p{
     color: #242424;
-}
+} */
 
 /* 2. 이미지 업로드 영역 (.image-upload-section) */
 .boardwriteform .image-upload-section {
@@ -284,4 +284,9 @@
     /* 이 버튼은 고정된 높이를 가짐 */
     flex-shrink: 0; 
     /* ... (나머지 스타일 유지) ... */
+}
+
+.ck-editor__editable * {
+    all: revert !important;
+    color: #000 !important;
 }
