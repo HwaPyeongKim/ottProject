@@ -4,6 +4,10 @@ import { useSelector } from "react-redux";
 import jaxios from "../../util/JWTUtil";
 import axios from "axios";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart, faCommentDots } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
+
 const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
     const loginUser = useSelector(state => state.user);
     const modalRef = useRef(null);
@@ -225,7 +229,7 @@ const CommentModal = ({ onClose, bidx, onCommentAdded  }) => {
                                     // 대댓글이 있을 때
                                     <button className="modal-icon-button"
                                         onClick={() => toggleReply(comment.bcidx)}>
-                                        💬 대댓글 {replyList.filter(r => r.pcidx === comment.bcidx).length}개
+                                        <FontAwesomeIcon icon={faCommentDots} /> 대댓글 {replyList.filter(r => r.pcidx === comment.bcidx).length}개
                                     </button>
                                 ) : (
                                     // 대댓글이 0개일 때

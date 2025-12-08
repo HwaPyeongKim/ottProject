@@ -50,7 +50,7 @@
   color: #000;
 }
 .tab-button:hover {
-  background-color: #ffffffe5;
+  background-color: #f7f7f7e5;
   color: #000;
 }
 
@@ -126,8 +126,8 @@
 
 .review-image {
   /* 사진과 유사한 비율 (약 1:1.5) */
-  width: 80px;
-  height: 120px;
+  width: 120px;
+  height: 170px;
   object-fit: cover;
   border-radius: 5px;
   margin-right: 10px;
@@ -161,7 +161,6 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 10px;
-  margin-top: 10px;
 }
 
 .likes-replies {
@@ -316,4 +315,34 @@
 .review-text p {
     margin: 0 !important;
     padding: 0 !important;
+}
+.spoiler-container {
+  position: relative;
+  width: 100%;
+}
+
+.spoiler-blur {
+  filter: blur(6px);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.spoiler-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 18px 22px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  width: 80%;
+  max-width: 280px;
+
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
 }

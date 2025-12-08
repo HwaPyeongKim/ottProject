@@ -180,14 +180,21 @@
 /* 대댓글 들여쓰기 & 애니메이션 */
 .modal-reply-item {
   display: flex;
-  margin-left: 40px;
+  margin-left: 20px;
   margin-top: 12px;
   opacity: 0;
   transform: translateY(-10px);
   animation: fadeIn 0.2s forwards;
 }
+
+.modal-reply-area{
+  margin-left: 20px;
+  border-left: 1px solid #cecdcd
+}
+
 .modal-reply-area .modal-reply-item:first-child {
-    margin-top: 30px;
+    margin-top: 15px;
+    padding-top: 15px;
 }
 
 @keyframes fadeIn {
@@ -235,7 +242,7 @@
   border: 1px solid #ddd;
   border-radius: 12px;
   background-color: #f9f9f9;
-  margin-left: 40px;
+  margin-left: 20px;
   margin-top: 10px;
 }
 .modal-reply-input input {
