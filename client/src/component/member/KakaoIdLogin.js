@@ -25,9 +25,9 @@ function KakaoIdLogin() {
                 cookies.set('user', JSON.stringify(LUser), {path:'/', })
                 console.log("에딧검사 : ", result.data.edit)
                 if( result.data.edit === 'no' ){
-                    navigate('/')
-                }else{
                     navigate('/editKakao')
+                }else{
+                    navigate('/')
                 }
             }).catch((err)=>{console.error(err)})
         }, []

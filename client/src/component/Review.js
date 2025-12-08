@@ -239,7 +239,13 @@ const Review = ({ dbidx, season, refreshAverage, title, posterpath, type }) => {
                         </>
                         : null
                       }
-                      <li><button onClick={()=>{spoilReview(review.ridx)}}>스포일러 신고</button></li>
+                      {
+                        review.member.midx != loginUser.midx ?
+                        <>
+                          <li><button onClick={()=>{spoilReview(review.ridx)}}>스포일러 신고</button></li>
+                        </>
+                        : null
+                      }
                       <li><button onClick={()=>setOpenMenuId(null)}>닫기</button></li>
                     </ul>
                   </div>

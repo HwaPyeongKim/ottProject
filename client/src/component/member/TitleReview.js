@@ -8,8 +8,14 @@ function TitleReview() {
   const loginUser = useSelector( state=>state.user );
   const {userMidx} = useParams();
   const userId = Number(userMidx);
-//   const {writeridx: paramMidx} = useParams();
-//   const targetMidx = paramMidx ? Number(paramMidx) : loginUser?.midx;
+    const [targetMidx, setTargetMidx] = useState(userId);
+        useEffect(() => {
+        if (loginUser?.midx) {
+            setTargetMidx(
+            userId === loginUser.midx ? loginUser.midx : userId
+            );
+        }
+        }, [loginUser, userId]);
   const [chkMember, setChkMember] = useState([]);
   const [reviews, setReviews] = useState([]);
 
@@ -29,36 +35,33 @@ function TitleReview() {
   const fetchReview = async (pageNum) => {
       if (loading || !hasMore) {return};
 
-      setLoading(true);
-      let targetMidx;
-      console.log('리뷰 유저아이디 : ',userId);
-      try{
-          if( userId !== loginUser.midx ){
-            targetMidx = userId;
-            const res = await jaxios.post('/api/member/getCheckMember', null, {params:{midx:targetMidx}})
-            setChkMember(res.data.checkMember);
-          }else{
-            targetMidx = loginUser.midx;
-            setChkMember(loginUser);
-          }
-          console.log('해당 midx : ', targetMidx)
-          const result = await jaxios.get('/api/member/getReviewList', {params:{page: pageNum, midx:targetMidx, type: typeFilter}})
-          console.log('타이틀평점 : ', result.data.reviewList.reviewList)
-          if (result.data.reviewList.reviewList.length === 0) {
-              setHasMore(false);
-              setLoading(false);
-              return;
-          }
-          if (pageNum === 1) {
-              setReviews(result.data.reviewList.reviewList)
-          } else {
-              setReviews(prev => [...prev, ...result.data.reviewList.reviewList]);
-          }
-      }catch(err){
-          console.error(err)
-      }
-      setLoading(false);
-  }
+        setLoading(true);
+        console.log('리뷰 유저아이디 : ',userId);
+        try{
+            if( targetMidx !== loginUser.midx ){
+                const res = await jaxios.post('/api/member/getCheckMember', null, {params:{midx:targetMidx}})
+                setChkMember(res.data.checkMember);
+            }else{
+                setChkMember(loginUser);
+            }
+            console.log('해당 midx : ', targetMidx)
+            const result = await jaxios.get('/api/member/getReviewList', {params:{page: pageNum, midx:targetMidx, type: typeFilter}})
+            console.log('타이틀평점 : ', result.data.reviewList.reviewList)
+            if (result.data.reviewList.reviewList.length === 0) {
+                setHasMore(false);
+                setLoading(false);
+                return;
+            }
+            if (pageNum === 1) {
+                setReviews(result.data.reviewList.reviewList)
+            } else {
+                setReviews(prev => [...prev, ...result.data.reviewList.reviewList]);
+            }
+        }catch(err){
+            console.error(err)
+        }
+        setLoading(false);
+    }
 
   useEffect(
       ()=>{
@@ -90,7 +93,12 @@ function TitleReview() {
 
   return (
     <div style={{ paddingTop: "40px" }}>
-        <h2 style={{ color: "white", textAlign: "center" }}>후기 목록</h2>
+        {
+            (targetMidx === loginUser.midx)?
+            (<h2 style={{ color: "white", textAlign: "center" }}>나의 후기 목록</h2>):
+            (<h2 style={{ color: "white", textAlign: "center" }}>{chkMember.nickname} 님의 후기 목록</h2>)
+        }
+        
         <div className="type-filter" style={{paddingLeft: "27.5%"}}>
             <button 
                 className={typeFilter === "all" ? "active" : ""} 
@@ -113,7 +121,14 @@ function TitleReview() {
 
         {reviews.map(review => (
             review.content != '' && (
-                <ReviewCard key={review.ridx} review={review} user={chkMember} />
+                <ReviewCard key={review.ridx} review={review} getReviews={ (page = 1) => {
+                    setPage(1);
+                    setReviews([]);
+                    setHasMore(true);
+                    fetchReview(1);
+                }}
+                refreshAverage={() => {}}
+                />
             )
         ))}
 

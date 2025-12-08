@@ -24,8 +24,8 @@ function Follower() {
     const navigate = useNavigate();
     const [followersImg, setFollowersImg] = useState([])
     const [followers, setFollowers] = useState([])
-    const [paging, setPaging] = useState({})
     const [followersCount, setFollowersCount] = useState('')
+    const [userNickname, setUserNickname] = useState('')
 
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
@@ -41,6 +41,15 @@ function Follower() {
     const fetchFollower = async (pageNum) => {
         try{
             console.log('해당 midx : ', targetMidx)
+            if(targetMidx!==loginUser.midx){
+                const res = await axios.get("/api/member/getFollowMember", {
+                    params: { midx:targetMidx },
+                });
+                setUserNickname(res.data.followMember.nickname)
+            }else{
+                setUserNickname(loginUser.nickname)
+            }
+
             const result = await jaxios.get(`/api/member/getFollowers`, {params:{page:pageNum, midx:targetMidx}} )
             if (result.data.followers.length === 0) {
                 setHasMore(false);
@@ -51,8 +60,10 @@ function Follower() {
                 setFollowers( [...result.data.followers] );
                 //setPaging( result.data.paging)
                 setFollowersCount( result.data.totalFollowersCount )
+                console.log('follwers : ', followers)
             } else {
                 setFollowers(prev => [...prev, ...result.data.followers]);
+                console.log('follwers : ', followers)
             }
         }catch(err){
             console.error(err)
@@ -96,44 +107,12 @@ function Follower() {
         if (loader.current) observer.observe(loader.current);
         return () => observer.disconnect();
     }, [hasMore, loading]);
-    //---------------------------------------------------- 무한 스크롤 -------------------------------------------------------------
-    // useEffect(
-    //     ()=>{ 
-    //         window.addEventListener('scroll', handleScroll );
-    //         return () => {
-    //             window.removeEventListener("scroll", handleScroll);
-    //         }
-    //     },[paging.page, followers]
-    // )
-    // const handleScroll=()=>{
-    //     const scrollHeight = document.documentElement.scrollHeight - 100; 
-    //     const scrollTop = document.documentElement.scrollTop;  
-    //     const clientHeight = document.documentElement.clientHeight; 
-    //     if( scrollTop + clientHeight >= scrollHeight ) {
-    //         if( Number(paging.page) >= Number(paging.totalPage)){return}
-    //         onPageMove( Number(paging.page) + 1 );
-    //     }
-    // }
-
-    // function onPageMove(p){
-    //     jaxios.get(`/api/member/getFollowers`, {params:{page:p, midx:loginUser.midx}} )
-    //     .then((result)=>{
-    //         setPaging( result.data.paging )
-    //         let follows = [];
-    //         follows = [...followers]
-    //         follows = [...follows, ...result.data.followers]
-    //         setFollowers( [...follows] );
-    //     }).catch((err)=>{console.error(err)})
-    // }
 
     return (
         <div>
             <div className="follower-container">
                 <div className="follower-title">
-                    {
-                        (targetMidx === loginUser.midx)?
-                        (loginUser.nickname):(followers.nickname)
-                    }님의 팔로워&nbsp;ㅣ&nbsp;<span>{(followers)?(followersCount):(0)}명</span>
+                    {userNickname}님의 팔로워&nbsp;ㅣ&nbsp;<span>{(followers?.length)?(followersCount):(0)}명</span>
                 </div>
 
                 <div className="follower-list">

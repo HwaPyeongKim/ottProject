@@ -31,6 +31,8 @@ function Mypage({onClose}) {
     const [imgStyle, setImgStyle] = useState({display:"none"});
 
     const [isOpen, setIsOpen] = useState(false)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isCheckPwdModal, setIsCheckPwdModal] = useState(false);
 
     const cookies = new Cookies()
     const dispatch = useDispatch()
@@ -148,9 +150,9 @@ function Mypage({onClose}) {
         }).catch((err)=>{console.error(err)})
     }
 
-    function toggle(){
-        setIsOpen( !isOpen )
-    }
+    // function toggle(){
+    //     setIsOpen( !isOpen )
+    // }
     // 모달창을 위한 style
     const customStyles = {
         overlay: { backgroundColor: "rgba( 0 , 0 , 0 , 0.5)", zIndex: 2000,},
@@ -177,8 +179,35 @@ function Mypage({onClose}) {
     function onLogout(){
         dispatch( logoutAction() );
         cookies.remove('user', {path:'/',} )
-        alert('로그아웃되엇습니다')
+        alert('로그아웃되었습니다')
         navigate('/')
+    }
+
+    async function checkPwd(){
+      let result = await axios.post('/api/member/checkPwd', null, {params:{midx:loginUser.midx, pwd:currentPwd}})
+        if(result.data.msg === 'ok'){
+          alert('일치되었습니다')
+          setCurrentPwd('')
+          setMessage('')
+          setIsCheckPwdModal(false)
+          setView("profile"); 
+        }else{
+          setMessage('일치하지 않습니다.')
+        }
+    }
+
+    function deleteAccount(){
+      // 비밀번호를 입력받아 한번 더 확인작업 필요
+      // deleteyn 이 있는 곳에는 모두 Y로 변경
+      jaxios.delete("/api/member/deleteAccount", { params : { midx:loginUser.midx }})
+      .then((result)=>{
+        if(result.data.msg === 'ok'){
+          dispatch( logoutAction() );
+          cookies.remove('user', {path:'/',} )
+          alert('탈퇴되었습니다')
+          navigate('/')
+        }
+      }).catch((err)=>{console.error(err)})
     }
 
     return (
@@ -188,7 +217,7 @@ function Mypage({onClose}) {
             <div className="modal-header">
               <h2>
                 {view === "menu" && `${loginUser.nickname} 님`}
-                {view === "profile" && "회원 정보 변경"}
+                {view === "profile" && "회원 정보 관리"}
                 {view === "password" && "암호 변경"}
               </h2>
               <button className="close-btn" onClick={onClose}>✕</button>
@@ -199,23 +228,10 @@ function Mypage({onClose}) {
                 <>
                   <div className="menu-item">
                     <div onClick={() => { onClose(); navigate(`/pageView/${loginUser.midx}`); }}>마이페이지</div>
-                    {/* <div onClick={() => { onClose(); navigate('/mylist'); }}>마이리스트</div> */}
                   </div>
-                  {/* <hr className="menu-divider" />
-                  <div className="menu-item" style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
-                    <div onClick={() => { onClose(); navigate('/myfollow'); }}>팔로우</div>&nbsp;&nbsp;/&nbsp;&nbsp;
-                    <div onClick={() => { onClose(); navigate('/myfollower'); }}>팔로워</div>
-                  </div> */}
-                  {/* <div>
-                      <div onClick={()=>{ onClose(); navigate('/mylist') }}>마이리스트</div>
-                  </div>
-                  <hr />
-                  <div style={{display:"flex", justifyContent:'center'}}>
-                      <div onClick={()=>{ onClose(); navigate('/myfollow') }}>팔로우&nbsp;&nbsp;|&nbsp;&nbsp;팔로워</div>
-                  </div> */}
                   <hr className="menu-divider" />
                   <div className="menu-item">
-                    <div onClick={() => setView("profile")} style={{ cursor: 'pointer' }}>회원 정보 변경</div>
+                    <div onClick={() => {setIsCheckPwdModal(true)}} style={{ cursor: 'pointer' }}>회원 정보 관리</div>
                   </div>
                   <hr className="menu-divider" />
                   <div className='menu-item'>
@@ -295,6 +311,7 @@ function Mypage({onClose}) {
                   </div>
 
                   <div className="btn-group">
+                    <span className="underline" onClick={()=>{ setIsDeleteModalOpen(true); }}>영구 회원 탈퇴</span>
                     <button className="btn-highlight" onClick={() => { updateUser(); }}>저장</button>
                     <button className="btn btn-secondary" onClick={() => setView("menu")}>뒤로</button>
                   </div>
@@ -340,6 +357,38 @@ function Mypage({onClose}) {
               )}
             </div>
           </div>
+          {isCheckPwdModal && (
+              <div className="mpe-modalOverlay" onClick={() => setIsCheckPwdModal(false)}>
+                  <div className="mpe-modalContent" onClick={(e) => e.stopPropagation()}>
+                      <h3>회원정보 관리 비밀번호 확인</h3>
+                      <div className="mpfield">
+                        <input type="text" placeholder="비밀번호를 입력해주세요" onChange={(e)=>{setCurrentPwd(e.currentTarget.value)}} />
+                      </div>
+                      <h3 style={{color:'coral'}}>{message}</h3>
+                      <div className="btn-group">
+                        <button className="btn-highlight" onClick={()=>{checkPwd()}}>확인</button>
+                        <button className="btn btn-secondary" onClick={()=>setIsCheckPwdModal(false)}>닫기</button>
+                      </div>
+                  </div>
+              </div>
+          )}
+
+          {isDeleteModalOpen && (
+            <div className="mpe-modalOverlay" onClick={() => setIsOpen(false)}>
+              <div className="mpe-modalContent" onClick={(e) => e.stopPropagation()}>
+                <h3>영구 회원 탈퇴</h3>
+                <p>영구적으로 회원 정보가 삭제되며 되돌릴 수 없습니다. 정말 탈퇴하시겠습니까?</p>
+                <div className="mpe-buttonWrap">
+                    <button className="mpe-cancelButton" onClick={() => {setIsDeleteModalOpen(false)}}>
+                      취소
+                    </button>
+                    <button className="mpe-deleteConfirmButton" onClick={() => {deleteAccount()}}>
+                      탈퇴
+                    </button>
+                </div>
+              </div>
+            </div>
+            )}
         </div>
 
 <div>

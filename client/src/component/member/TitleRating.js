@@ -15,6 +15,14 @@ function TitleRating() {
     const loginUser = useSelector( state=>state.user );
     const {userMidx} = useParams();
     const userId = Number(userMidx);
+    const [targetMidx, setTargetMidx] = useState(userId);
+    useEffect(() => {
+    if (loginUser?.midx) {
+        setTargetMidx(
+        userId === loginUser.midx ? loginUser.midx : userId
+        );
+    }
+    }, [loginUser, userId]);
 
     const [movies, setMovies] = useState([]);
     const [sort, setSort] = useState("scoreDesc");
@@ -127,6 +135,13 @@ function TitleRating() {
 
     return (
         <div className="tr-container">
+            <div style={{ paddingTop: "40px" }}>
+                {
+                    (targetMidx === loginUser.midx)?
+                    (<h2 style={{ color: "white", textAlign: "center" }}>나의 후기 목록</h2>):
+                    (<h2 style={{ color: "white", textAlign: "center" }}>{chkMember.nickname} 님의 후기 목록</h2>)
+                }
+            </div>
             <div className="tr-tabs">
                 <button className={listTab === 'tab1' ? "active" : ""}  
                 onClick={()=>{setListTab('tab1')}}>전체</button>
@@ -176,7 +191,7 @@ function TitleRating() {
                                             {review.title.length > 15 
                                             ? review.title.substring(0, 15) + "..." 
                                             : review.title}
-                                        </div>
+                                        </div>  
                                     </div>
                                     <div style={{display:'flex', alignItems:'center', justifyContent:'center'}}>
                                         <div>평가함</div>&nbsp;

@@ -261,15 +261,16 @@ public class MemberService {
     public HashMap<String, Object> getReviewList(int page, int midx, String type) {
         HashMap<String , Object> result = new HashMap<>();
 
+        final String deleteYn = "N";
         boolean isTypeFilter = (type != null && !type.equals("all"));
 
         if( (Integer)page == null || page < 1 ){
             List<Review> list;
 
             if (isTypeFilter) {
-                list = rr.findAllByMidxAndType(midx, type, Sort.by(Sort.Direction.DESC, "writedate"));
+                list = rr.findAllByMidxAndTypeAndDeleteyn(midx, type, deleteYn, Sort.by(Sort.Direction.DESC, "writedate"));
             } else {
-                list = rr.findAllByMidx(midx, Sort.by(Sort.Direction.DESC, "writedate"));
+                list = rr.findAllByMidxAndDeleteyn(midx, deleteYn, Sort.by(Sort.Direction.DESC, "writedate"));
             }
             result.put("reviewList", list);
             //System.out.println("DB 리뷰리스트 : " + result.get("reviewList"));
@@ -278,8 +279,8 @@ public class MemberService {
             paging.setPage(page);
 
             int count = isTypeFilter
-                    ? rr.countByMidxAndType(midx, type)
-                    : rr.countByMidx(midx);
+                    ? rr.countByMidxAndTypeAndDeleteyn(midx, type, deleteYn)
+                    : rr.countByMidxAndDeleteyn(midx, deleteYn);
             System.out.println("리스트 타이틀 카운트 : " + count);
             paging.setDisplayRow(24);
             paging.setDisplayPage(2);
@@ -287,8 +288,8 @@ public class MemberService {
             paging.calPaging();
             Pageable pageable = PageRequest.of(page - 1, paging.getDisplayRow(), Sort.by(Sort.Direction.DESC, "writedate"));
             Page<Review> list = isTypeFilter
-                    ? rr.findByMidxAndType(midx, type, pageable)
-                    : rr.findByMidx(midx, pageable);
+                    ? rr.findByMidxAndTypeAndDeleteyn(midx, type, deleteYn, pageable)
+                    : rr.findByMidxAndDeleteyn(midx, deleteYn, pageable);
             System.out.println("DB 리뷰리스트 : " + list);
             result.put("reviewList", list.getContent());
             result.put("paging", paging);
@@ -305,9 +306,10 @@ public class MemberService {
 
     public void editKakao(Member member) {
         Member mem = mr.findBySnsid(member.getSnsid());
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
         if(mem != null){
             mem.setEmail(member.getEmail());
-            mem.setPwd("EDITKAKAO");
+            mem.setPwd(pe.encode("EDITKAKAO"));
             mem.setName(member.getName());
             mem.setNickname(member.getNickname());
             mem.setPhone(member.getPhone());
