@@ -90,7 +90,7 @@ function Board(props) {
         const lines = el.scrollHeight / lineHeight;
 
         // 3줄 "초과"일 때만 더보기 버튼 표시
-        setIsOverflowing(lines > 3.1);
+        setIsOverflowing(lines > 6.1);
     }, [props.board.bidx, props.board.content, showFullContent]);
 
 
