@@ -93,7 +93,12 @@ function TitleReview() {
 
   return (
     <div style={{ paddingTop: "40px" }}>
-        <h2 style={{ color: "white", textAlign: "center" }}>{chkMember.nickname} 님의 후기 목록</h2>
+        {
+            (targetMidx === loginUser.midx)?
+            (<h2 style={{ color: "white", textAlign: "center" }}>나의 후기 목록</h2>):
+            (<h2 style={{ color: "white", textAlign: "center" }}>{chkMember.nickname} 님의 후기 목록</h2>)
+        }
+        
         <div className="type-filter" style={{paddingLeft: "27.5%"}}>
             <button 
                 className={typeFilter === "all" ? "active" : ""} 
@@ -116,7 +121,14 @@ function TitleReview() {
 
         {reviews.map(review => (
             review.content != '' && (
-                <ReviewCard key={review.ridx} review={review} user={chkMember} />
+                <ReviewCard key={review.ridx} review={review} getReviews={ (page = 1) => {
+                    setPage(1);
+                    setReviews([]);
+                    setHasMore(true);
+                    fetchReview(1);
+                }}
+                refreshAverage={() => {}}
+                />
             )
         ))}
 

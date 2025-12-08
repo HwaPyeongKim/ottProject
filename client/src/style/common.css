@@ -196,3 +196,22 @@ header .menu button {border: 0; background: transparent; color: #fff; line-heigh
 .send-btn:hover {
   background: #ffdf40;
 }
+
+/* --- 홈 배경 이미지 --- */
+.home-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.home-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%; /* 🔥 이미지를 화면보다 더 크게 */
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) brightness(0.55); /* 🔥 블러 약하게 */
+  transform: rotate(-15deg) scale(1.1); /* 🔥 이미지 대각선 배치 */
+  transform-origin: center;
+  z-index: -1;
+}

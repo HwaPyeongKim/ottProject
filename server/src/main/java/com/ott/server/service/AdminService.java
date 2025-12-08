@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -272,5 +274,12 @@ public class AdminService {
     }
 
 
-
+    public void setAdmin(List<Integer> selected, int role) {
+        for (Integer midx : selected) {
+            mr.findByMidx(midx).ifPresent(member -> {
+                member.setRole(role);
+                mr.save(member);
+            });
+        }
+    }
 }

@@ -8,6 +8,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -15,6 +17,14 @@ public class AdminController {
 
     @Autowired
     AdminService as;
+
+    @PostMapping("/setAdmin")
+    public HashMap<String, Object> setAdmin(@RequestParam("selected") List<Integer> selected, @RequestParam("role") int role){
+        HashMap<String, Object> result = new HashMap<>();
+        as.setAdmin(selected, role);
+        result.put("msg", "ok");
+        return result;
+    }
 
     @GetMapping("/getQnaList")
     public HashMap<String, Object> getQnaList(@RequestParam("page") int page,

@@ -7,7 +7,7 @@ import AddTitle from './AddTitle';
 import "../../style/myListView.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookmark, faThumbsUp, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark, faThumbsUp, faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 function UserListView() {
 
@@ -188,13 +188,19 @@ function UserListView() {
                     />
                     <div>
                         {
-                            loginUser && loginUser.midx===targetMidx ?
-                            <>
+                            (loginUser && loginUser.midx===targetMidx) ?
+                            (<>
                                 <button onClick={async (e)=>{ e.stopPropagation(); e.preventDefault(); setIsTitleDeleteModal(true); setDbidx(t.dbidx);} }><FontAwesomeIcon icon={faBookmark} /></button>
                                 {/* <button className={`like${likes.includes(item.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(item.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button> */}
-                            </>
-                            : null
+                            </>)
+                            : (null)
                         }
+                        {
+                            (loginUser.midx!==targetMidx) ? 
+                            (<button><FontAwesomeIcon icon={faPlus} /></button>)
+                            :(null)
+                        }
+                        
                     </div>
                 </Link>
                 </div>

@@ -217,7 +217,7 @@ function Mypage({onClose}) {
             <div className="modal-header">
               <h2>
                 {view === "menu" && `${loginUser.nickname} 님`}
-                {view === "profile" && "회원 정보 변경"}
+                {view === "profile" && "회원 정보 관리"}
                 {view === "password" && "암호 변경"}
               </h2>
               <button className="close-btn" onClick={onClose}>✕</button>
@@ -231,7 +231,7 @@ function Mypage({onClose}) {
                   </div>
                   <hr className="menu-divider" />
                   <div className="menu-item">
-                    <div onClick={() => {setIsCheckPwdModal(true)}} style={{ cursor: 'pointer' }}>회원 정보 변경</div>
+                    <div onClick={() => {setIsCheckPwdModal(true)}} style={{ cursor: 'pointer' }}>회원 정보 관리</div>
                   </div>
                   <hr className="menu-divider" />
                   <div className='menu-item'>
@@ -360,7 +360,7 @@ function Mypage({onClose}) {
           {isCheckPwdModal && (
               <div className="mpe-modalOverlay" onClick={() => setIsCheckPwdModal(false)}>
                   <div className="mpe-modalContent" onClick={(e) => e.stopPropagation()}>
-                      <h3>회원정보 변경 비밀번호 확인</h3>
+                      <h3>회원정보 관리 비밀번호 확인</h3>
                       <div className="mpfield">
                         <input type="text" placeholder="비밀번호를 입력해주세요" onChange={(e)=>{setCurrentPwd(e.currentTarget.value)}} />
                       </div>
@@ -375,29 +375,18 @@ function Mypage({onClose}) {
 
           {isDeleteModalOpen && (
             <div className="mpe-modalOverlay" onClick={() => setIsOpen(false)}>
-                <div
-                className="mpe-modalContent"
-                onClick={(e) => e.stopPropagation()}
-                >
+              <div className="mpe-modalContent" onClick={(e) => e.stopPropagation()}>
                 <h3>영구 회원 탈퇴</h3>
                 <p>영구적으로 회원 정보가 삭제되며 되돌릴 수 없습니다. 정말 탈퇴하시겠습니까?</p>
-
                 <div className="mpe-buttonWrap">
-                    <button
-                    className="mpe-cancelButton"
-                    onClick={() => {setIsDeleteModalOpen(false)}}
-                    >
-                    취소
+                    <button className="mpe-cancelButton" onClick={() => {setIsDeleteModalOpen(false)}}>
+                      취소
                     </button>
-                    <button
-                    className="mpe-deleteConfirmButton"
-                    onClick={() => {deleteAccount()}}
-                    >
-                    탈퇴
+                    <button className="mpe-deleteConfirmButton" onClick={() => {deleteAccount()}}>
+                      탈퇴
                     </button>
                 </div>
-
-                </div>
+              </div>
             </div>
             )}
         </div>
