@@ -559,12 +559,12 @@ function Detail() {
                       <SwiperSlide className="list" key={idx}>
                         <div className="cover">
                           <img src={`https://image.tmdb.org/t/p/w185${similar.poster_path}`} alt={`${similar.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                          <Link to={`/movie/detail/${similar.id}`}>
+                          <a href={`/tv/detail/${similar.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
                               <button className={`like${likes.includes(similar.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(similar.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button>
                             </div>
-                          </Link>
+                          </a>
                         </div>
                       </SwiperSlide>
                     ))}
@@ -601,12 +601,12 @@ function Detail() {
                       <SwiperSlide className="list" key={idx}>
                         <div className="cover">
                           <img src={`https://image.tmdb.org/t/p/w185${recommendation.poster_path}`} alt={`${recommendation.title} 포스터`} onError={(e)=>{e.target.src="/images/noposter.png"}} />
-                          <Link to={`/tv/detail/${recommendation.id}`}>
+                          <a href={`/tv/detail/${recommendation.id}`}>
                             <div>
                               <button><FontAwesomeIcon icon={faBookmark} /></button>
                               <button className={`like${likes.includes(recommendation.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(recommendation.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button>
                             </div>
-                          </Link>
+                          </a>
                         </div>
                       </SwiperSlide>
                     ))}
