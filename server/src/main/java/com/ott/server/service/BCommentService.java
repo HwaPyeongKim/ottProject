@@ -30,7 +30,8 @@ public class BCommentService {
 
     public List<BCommentResponseDTO> getCommentList(int bidx) {
         Board boardEntity = br.findById(bidx).orElseThrow(() -> new RuntimeException("게시글 없음"));;
-        List<BComment> list = cr.findAllByBoardWithMember(boardEntity);
+//        List<BComment> list = cr.findAllByBoardWithMember(boardEntity);
+        List<BComment> list = cr.findByBoard_BidxAndDeleteynOrderByBcidxDesc(bidx, "N");
 //        System.out.println("댓글 조회된 개수 = " + list.size());
 
         // --------------------------------------------------------
