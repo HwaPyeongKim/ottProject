@@ -256,9 +256,19 @@ const Review = ({ dbidx, season, refreshAverage, title, posterpath, type }) => {
                       <pre>{review.content}</pre>
                     ) : (
                       openedSpoilIds.includes(review.ridx) ? (
-                        <pre onClick={()=>toggleSpoilReview(review.ridx)}>{review.content}</pre>
+                        <pre>{review.content}</pre>
                       ) : (
-                        <p onClick={()=>toggleSpoilReview(review.ridx)} className="blindReview">⚠️ 스포성 내용이 포함된 게시글입니다. (클릭하여 보기)</p>
+                        <>
+                          <div className="spoiler-container">
+                            <div className="spoiler-blur">
+                              <pre>{review.content}</pre>
+                            </div>
+                            <div className="spoiler-overlay" onClick={()=>toggleSpoilReview(review.ridx)}>
+                                ⚠️ 스포일러가 포함된 게시글입니다<br/>
+                                (클릭하여 보기)
+                            </div>
+                          </div>
+                        </>
                       )
                     )
                   }

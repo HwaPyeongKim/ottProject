@@ -58,14 +58,17 @@
 .content_info .review .reviewList > li > div {display: flex; justify-content: space-between;}
 .content_info .review .reviewList > li > div div {position: relative;}
 .content_info .review .reviewList > li > div div .menuButton {border: none; outline: none; background: transparent; color: #fff; font-size: 1.2em;}
-.content_info .review .reviewList > li > div div ul {display: none; position: absolute; top: 0; right: 0; width: 140px;}
+.content_info .review .reviewList > li > div div ul {display: none; position: absolute; top: 0; right: 0; width: 140px; z-index: 10;}
 .content_info .review .reviewList > li > div div ul.on {display: inline-block;}
 .content_info .review .reviewList > li > div div ul li {text-align: center; background: #222c38; padding: 7px 0; border-bottom: 1px solid #4d4d4d;}
 .content_info .review .reviewList > li > div div ul li:last-child {border-bottom: 0;}
 .content_info .review .reviewList > li > div div ul li:hover {background: #f5c518; color: #060d17;}
 .content_info .review .reviewList > li > div div ul li button {border: none; outline: none; background: transparent; color: #fff;}
 .content_info .review .reviewList > li pre {flex: 8; min-height: 50px;}
-.content_info .review .reviewList > li .blindReview {width: 100%; padding: 40px; border-radius: 10px; background: #f7d9db; color: #b30000; font-weight: bold; text-align: center; cursor: pointer;}
+.content_info .review .reviewList > li .spoiler-container {position: relative; width: 100%; height: 200px; overflow: hidden;}
+.content_info .review .reviewList > li .spoiler-overlay {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.75); color: #fff; padding: 18px 22px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 0.95rem; cursor: pointer; width: 80%; max-width: 280px; box-shadow: 0 4px 14px rgba(0,0,0,0.3); backdrop-filter: blur(4px);}
+.content_info .review .reviewList > li .spoiler-blur {filter: blur(6px); opacity: 0.6; pointer-events: none;}
+
 .content_info .review .more {margin-top: 20px;}
 .content_info .review .more button {width: 100%; height: 60px;}
 
