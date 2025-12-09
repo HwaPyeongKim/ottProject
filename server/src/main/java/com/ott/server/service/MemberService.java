@@ -312,7 +312,7 @@ public class MemberService {
         BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
         if(mem != null){
             mem.setEmail(member.getEmail());
-            mem.setPwd(pe.encode("EDITKAKAO"));
+            mem.setPwd(pe.encode("KAKAO"));
             mem.setName(member.getName());
             mem.setNickname(member.getNickname());
             mem.setPhone(member.getPhone());
