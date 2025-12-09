@@ -248,6 +248,7 @@ public class MemberController {
     @PostMapping("/resetPwd")
     public HashMap<String, Object> resetPwd(@RequestParam("midx") int midx, @RequestParam("pwd") String pwd) {
         HashMap<String, Object> result = new HashMap<>();
+        System.out.println("222222222222222222222222222222222222222222222222222222");
         ms.resetPwd(midx, pwd);
         result.put("msg", "ok");
         return result;
@@ -475,11 +476,12 @@ public class MemberController {
         return result;
     }
 
-    @PostMapping("/moveList")
-    public HashMap<String, Object> moveList(@RequestBody List list) {
+    @GetMapping("/getMostAddedTitles")
+    public HashMap<String, Object> getMostAddedTitles() {
+        List<HashMap<String, Object>> list = ms.getMostAddedTitles();
+        System.out.println("🔥 getMostAddedTitles returned: " + list); // 여기에 로그 추가
         HashMap<String, Object> result = new HashMap<>();
-        ms.moveList(list);
-        result.put("msg", "ok");
+        result.put("titles", list);
         return result;
     }
 }

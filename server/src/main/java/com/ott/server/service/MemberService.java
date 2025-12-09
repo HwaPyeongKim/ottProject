@@ -344,17 +344,6 @@ public class MemberService {
         Optional<Member> mem = mr.findByMidx(member.getMidx());
         if (mem.isPresent()) {
             Member deleteMem = mem.get();
-            deleteMem.setEmail(null);
-            deleteMem.setPwd(null);
-            deleteMem.setPhone(null);
-            deleteMem.setName(null);
-            deleteMem.setNickname(null);
-            deleteMem.setZipnum(null);
-            deleteMem.setAddress1(null);
-            deleteMem.setAddress2(null);
-            deleteMem.setProfileimg(null);
-            deleteMem.setProfilemsg(null);
-            deleteMem.setSnsid(null);
             deleteMem.setDeleteyn("Y");
             mr.save(deleteMem);
         }
@@ -390,7 +379,19 @@ public class MemberService {
         }
     }
 
-    public void moveList(List list) {
-        ler.fin
+    public List<HashMap<String, Object>> getMostAddedTitles() {
+        List<Object[]> list = dlr.findMostAddedTitles();
+        List<HashMap<String, Object>> result = new ArrayList<>();
+
+        for (Object[] row : list) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("dbidx", row[0]);
+            map.put("posterpath", row[1]);
+            map.put("title", row[2]);
+            map.put("type", row[3]);  // ⬅ 추가 (movie / tv)
+            result.add(map);
+        }
+        return result;
     }
+
 }
