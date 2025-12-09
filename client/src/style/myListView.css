@@ -80,8 +80,41 @@
     transition: opacity 0.25s;
 }
 
-.card:hover .card-overlay {
+.card:hover .card-poster-hover{
     opacity: 1;
+    pointer-events: auto;
+}
+
+.card-poster-hover {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+
+    display: flex;
+    justify-content: flex-end;   
+    align-items: flex-start;     
+    padding: 10px;   
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease-in-out;
+
+    z-index: 5;
+}
+
+.card-poster-hover button {
+    background: rgba(255,255,255,0.05);
+    border: none;
+    border-radius: 50%;
+    padding: 12px;
+    font-size: 15px;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.2s ease;
+}
+
+.card-poster-hover button:hover {
+    transform: scale(1.15);
 }
 
 .mylist-title {

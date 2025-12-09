@@ -248,7 +248,6 @@ public class MemberController {
     @PostMapping("/resetPwd")
     public HashMap<String, Object> resetPwd(@RequestParam("midx") int midx, @RequestParam("pwd") String pwd) {
         HashMap<String, Object> result = new HashMap<>();
-        System.out.println("222222222222222222222222222222222222222222222222222222");
         ms.resetPwd(midx, pwd);
         result.put("msg", "ok");
         return result;
@@ -472,6 +471,14 @@ public class MemberController {
         ms.deleteBcomment(member);
         ms.deleteReview(member);
         ms.deleteBoard(member);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @PostMapping("/moveList")
+    public HashMap<String, Object> moveList(@RequestBody List list) {
+        HashMap<String, Object> result = new HashMap<>();
+        ms.moveList(list);
         result.put("msg", "ok");
         return result;
     }

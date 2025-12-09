@@ -20,6 +20,7 @@ function UserCommunity() {
         );
     }
     }, [loginUser, userId]);
+    const [chkMember, setChkMember] = useState([]);
 
     const navigate = useNavigate();
     const [boardList, setBoardList] = useState([]);
@@ -29,9 +30,33 @@ function UserCommunity() {
     const [sortType, setSortType] = useState('latest'); // 최신(latest) or 인기(popular)
 
     useEffect(() => {
-        setBoardList([]);
-        onSearch(1); // 초기 데이터 로드
-    }, [sortType]); // 정렬 기준 바뀌면 다시 로드
+        const fetchData = async () => {
+            if (targetMidx !== loginUser.midx) {
+                try {
+                    // jaxios 사용 시 토큰 검증이 필요 없으면 axios.get/post 사용 가능
+                    const res = await jaxios.post('/api/member/getCheckMember', null, { params: { midx: targetMidx } });
+                    setChkMember(res.data.checkMember);
+                } catch (error) {
+                    console.error("회원 정보 체크 API 호출 실패:", error);
+                }
+            }
+            setBoardList([]);
+            onSearch(1);
+        };
+        fetchData();
+    }, [sortType, targetMidx, loginUser.midx]);
+    // useEffect( async () => {
+    //     fetchData()
+    //     setBoardList([]);
+    //     onSearch(1); // 초기 데이터 로드
+    // }, [sortType]); // 정렬 기준 바뀌면 다시 로드
+
+    // const fetchData = async () => {
+    //     if( targetMidx !== loginUser.midx ){
+    //         const res = await jaxios.post('/api/member/getCheckMember', null, {params:{midx:targetMidx}})
+    //         setChkMember(res.data.checkMember);
+    //     }
+    // }
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
@@ -123,7 +148,11 @@ function UserCommunity() {
 
     return (
         <div className='comment-section-container'>
-            <h2 className="section-title" style={{marginLeft: "10px", marginBottom: "40px"}}>커뮤니티 글 모음</h2>
+            {
+                (targetMidx === loginUser.midx)?
+                (<h2 className="section-title" style={{marginLeft: "10px", marginBottom: "40px"}}>나의 이야기 모음</h2>):
+                (<h2 className="section-title" style={{marginLeft: "10px", marginBottom: "40px"}}>{chkMember.nickname} 이야기 모음</h2>)
+            }
             {/* <div className="tab-buttons">
                 <div>
                     <button className={`tab-button ${sortType === 'latest' ? 'active' : ''}`} onClick={Latest}>최신</button>
