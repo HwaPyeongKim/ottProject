@@ -378,4 +378,20 @@ public class MemberService {
             }
         }
     }
+
+    public List<HashMap<String, Object>> getMostAddedTitles() {
+        List<Object[]> list = dlr.findMostAddedTitles();
+        List<HashMap<String, Object>> result = new ArrayList<>();
+
+        for (Object[] row : list) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("dbidx", row[0]);
+            map.put("posterpath", row[1]);
+            map.put("title", row[2]);
+            map.put("type", row[3]);  // ⬅ 추가 (movie / tv)
+            result.add(map);
+        }
+        return result;
+    }
+
 }

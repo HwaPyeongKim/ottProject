@@ -184,9 +184,13 @@
 }
 
 .intro-thumb {
-  width: 180px;
+  width: 95%;
+  height: 50%;
   border-radius: 8px;
   margin-bottom: 18px;
+
+  object-fit: cover;   /* 🔥 비율 유지 + 꽉 채우기 */
+  object-position: center;  /* 중앙 기준 크롭 */
 }
 
 /* 텍스트 */
@@ -214,6 +218,16 @@
 
 .intro-card {
   position: relative;
+  padding-bottom: 46px;
+}
+
+.intro-c-sub {
+  position: absolute;
+  bottom: 18px;      /* 카드 하단에서 18px */
+  right: 24px;       /* 카드 오른쪽에서 24px */
+  font-size: 15px;
+  color: #97b8d4;
+  opacity: 0.85;
 }
 
 /* 제목 */
@@ -267,20 +281,20 @@
 .hero-section {
   width: 100%;
   text-align: center;
-  padding: 150px 0 60px;
+  padding: 100px 0 50px;
   color: #fff;
   position: relative;
   z-index: 5;
 }
 
 .hero-title {
-  font-size: 55px;
+  font-size: 40px;
   font-weight: 800;
   margin-bottom: 22px;
 }
 
 .hero-desc {
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.6;
   color: #d2d2d2;
   margin-bottom: 38px;
@@ -294,4 +308,15 @@
 @media (max-width: 600px) {
   .hero-title { font-size: 32px; }
   .hero-desc { font-size: 16px; }
+}
+
+.intro-slider-wrap {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.intro-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

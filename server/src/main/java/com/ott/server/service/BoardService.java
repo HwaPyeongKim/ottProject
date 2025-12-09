@@ -163,4 +163,15 @@ public class BoardService {
     public boolean isReported(int bidx, int midx) {
         return rr.existsByBidxAndMidx(bidx, midx);
     }
+
+
+    public Board getTopBoard() {
+        Board board = br.findTopByStatusOrderByLikecountDesc(BoardStatus.NORMAL);
+
+        if (board != null && board.getBoardMember() != null) {
+            board.getBoardMember().getNickname(); // Lazy 초기화
+        }
+
+        return board;
+    }
 }
