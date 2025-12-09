@@ -12,15 +12,16 @@ public interface BCommentRepository extends JpaRepository<BComment, Integer> {
 
 //    List<BComment> findByBoard_BidxOrderByBcidxDesc(int bidx);
 
-    List<BComment> findByBoard_BidxAndDeleteynOrderByBcidxDesc(int bidx, String deleteyn);
+    @Query(" SELECT c FROM BComment c  JOIN FETCH c.member  WHERE c.board.bidx = :bidx   AND c.deleteyn = 'N' ORDER BY c.bcidx DESC ")
+    List<BComment> findAllActiveByBoardWithMember(@Param("bidx") int bidx);
 
     @Query("select c from BComment c join fetch c.member where c.board = :board order by c.bcidx desc")
     List<BComment> findAllByBoardWithMember(@Param("board") Board board);
 
-    @Query("SELECT COUNT(c) FROM BComment c WHERE c.board.bidx = :bidx")
+    @Query("SELECT COUNT(c) FROM BComment c WHERE c.board.bidx = :bidx AND c.deleteyn = 'N'")
     long countByBoardId(int bidx);
 
-//    List<BComment> findByPcidx(int bcidx);
+    //    List<BComment> findByPcidx(int bcidx);
     List<BComment> findByPcidxAndDeleteyn(int bcidx, String deleteyn);
 
     List<BComment> findByBoard(Board board);

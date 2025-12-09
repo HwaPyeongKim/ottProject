@@ -56,15 +56,22 @@ public class BoardService {
             count = br.count(); // 전체 글 개수
             paging.setTotalCount((int) count);
             paging.calPaging();
-            Page<Board> list = br.findAll(pageable);
+            Page<Board> list = br.findAllByStatusNot(BoardStatus.DELETED, pageable);
             result.put("boardList", list.getContent());
         } else {
-            count = br.countByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(
-                    searchWord, searchWord, searchWord);
+            count = br.countByTitleContainingAndStatusNotOrContentContainingAndStatusNotOrBoardMember_NicknameContainingAndStatusNot(
+                    searchWord, BoardStatus.DELETED,
+                    searchWord, BoardStatus.DELETED,
+                    searchWord, BoardStatus.DELETED
+            );
             paging.setTotalCount((int) count);
             paging.calPaging();
-            Page<Board> list = br.findAllByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(
-                    searchWord, searchWord, searchWord, pageable);
+            Page<Board> list = br.findAllByTitleContainingAndStatusNotOrContentContainingAndStatusNotOrBoardMember_NicknameContainingAndStatusNot(
+                    searchWord, BoardStatus.DELETED,
+                    searchWord, BoardStatus.DELETED,
+                    searchWord, BoardStatus.DELETED,
+                    pageable
+            );
             result.put("boardList", list.getContent());
         }
 
@@ -127,11 +134,15 @@ public class BoardService {
         if (board == null) {
             throw new RuntimeException("게시글 없음");
         }
+        board.setStatus(BoardStatus.DELETED);
+        br.save(board);
 
-        List<BComment> comments = bcr.findByBoard(board);  // board에 달린 모든 댓글 가져오기
-        bcr.deleteAll(comments);
-
-        br.delete(board);
+        // 게시글의 모든 댓글 Soft Delete
+        List<BComment> comments = bcr.findByBoard(board); // board에 달린 모든 댓글 가져오기
+        for (BComment c : comments) {
+            c.setDeleteyn("Y");
+        }
+        bcr.saveAll(comments);
     }
 
     public void reportBoard(int bidx, int midx) {
