@@ -226,23 +226,18 @@ function Main() {
             <h2 className="intro-subject">이용 방법</h2>
             <button className="subject-btn" onClick={()=>{setChatView( !chatView )}}>→&nbsp;&nbsp;챗봇 문의하기</button>
           </div>
-          <span className="intro-sub">모든 작품을 한곳에서</span>
-          <h2 className="intro-title">전체 스트리밍 가이드</h2>
+          <br />
+          <span className="intro-sub">모든 작품을 한곳에서 검색</span>
+          <h2 className="intro-title">스트리밍 플랫폼 가이드</h2>
           <p className="intro-desc">
-            좋아하는 모든 스트리밍 서비스에 대한 맞춤 추천을 받아보세요.
-            영화, TV 시리즈, 스포츠를 감상할 수 있는 곳을 알려드립니다.
-          </p><br />
-          <span className="intro-sub">한 번에 검색</span>
-          <h2 className="intro-title">모든 플랫폼을 한 번에 검색</h2>
+            좋아하는 모든 콘텐츠에 대한 맞춤 검색을 해보세요.<br />
+            영화, TV 시리즈를 감상할 수 있는 곳을 알려드립니다.
+          </p><br /><br />
+          <span className="intro-sub">하나의 리스트로 정리</span>
+          <h2 className="intro-title">리스트 저장 및 공유</h2>
           <p className="intro-desc">
-            영화 또는 TV 시리즈를 확인하기 위해 여러 스트리밍 서비스를
-            이용할 필요가 없습니다. 한 번의 검색으로 모두 찾으세요.
-          </p><br />
-          <span className="intro-sub">하나의 리스트</span>
-          <h2 className="intro-title">모든 리스트 통합</h2>
-          <p className="intro-desc">
-            시청하려는 모든 영화와 TV 시리즈를 하나의 리스트로 만들어
-            다양한 기기에서 모든 스트리밍 서비스를 이용할 수 있습니다.
+            시청하려는 모든 콘텐츠를 하나의 리스트로 만들어보세요.<br />
+            공유하거나 비공개로 이용할 수 있습니다.
           </p><br />
         </div>
 
@@ -264,7 +259,7 @@ function Main() {
               <h2 className="intro-title">{topBoard.title}</h2>
 
               <p className="intro-desc">
-                {(topBoard.content || "").replace(/<[^>]+>/g, "").slice(0, 55)}...
+                {(topBoard.content || "").replace(/<[^>]+>/g, "").slice(0, 55)}
               </p>
 
               <span className="intro-c-sub">By. {topBoard.boardMember.nickname || ""}</span>
@@ -297,7 +292,7 @@ function Main() {
               <div key={item.id} className="intro-slide">
                 <Link to={`/${item.type}/detail/${item.id}`}>
                   <img
-                    className="intro-thumb"
+                    className="intro-Lthumb"
                     src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
                     alt=""
                   />
