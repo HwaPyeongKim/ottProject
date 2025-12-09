@@ -390,7 +390,27 @@ public class MemberService {
         }
     }
 
-    public void moveList(List list) {
-        ler.fin
+    public void moveList(ListEntity listentity, int loginMidx) {
+        ListEntity originalList = ler.findByMidxAndListidx(listentity.getMidx(), listentity.getListidx());
+//        if( originalLe == null ){
+//            throw new NoSuchElementException("원본 리스트를 찾을 수 없습니다.");
+//        }
+        ListEntity newList = new ListEntity();
+        newList.setTitle(listentity.getTitle());
+        newList.setSecurity(listentity.getSecurity());
+        newList.setMidx(loginMidx);
+        newList.setListidx(0);
+        ListEntity savedList = ler.save(newList);
+
+        List<DbList> originalDbList = dlr.findAllByListidx(originalList.getListidx(), Sort.by(Sort.Direction.DESC, "id"));
+
+        for (DbList db : originalDbList) {
+            DbList newDb = new DbList();
+            newDb.setDbidx(db.getDbidx());
+            newDb.setListidx(savedList.getListidx());
+            newDb.setPosterpath(db.getPosterpath());
+            newDb.setTitle(db.getTitle());
+            dlr.save(newDb);
+        }
     }
 }

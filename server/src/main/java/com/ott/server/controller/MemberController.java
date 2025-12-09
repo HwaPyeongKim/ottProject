@@ -446,7 +446,6 @@ public class MemberController {
         return result;
     }
 
-
     @GetMapping("/getReviewList")
     public HashMap<String, Object> getReviewList(
             @RequestParam(required = false, value = "page", defaultValue = "") int page,
@@ -476,9 +475,16 @@ public class MemberController {
     }
 
     @PostMapping("/moveList")
-    public HashMap<String, Object> moveList(@RequestBody List list) {
+    public HashMap<String, Object> moveList(HttpServletRequest request, @RequestBody ListEntity listentity) {
         HashMap<String, Object> result = new HashMap<>();
-        ms.moveList(list);
+        System.out.println("리스트 엔티티 타이틀 : " + listentity.getTitle());
+        System.out.println("리스트 엔티티 시큐리티 : " + listentity.getSecurity());
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.replace("Bearer ", "");
+        Map<String, Object> claims = JWTUtil.validateToken(token);
+        int loginMidx = (int) claims.get("midx");
+        System.out.println("로그인 유저 midx = " + loginMidx);
+        ms.moveList(listentity, loginMidx);
         result.put("msg", "ok");
         return result;
     }
