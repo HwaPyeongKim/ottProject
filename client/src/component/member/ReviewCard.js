@@ -126,7 +126,11 @@ function ReviewCard({ review, getReviews, refreshAverage }) {
     <>
       <div className="rc-review-card">
         <div className="rc-review-header">
-          <img src={`https://image.tmdb.org/t/p/w342/${review.posterpath}`} className="rc-poster-img" alt="poster"/>
+          <img
+            src={`https://image.tmdb.org/t/p/w342/${review.posterpath}`}
+            className="rc-poster-img"
+            alt="poster"
+          />
 
           <div className="rc-review-info">
             <div className="rc-review-title">{review.title}</div>
@@ -134,7 +138,7 @@ function ReviewCard({ review, getReviews, refreshAverage }) {
           </div>
 
           <div className="rc-review-rating-top">
-            <FontAwesomeIcon icon={solidStar} className="rc-star-icon"/>
+            <FontAwesomeIcon icon={solidStar} className="rc-star-icon" />
             <div>{review.score}</div>
           </div>
         </div>
@@ -142,42 +146,45 @@ function ReviewCard({ review, getReviews, refreshAverage }) {
         <div className="rc-review-content-wrap">
           <div className="rc-review-content">{review.content}</div>
 
-          <div className="rc-menu-wrap">
-              <button
-              className="menuButton"
-              onClick={() =>
+          {review.member.midx === loginUser.midx && (
+            <div className="rc-menu-wrap">
+              <button className="menuButton"
+                onClick={() =>
                   setOpenMenuId(openMenuId === review.ridx ? null : review.ridx)
-              }
+                }
               >
-              <FontAwesomeIcon icon={faEllipsis} />
+                <FontAwesomeIcon icon={faEllipsis} />
               </button>
 
               <ul className={openMenuId === review.ridx ? "on" : ""}>
-              {review.member.midx === loginUser.midx && (
-                  <>
-                  <li>
-                      <button onClick={() => {
+                <li>
+                  <button
+                    onClick={() => {
                       setIsModalOpen(true);
                       setReviewObj(review);
                       setEditScore(review.score);
                       setEditContent(review.content);
                       setOpenMenuId(null);
-                      }}>
-                      수정하기
-                      </button>
-                  </li>
-                  <li>
-                    <button onClick={() => deleteReview(review.ridx)}>
+                    }}
+                  >
+                    수정하기
+                  </button>
+                </li>
+
+                <li>
+                  <button onClick={() => deleteReview(review.ridx)}>
                     삭제하기
-                    </button>
-                  </li>
-                  </>
-              )}
-              <li>
-                  <button onClick={() => setOpenMenuId(null)}>닫기</button>
-              </li>
+                  </button>
+                </li>
+
+                <li>
+                  <button onClick={() => setOpenMenuId(null)}>
+                    닫기
+                  </button>
+                </li>
               </ul>
-          </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -207,6 +214,7 @@ function ReviewCard({ review, getReviews, refreshAverage }) {
       )}
     </>
   );
+
 }
 
 export default ReviewCard;

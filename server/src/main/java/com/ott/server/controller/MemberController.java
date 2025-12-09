@@ -405,12 +405,12 @@ public class MemberController {
             if( member == null ){
                 result.put("msg", "no");
             }else{
-                String rawPassword = pwd;              // 비교하고 싶은 원본 문자열
-                String encodedPassword = member.getPwd();    // DB에 저장된 BCrypt 해시
-                boolean isMatch = pe.matches(rawPassword, encodedPassword);
-                if(isMatch){
-                    result.put("edit", "no");
-                }
+//                String rawPassword = pwd;              // 비교하고 싶은 원본 문자열
+//                String encodedPassword = member.getPwd();    // DB에 저장된 BCrypt 해시
+//                boolean isMatch = pe.matches(rawPassword, encodedPassword);
+//                if(isMatch){
+//                    result.put("edit", "no");
+//                }
                 result.put("KakaoUser", member);
                 result.put("msg", "ok");
             }
@@ -434,10 +434,10 @@ public class MemberController {
         if( member == null ){
             result.put("msg", "no");
         }else{
-            String rawPassword = "KAKAO";              // 비교하고 싶은 원본 문자열
-            String encodedPassword = member.getPwd();    // DB에 저장된 BCrypt 해시
-            boolean isMatch = pe.matches(rawPassword, encodedPassword);
-            if(isMatch){
+//            String rawPassword = "KAKAO";              // 비교하고 싶은 원본 문자열
+//            String encodedPassword = member.getPwd();    // DB에 저장된 BCrypt 해시
+//            boolean isMatch = pe.matches(rawPassword, encodedPassword);
+            if(member.getEmail() == null || member.getEmail().equals("")){
                 result.put("edit", "no");
             }
             result.put("msg", "ok");

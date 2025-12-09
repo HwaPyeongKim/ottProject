@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { loginAction } from '../../store/userSlice';
+import { loginAction, logoutAction } from '../../store/userSlice';
 import axios from 'axios'
 import { Cookies } from 'react-cookie';
 import '../../style/join.css'
@@ -110,22 +110,12 @@ function EditKakao() {
             if(result.data.msg === 'no' ){ return alert('닉네임이 중복됩니다'); }
             // 회원가입
             const phone = `${phone1}-${phone2}-${phone3}`
-            result = await axios.post('/api/member/editKakao', {email, name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg, snsid:loginUser.snsid});
+            result = await axios.post('/api/member/editKakao', {email, pwd:'KAKAO', name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg, snsid:loginUser.snsid});
             if(result.data.msg === 'ok'){
-                let res = await axios.get('/api/member/getSnsUser', {params:{snsid: loginUser.snsid}})
-
-                let LUser = res.data.snsUser
-                if (!LUser) {
-                    console.error("snsUser 조회 실패:", res.data)
-                    alert("로그인 정보 확인 중 오류가 발생했습니다.");
-                    return;
-                }else{
-                    cookies.set('user', JSON.stringify( LUser ) , {path:'/', } )
-                    dispatch( loginAction( LUser ) )
-
-                    alert('회원 가입이 완료되었습니다.');
-                    navigate('/');
-                }
+                dispatch( logoutAction() );
+                cookies.remove('user', {path:'/',} )
+                alert('회원 가입이 완료되었습니다. 다시 로그인하세요');
+                navigate('/');
             }
         }catch(err){
             console.error(err)
