@@ -164,3 +164,11 @@
     border-radius: 6px;
     color: white;
 }
+
+.empty-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 0;
+  font-size: 18px;
+  color: white;
+}

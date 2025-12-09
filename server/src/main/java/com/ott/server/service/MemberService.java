@@ -344,6 +344,17 @@ public class MemberService {
         Optional<Member> mem = mr.findByMidx(member.getMidx());
         if (mem.isPresent()) {
             Member deleteMem = mem.get();
+            deleteMem.setEmail(null);
+            deleteMem.setPwd(null);
+            deleteMem.setPhone(null);
+            deleteMem.setName(null);
+            deleteMem.setNickname(null);
+            deleteMem.setZipnum(null);
+            deleteMem.setAddress1(null);
+            deleteMem.setAddress2(null);
+            deleteMem.setProfileimg(null);
+            deleteMem.setProfilemsg(null);
+            deleteMem.setSnsid(null);
             deleteMem.setDeleteyn("Y");
             mr.save(deleteMem);
         }
@@ -379,19 +390,27 @@ public class MemberService {
         }
     }
 
-    public List<HashMap<String, Object>> getMostAddedTitles() {
-        List<Object[]> list = dlr.findMostAddedTitles();
-        List<HashMap<String, Object>> result = new ArrayList<>();
+    public void moveList(ListEntity listentity, int loginMidx) {
+        ListEntity originalList = ler.findByMidxAndListidx(listentity.getMidx(), listentity.getListidx());
+//        if( originalLe == null ){
+//            throw new NoSuchElementException("원본 리스트를 찾을 수 없습니다.");
+//        }
+        ListEntity newList = new ListEntity();
+        newList.setTitle(listentity.getTitle());
+        newList.setSecurity(listentity.getSecurity());
+        newList.setMidx(loginMidx);
+        newList.setListidx(0);
+        ListEntity savedList = ler.save(newList);
 
-        for (Object[] row : list) {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("dbidx", row[0]);
-            map.put("posterpath", row[1]);
-            map.put("title", row[2]);
-            map.put("type", row[3]);  // ⬅ 추가 (movie / tv)
-            result.add(map);
+        List<DbList> originalDbList = dlr.findAllByListidx(originalList.getListidx(), Sort.by(Sort.Direction.DESC, "id"));
+
+        for (DbList db : originalDbList) {
+            DbList newDb = new DbList();
+            newDb.setDbidx(db.getDbidx());
+            newDb.setListidx(savedList.getListidx());
+            newDb.setPosterpath(db.getPosterpath());
+            newDb.setTitle(db.getTitle());
+            dlr.save(newDb);
         }
-        return result;
     }
-
 }
