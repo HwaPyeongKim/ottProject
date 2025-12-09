@@ -113,6 +113,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
         if(path.startsWith("/public/main.png")){return true;}
 
+        if(path.startsWith("/board/getTopBoard")){return true;}
+        if(path.startsWith("/member/getMostAddedTitles")){return true;}
+
         return false;
     }
 }

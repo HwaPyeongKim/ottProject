@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import jaxios from "../../util/JWTUtil";
@@ -9,16 +9,9 @@ import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faStar as solidStar,
-  faStarHalfAlt,
-  faEllipsis,
-} from "@fortawesome/free-solid-svg-icons";
+import { faStar as solidStar, faStarHalfAlt, faEllipsis, } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 
-/* =============================
-   ⭐ 별점 컴포넌트
-============================= */
 function StarRating({ score, setScore }) {
   const [hover, setHover] = useState(0);
 const loginUser = useSelector( state=>state.user );
@@ -77,9 +70,6 @@ const loginUser = useSelector( state=>state.user );
   );
 }
 
-/* =============================
-   ✅ ReviewCard 컴포넌트
-============================= */
 function ReviewCard({ review, getReviews, refreshAverage }) {
   const loginUser = useSelector((state) => state.user);
 
@@ -95,9 +85,6 @@ function ReviewCard({ review, getReviews, refreshAverage }) {
   const [editScore, setEditScore] = useState(0);
   const [editContent, setEditContent] = useState("");
 
-  /* =============================
-     ✅ 리뷰 삭제
-  ============================= */
   function deleteReview(ridx) {
     if (!window.confirm("해당 댓글을 삭제하시겠습니까?")) return;
 
@@ -114,9 +101,6 @@ function ReviewCard({ review, getReviews, refreshAverage }) {
     setOpenMenuId(null);
   }
 
-  /* =============================
-     ✅ 리뷰 수정
-  ============================= */
   function editReview(ridx) {
     if (!editScore) return alert("별점을 선택해주세요.");
 
@@ -149,48 +133,54 @@ function ReviewCard({ review, getReviews, refreshAverage }) {
             <div className="rc-review-date">{timeAgo}</div>
           </div>
 
-          {/* 별점 */}
           <div className="rc-review-rating-top">
             <FontAwesomeIcon icon={solidStar} className="rc-star-icon"/>
-            <span>{review.score}</span>
+            <div>{review.score}</div>
           </div>
         </div>
 
-        {/* 내용 */}
-        <div className="rc-review-content">{review.content}</div>
+        <div className="rc-review-content-wrap">
+          <div className="rc-review-content">{review.content}</div>
 
-        {/* 메뉴 */}
-        <div>
-          <button className="menuButton" onClick={() => setOpenMenuId(review.ridx)}>
-            <FontAwesomeIcon icon={faEllipsis} />
-          </button>
+          <div className="rc-menu-wrap">
+              <button
+              className="menuButton"
+              onClick={() =>
+                  setOpenMenuId(openMenuId === review.ridx ? null : review.ridx)
+              }
+              >
+              <FontAwesomeIcon icon={faEllipsis} />
+              </button>
 
-          <ul className={openMenuId === review.ridx ? "on" : ""}>
-            {review.member.midx === loginUser.midx && (
-              <>
-                <li>
-                  <button onClick={() => { setIsModalOpen(true); setReviewObj(review); setEditScore(review.score);
-                      setEditContent(review.content);}}>
-                    수정하기
-                  </button>
-                </li>
-                <li>
-                  <button onClick={() => deleteReview(review.ridx)}>
+              <ul className={openMenuId === review.ridx ? "on" : ""}>
+              {review.member.midx === loginUser.midx && (
+                  <>
+                  <li>
+                      <button onClick={() => {
+                      setIsModalOpen(true);
+                      setReviewObj(review);
+                      setEditScore(review.score);
+                      setEditContent(review.content);
+                      setOpenMenuId(null);
+                      }}>
+                      수정하기
+                      </button>
+                  </li>
+                  <li>
+                    <button onClick={() => deleteReview(review.ridx)}>
                     삭제하기
-                  </button>
-                </li>
-              </>
-            )}
-            <li>
-              <button onClick={() => setOpenMenuId(null)}>닫기</button>
-            </li>
-          </ul>
+                    </button>
+                  </li>
+                  </>
+              )}
+              <li>
+                  <button onClick={() => setOpenMenuId(null)}>닫기</button>
+              </li>
+              </ul>
+          </div>
         </div>
       </div>
 
-      {/* =============================
-          ✅ 수정 모달
-      ============================= */}
       {isModalOpen && reviewObj && (
         <div className="modalOverlay" onClick={() => setIsModalOpen(false)}>
           <div className="modalContent modalReview" onClick={(e) => e.stopPropagation()}>

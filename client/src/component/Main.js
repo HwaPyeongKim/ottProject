@@ -22,6 +22,15 @@ function Main() {
   const [movieUpcoming, setMovieUpcoming] = useState([]);
   const [tvUpcoming, setTvUpcoming] = useState([]);
 
+  const [topBoard, setTopBoard] = useState(null);
+  const [topBoardImg, setTopBoardImg] = useState(null);
+
+  const [mostSavedTitles, setMostSavedTitles] = useState([]);
+  const navigate = useNavigate();
+
+  const [chatView, setChatView] = useState(false)
+  const [chatStyle, setChatStyle] = useState({display:'none'})
+
   const settings = {
     dots: false,
     infinite: false,
@@ -32,7 +41,7 @@ function Main() {
   };
 
   async function attachProviders(items, type) {
-    return Promise.all(
+    return Promise.all( 
       items.map(async (item) => {
         const provider = await axios.get(
           `${baseUrl}/${type}/${item.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`
@@ -41,6 +50,23 @@ function Main() {
           ...item,
           providers: provider.data.results["KR"]?.flatrate || [],
         };
+      })
+    );
+  }
+
+  async function attachTopProvider(items) {
+    return Promise.all(
+      items.map(async (item) => {
+        try {
+          const provider = await axios.get(
+            `${baseUrl}/${item.type}/${item.id}/watch/providers?api_key=${process.env.REACT_APP_KEY}`
+          );
+          const flatrate = provider.data?.results?.KR?.flatrate || [];
+          return { ...item, providers: flatrate };
+        } catch (err) {
+          console.warn("provider fetch failed:", item.type, item.id);
+          return { ...item, providers: [] };
+        }
       })
     );
   }
@@ -87,6 +113,65 @@ function Main() {
   }
 
   useEffect(() => {
+    axios.get("/api/member/getMostAddedTitles")
+      .then(async (res) => {
+        const datas = res.data.titles?.slice(0, 5) || [];
+
+        // 🔥 fetched data mapping
+        const mapped = datas.map(item => ({
+          id: item.dbidx,
+          poster_path: item.posterpath,
+          title: item.title,
+          type: item.type   // movie | tv
+        }));
+
+        // 🔥 type에 맞게 providers 조회하기
+        const final = await Promise.all(
+          mapped.map(async (item) => {
+            const provider = await attachProviders([{ id: item.id }], item.type);
+            return {
+              ...item,
+              providers: provider[0]?.providers || []
+            };
+          })
+        );
+
+        setMostSavedTitles(final);
+      })
+      .catch(err => console.error(err));
+  }, []);
+
+
+  useEffect(() => {
+    axios.get("/api/board/getTopBoard")
+      .then(async res => {
+        setTopBoard(res.data.board);
+
+        // 이미지 가져오기
+        if (res.data.board?.fidx) {
+          try {
+            const imgRes = await axios.get(`/api/file/url/${res.data.board.fidx}`);
+            setTopBoardImg(imgRes.data.image);
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      })
+      .catch(err => console.error(err));
+  }, []);
+
+  useEffect(() => {
+          if (chatView) {
+              setChatStyle({display: 'flex', flexDirection: 'column'});
+          } else {
+              setChatStyle({display:'none'});
+          }
+      }, [chatView]);
+
+
+  useEffect(() => {
+
+
     fetchList(
       `${baseUrl}/movie/popular?language=ko-KR&region=KR&page=1&api_key=${process.env.REACT_APP_KEY}`,
       setTopMovie,
@@ -139,53 +224,91 @@ function Main() {
         <div className="intro-card">
           <div className="intro-subject-wrap">
             <h2 className="intro-subject">이용 방법</h2>
-            <button className="subject-btn">→&nbsp;&nbsp;챗봇 문의하기</button>
+            <button className="subject-btn" onClick={()=>{setChatView( !chatView )}}>→&nbsp;&nbsp;챗봇 문의하기</button>
           </div>
           <span className="intro-sub">모든 작품을 한곳에서</span>
           <h2 className="intro-title">전체 스트리밍 가이드</h2>
           <p className="intro-desc">
             좋아하는 모든 스트리밍 서비스에 대한 맞춤 추천을 받아보세요.
             영화, TV 시리즈, 스포츠를 감상할 수 있는 곳을 알려드립니다.
-          </p><br /><br />
+          </p><br />
           <span className="intro-sub">한 번에 검색</span>
           <h2 className="intro-title">모든 플랫폼을 한 번에 검색</h2>
           <p className="intro-desc">
             영화 또는 TV 시리즈를 확인하기 위해 여러 스트리밍 서비스를
             이용할 필요가 없습니다. 한 번의 검색으로 모두 찾으세요.
-          </p><br /><br />
+          </p><br />
           <span className="intro-sub">하나의 리스트</span>
           <h2 className="intro-title">모든 리스트 통합</h2>
           <p className="intro-desc">
             시청하려는 모든 영화와 TV 시리즈를 하나의 리스트로 만들어
             다양한 기기에서 모든 스트리밍 서비스를 이용할 수 있습니다.
-          </p><br /><br />
+          </p><br />
         </div>
 
         <div className="intro-card">
           <div className="intro-subject-wrap">
             <h2 className="intro-subject">인기 커뮤니티</h2>
-            <button className="subject-btn">→&nbsp;&nbsp;더보기</button>
+            <button className="subject-btn" onClick={()=>{navigate("/community")}}>→&nbsp;&nbsp;더보기</button>
           </div>
-          <img className="intro-thumb" src="/images/severance.png" alt="" />
-          <span className="intro-sub">커뮤니티</span>
-          <h2 className="intro-title">커뮤니티</h2>
-          <p className="intro-desc">
-            커뮤니티
-          </p>
+
+          {topBoard ? (
+            <>
+              {topBoardImg && (
+                <img className="intro-thumb"
+                    src={topBoardImg}
+                    alt="community thumbnail"
+                    style={{ borderRadius: "18px", marginBottom: "12px" }} />
+              )}
+
+              <h2 className="intro-title">{topBoard.title}</h2>
+
+              <p className="intro-desc">
+                {(topBoard.content || "").replace(/<[^>]+>/g, "").slice(0, 55)}...
+              </p>
+
+              <span className="intro-c-sub">By. {topBoard.boardMember.nickname || ""}</span>
+            </>
+          ) : (
+            <p className="intro-desc">로딩 중...</p>
+          )}
         </div>
 
-        <div className="intro-card">
-          <div className="intro-subject-wrap">
-            <h2 className="intro-subject">인기 리스트</h2>
-            <button className="subject-btn">→&nbsp;&nbsp;리스트에 담기</button>
-          </div>
-          <img className="intro-thumb" src="/images/lotr.png" alt="" />
-          <span className="intro-sub">인기 리스트</span>
-          <h2 className="intro-title">인기 리스트</h2>
-          <p className="intro-desc">
-            인기 리스트
-          </p>
+
+
+       <div className="intro-card">
+        <div className="intro-subject-wrap">
+          <h2 className="intro-subject">인기 리스트</h2>
+          <button className="subject-btn"></button>
         </div>
+
+        <div className="intro-slider-wrap">
+          <Slider
+            dots={true}
+            infinite={true}
+            speed={500}
+            slidesToShow={1}
+            slidesToScroll={1}
+            arrows={false}
+            autoplay={true}
+            autoplaySpeed={3400}
+          >
+            {mostSavedTitles.map((item) => (
+              <div key={item.id} className="intro-slide">
+                <Link to={`/${item.type}/detail/${item.id}`}>
+                  <img
+                    className="intro-thumb"
+                    src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+                    alt=""
+                  />
+                </Link>
+                <h2 className="intro-title">{item.title}</h2>
+              </div>
+            ))}
+
+          </Slider>
+        </div>
+      </div>
       </section>
 
       <div className="top10-textrow">

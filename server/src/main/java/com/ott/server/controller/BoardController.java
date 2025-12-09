@@ -154,4 +154,13 @@ public class BoardController {
         return result;
     }
 
+    @GetMapping("/getTopBoard")
+    public HashMap<String, Object> getTopBoard() {
+        HashMap<String, Object> result = new HashMap<>();
+        Board board = bs.getTopBoard();
+        result.put("board", board);
+        return result;
+    }
+
+
 }

@@ -50,4 +50,6 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     int countByKeyAndStatus(@Param("key") String key);
 
     List<Board> findByBoardMember_Midx(int midx);
+
+    Board findTopByStatusOrderByLikecountDesc(BoardStatus status);
 }

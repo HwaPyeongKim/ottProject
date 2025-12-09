@@ -310,10 +310,14 @@ function Mypage({onClose}) {
                     
                   </div>
 
-                  <div className="btn-group">
+                  <div className="btn-group btn-group2">
+                    <div>
                     <span className="underline" onClick={()=>{ setIsDeleteModalOpen(true); }}>영구 회원 탈퇴</span>
+                    </div>
+                    <div>
                     <button className="btn-highlight" onClick={() => { updateUser(); }}>저장</button>
                     <button className="btn btn-secondary" onClick={() => setView("menu")}>뒤로</button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -362,7 +366,7 @@ function Mypage({onClose}) {
                   <div className="mpe-modalContent" onClick={(e) => e.stopPropagation()}>
                       <h3>회원정보 관리 비밀번호 확인</h3>
                       <div className="mpfield">
-                        <input type="text" placeholder="비밀번호를 입력해주세요" onChange={(e)=>{setCurrentPwd(e.currentTarget.value)}} />
+                        <input type="password" placeholder="비밀번호를 입력해주세요" onChange={(e)=>{setCurrentPwd(e.currentTarget.value)}} />
                       </div>
                       <h3 style={{color:'coral'}}>{message}</h3>
                       <div className="btn-group">

@@ -34,6 +34,9 @@ function UserList() {
     const [listTitle, setListTitle] = useState("");
     const [security, setSecurity] = useState("N");
 
+    const [selectedLists, setSelectedLists] = useState([]);
+    const [selected, setSelected] = useState({});
+
     useEffect(
         ()=>{
             if(!loginUser?.midx){
@@ -101,14 +104,14 @@ function UserList() {
                 }
                 
                 {
-                    loginUser.midx === targetMidx&&(
+                    (loginUser.midx === targetMidx)&&(
                     <>
                         <button className={listTab === 'tab2' ? "active" : ""} 
                         onClick={()=>{setListTab('tab2')}}>나의 비밀 리스트</button>
                         <button style={{color:'#f5c518'}}
                         onClick={()=>{setIsAddListModal(true)}}>리스트 추가</button>
-                    </>
-                )}
+                    </>)
+                }
             </div>
 
             <div className="mylist-grid">
@@ -123,10 +126,8 @@ function UserList() {
                         ))
                     ) : (
                         <div className="mylist-info" 
-                        style={
-                            {display:'flex', alignItems:'center', justifyContent:'center',
-                            width:'100%', height:'100%',
-                            fontSize:'40px', fontWeight:'bold', color:'coral'}
+                        style={{display:'flex', alignItems:'center', justifyContent:'center',width:'100%', height:'100%',
+                            fontSize:'24px', fontWeight:'bold', color:'white'}
                         }>생성된 리스트가 없습니다</div>
                     )
                 }

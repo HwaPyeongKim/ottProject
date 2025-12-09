@@ -473,4 +473,13 @@ public class MemberController {
         result.put("msg", "ok");
         return result;
     }
+
+    @GetMapping("/getMostAddedTitles")
+    public HashMap<String, Object> getMostAddedTitles() {
+        List<HashMap<String, Object>> list = ms.getMostAddedTitles();
+        System.out.println("🔥 getMostAddedTitles returned: " + list); // 여기에 로그 추가
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("titles", list);
+        return result;
+    }
 }

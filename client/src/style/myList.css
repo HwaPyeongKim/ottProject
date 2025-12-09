@@ -3,18 +3,21 @@
 }
 
 .mylist-grid {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   margin-top: 30px;
 }
 
 .mylist-card {
-  width: 320px;
+  width: 100%;
+  height: 100px;
   background-color: #1a1a1d;
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
   transition: transform .2s;
+  margin: 0 auto;
 }
 
 .mylist-card:hover {
@@ -30,6 +33,9 @@
 
 .mylist-info {
   padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mylisttabs {
