@@ -163,7 +163,7 @@
 
 .intro-card {
   width: 400px;
-  height: 500px;
+  height: 400px;
   background: #0f1b25;
   border-radius: 22px;
   padding: 38px 30px;
@@ -191,6 +191,18 @@
 
   object-fit: cover;   /* 🔥 비율 유지 + 꽉 채우기 */
   object-position: center;  /* 중앙 기준 크롭 */
+}
+
+.intro-Lthumb {
+  width: 250px;
+  height: 340px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+
+  object-fit: cover;   /* 🔥 비율 유지 + 꽉 채우기 */
+  object-position: center;  /* 중앙 기준 크롭 */
+  display: block;
+  margin: 0 auto 18px;
 }
 
 /* 텍스트 */
