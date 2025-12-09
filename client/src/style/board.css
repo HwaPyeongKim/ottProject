@@ -276,9 +276,9 @@
 /* 게시글 더보기 */
 .review-text.clamp {
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* 최대 4줄 */
+  -webkit-line-clamp: 6; /* 최대 4줄 */
   -webkit-box-orient: vertical;
-  line-clamp: 3; 
+  line-clamp: 6; 
   overflow: hidden;
 }
 

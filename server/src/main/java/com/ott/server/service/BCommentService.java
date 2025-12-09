@@ -30,19 +30,18 @@ public class BCommentService {
 
     public List<BCommentResponseDTO> getCommentList(int bidx) {
         Board boardEntity = br.findById(bidx).orElseThrow(() -> new RuntimeException("게시글 없음"));;
-        List<BComment> list = cr.findAllByBoardWithMember(boardEntity);
+//        List<BComment> list = cr.findAllByBoardWithMember(boardEntity);
+        List<BComment> list = cr.findAllActiveByBoardWithMember(bidx);
 //        System.out.println("댓글 조회된 개수 = " + list.size());
 
-        // --------------------------------------------------------
-        // 🟢 N+1 해결을 위한 Bulk 데이터 통합 로직
-        // --------------------------------------------------------
+        // N+1 해결을 위한 Bulk 데이터 통합 로직
 
         // 1. 모든 작성자의 프로필 이미지 ID 수집
-        // 🚨 Integer 대신 String으로 타입 변경 (Member Entity의 profileimg 타입에 맞춤)
+        // Integer 대신 String으로 타입 변경 (Member Entity의 profileimg 타입에 맞춤)
         List<String> profileFidxList = new ArrayList<>();
 
         for (BComment c : list) {
-            // 🚨 profileFidx 타입을 String으로 변경하여 오류 해결
+            // profileFidx 타입을 String으로 변경하여 오류 해결
             String profileFidx = c.getMember().getProfileimg();
 
             if (profileFidx != null && !profileFidx.isEmpty()) { // String이므로 null 체크 후, 비어있는지 추가 확인
@@ -51,7 +50,7 @@ public class BCommentService {
         }
 
         // 2. S3 URL Bulk 조회
-        // 🚨 sus.getFileUrls 메서드도 String List를 받도록 수정이 필요합니다.
+        // sus.getFileUrls 메서드도 String List를 받도록 수정이 필요합니다.
         Map<String, String> urlMap = sus.getFileUrls(profileFidxList);
 
         // 3. Entity -> DTO 매핑 및 URL 주입
@@ -103,13 +102,20 @@ public class BCommentService {
 
     public void deleteReply(int bcidx) {
         BComment comment = cr.findById(bcidx).orElseThrow(() -> new RuntimeException("댓글 없음"));
+
+        // 해당 댓글 삭제
+        comment.setDeleteyn("Y");
+        cr.save(comment);
+
         // 댓글 삭제시 대댓글 제거
-        if(comment.getPcidx() == null) {
-            List<BComment> replies = cr.findByPcidx(comment.getBcidx());
-            if(!replies.isEmpty()) {
-                cr.deleteAll(replies);
+        if (comment.getPcidx() == null) {
+            List<BComment> replies = cr.findByPcidxAndDeleteyn(comment.getBcidx(), "N");
+            for (BComment reply : replies) {
+                reply.setDeleteyn("Y");
             }
+            cr.saveAll(replies);
         }
-        cr.delete(comment);
     }
+
+
 }
