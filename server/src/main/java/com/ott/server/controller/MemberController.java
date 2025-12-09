@@ -170,7 +170,7 @@ public class MemberController {
             member.setProvider( "KAKAO" );
             ms.insertMember(member);
         }
-        response.sendRedirect("http://localhost:3000/kakaoIdLogin/"+member.getSnsid());
+        response.sendRedirect("http://3.34.168.161:3000/kakaoIdLogin/"+member.getSnsid());
     }
 
     @GetMapping("/refresh/{refreshToken}")

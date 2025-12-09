@@ -1,7 +1,6 @@
 services:
   my-db:
     image: mysql:8.4.2
-    container_name: my-db
     environment:
       MYSQL_ROOT_PASSWORD: adminuser
       MYSQL_DATABASE: ottdb
@@ -13,21 +12,54 @@ services:
       test: ["CMD", "mysqladmin", "ping"]
       interval: 5s
       retries: 10
-    
+
+  my-postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 10
 
   my-client:
-    image: 623378151486.dkr.ecr.ap-northeast-2.amazonaws.com/ottproject-client
-    container_name: my-client
+    image: 419492204710.dkr.ecr.ap-northeast-2.amazonaws.com/ottproject_client
     ports:
       - 80:80
     depends_on:
       - my-server
-    
+
   my-server:
-    image: 623378151486.dkr.ecr.ap-northeast-2.amazonaws.com/ottproject-server
+    image: 419492204710.dkr.ecr.ap-northeast-2.amazonaws.com/ottproject_server
     container_name: my-server
     ports:
       - 8070:8070
+    environment:
+      SPRING_DATASOURCE_MYSQL_JDBC_URL: jdbc:mysql://my-db:3306/ottdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      SPRING_DATASOURCE_MYSQL_USERNAME: root
+      SPRING_DATASOURCE_MYSQL_PASSWORD: adminuser
+      SPRING_DATASOURCE_POSTGRES_JDBC_URL: jdbc:postgresql://my-postgres:5432/postgres
+      SPRING_DATASOURCE_POSTGRES_USERNAME: postgres
+      SPRING_DATASOURCE_POSTGRES_PASSWORD: postgres
+      SPRING_AI_OPENAI_API_KEY: ${OPENAI_API_KEY}
     depends_on:
       my-db:
         condition: service_healthy
+      my-postgres:
+        condition: service_healthy
+
+  my-admin:
+    image: 419492204710.dkr.ecr.ap-northeast-2.amazonaws.com/ottproject-admin
+    container_name: my-admin
+    ports:
+      - 3001:80
+    depends_on:
+      - my-server
+    environment:
+      REACT_APP_SERVER_URL: http://3.34.168.161:8070

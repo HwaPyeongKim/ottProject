@@ -50,7 +50,7 @@ function Mypage({onClose}) {
             if( loginUser.profileimg ){
                 setImgSrc(loginUser.profileimg)
             }else{
-                setImgSrc('http://localhost:8070/public/user.png')
+                setImgSrc('http://3.34.168.161:8070/public/user.png')
             }
             setProfileimg(loginUser.profileimg);
             if( loginUser.provider == 'KAKAO'){
