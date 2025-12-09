@@ -68,7 +68,7 @@ function Login() {
           <div className="sns-btns">
             <button
               className="btn-sns kakao"
-              onClick={() => (window.location.href = 'http://localhost:8070/member/kakaostart')}
+              onClick={() => (window.location.href = `http://${process.env.REACT_APP_SERVER_URL}/member/kakaostart`)}
             >
               KAKAO
             </button>

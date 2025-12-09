@@ -24,7 +24,7 @@ function SubMenu() {
             <Link className="admin-menu-item" to="/spoilerList">SPOILER</Link>
             <button
             className="admin-menu-btn"
-            onClick={() => window.location.href = "http://localhost:3000"}
+            onClick={() => window.location.href = `${process.env.REACT_APP_BASE_URL}`}
             >
             BACK
             </button>

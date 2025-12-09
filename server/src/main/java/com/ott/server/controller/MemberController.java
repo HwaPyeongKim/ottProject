@@ -94,6 +94,8 @@ public class MemberController {
     private String client_id;
     @Value("${kakao.redirect_uri}")
     private String redirect_uri;
+    @Value("${app.front-url}")
+    private String front_url;
 
     @GetMapping("/kakaostart")
     public @ResponseBody String kakaostart() {
@@ -141,15 +143,11 @@ public class MemberController {
         StringBuilder sb2 = new StringBuilder();
         while ((input2 = br2.readLine()) != null) {
             sb2.append(input2);
-            System.out.println(input2);
         }
         Gson gson2 = new Gson();
         KakaoProfile kakaoProfile = gson2.fromJson(sb2.toString(), KakaoProfile.class);
         KakaoProfile.KakaoAccount ac = kakaoProfile.getAccount();
         KakaoProfile.KakaoAccount.Profile pf = ac.getProfile();
-        System.out.println("id : " + kakaoProfile.getId());
-        System.out.println("KakaoAccount-Email : " + ac.getEmail());
-        System.out.println("Profile-Nickname : " + pf.getNickname());
 
         Member member = ms.getMember( kakaoProfile.getId() );
         if( member == null ){
@@ -170,7 +168,7 @@ public class MemberController {
             member.setProvider( "KAKAO" );
             ms.insertMember(member);
         }
-        response.sendRedirect("http://localhost:3000/kakaoIdLogin/"+member.getSnsid());
+        response.sendRedirect(front_url + "/kakaoIdLogin/"+member.getSnsid());
     }
 
     @GetMapping("/refresh/{refreshToken}")
