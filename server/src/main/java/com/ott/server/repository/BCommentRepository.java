@@ -20,7 +20,8 @@ public interface BCommentRepository extends JpaRepository<BComment, Integer> {
     @Query("SELECT COUNT(c) FROM BComment c WHERE c.board.bidx = :bidx")
     long countByBoardId(int bidx);
 
-    List<BComment> findByPcidx(int bcidx);
+//    List<BComment> findByPcidx(int bcidx);
+    List<BComment> findByPcidxAndDeleteyn(int bcidx, String deleteyn);
 
     List<BComment> findByBoard(Board board);
 
