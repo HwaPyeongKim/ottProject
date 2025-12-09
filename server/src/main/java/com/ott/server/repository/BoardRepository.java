@@ -17,16 +17,31 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 //    List<Board> findAllByOrderByWritedateDesc();
 
     Board findByBidx(int bidx);
+    
+    Page<Board> findAllByTitleContainingAndStatusNotOrContentContainingAndStatusNotOrBoardMember_NicknameContainingAndStatusNot(
+            String title, BoardStatus status1,
+            String content, BoardStatus status2,
+            String nickname, BoardStatus status3,
+            Pageable pageable
+    );
+
+    long countByTitleContainingAndStatusNotOrContentContainingAndStatusNotOrBoardMember_NicknameContainingAndStatusNot(
+            String title, BoardStatus status1,
+            String content, BoardStatus status2,
+            String nickname, BoardStatus status3
+    );
 
     Page<Board> findAllByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(String searchWord, String searchWord1, String searchWord2, Pageable pageable);
-
-//    List<Board> findByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(String searchWord, String searchWord1, String searchWord2);
 
     long countByTitleContainingOrContentContainingOrBoardMember_NicknameContaining(String searchWord, String searchWord1, String searchWord2);
 
     int countByStatus(BoardStatus status);
 
     Page<Board> findByStatus(BoardStatus status, Pageable pageable);
+
+    Page<Board> findAllByStatusNot(BoardStatus status, Pageable pageable);
+
+    long countByStatusNot(BoardStatus status);
 
     @Query("SELECT b FROM Board b " + "WHERE b.status = :status " + "AND (b.title LIKE %:key% " + "OR b.content LIKE %:key% " + "OR b.boardMember.nickname LIKE %:key%)")
     Page<Board> searchByKeyAndStatus(@Param("status") BoardStatus status, @Param("key") String key, Pageable pageable);
