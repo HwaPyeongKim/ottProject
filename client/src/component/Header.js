@@ -73,7 +73,7 @@ function Header() {
       {location.pathname === "/" && (
         <div
           className="home-bg"
-          style={{ backgroundImage: `url(http://${process.env.REACT_APP_SERVER_URL}/public/main.png)` }}
+          style={{ backgroundImage: `url(http://localhost:8070/public/main.png)` }}
         ></div>
       )}
       <div className="logo">
@@ -160,7 +160,7 @@ function Header() {
           {
             (loginUser && loginUser.midx && loginUser.role > 1) ?
             <li>
-              <a href={process.env.REACT_APP_ADMIN_URL} target="_blank" rel="noopener noreferrer">관리자 페이지</a>
+              <a href="http://localhost:3001" target="_blank" rel="noopener noreferrer">관리자 페이지</a>
             </li>
             : null
           }

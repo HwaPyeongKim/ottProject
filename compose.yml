@@ -13,9 +13,10 @@ services:
       test: ["CMD", "mysqladmin", "ping"]
       interval: 5s
       retries: 10
+    
 
   my-client:
-    image: 623378151486.dkr.ecr.ap-northeast-2.amazonaws.com/watchtoday-client:latest
+    image: 623378151486.dkr.ecr.ap-northeast-2.amazonaws.com/ottproject-client
     container_name: my-client
     ports:
       - 80:80
@@ -23,22 +24,10 @@ services:
       - my-server
     
   my-server:
-    image: 623378151486.dkr.ecr.ap-northeast-2.amazonaws.com/watchtoday-server:latest
+    image: 623378151486.dkr.ecr.ap-northeast-2.amazonaws.com/ottproject-server
     container_name: my-server
     ports:
       - 8070:8070
     depends_on:
       my-db:
         condition: service_healthy
-    environment:
-      SPRING_AI_OPENAI_API_KEY: ${OPENAI_API_KEY}
-  
-  my-admin:
-    image: 623378151486.dkr.ecr.ap-northeast-2.amazonaws.com/watchtoday-admin:latest
-    container_name: my-admin
-    ports:
-      - 3001:80
-    depends_on:
-      - my-server
-    environment:
-      REACT_APP_SERVER_URL: http://13.124.118.146:8070
