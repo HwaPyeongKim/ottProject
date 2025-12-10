@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { loginAction } from '../../store/userSlice';
+import { loginAction, logoutAction } from '../../store/userSlice';
 import axios from 'axios'
 import { Cookies } from 'react-cookie';
 import '../../style/join.css'
@@ -110,22 +110,12 @@ function EditKakao() {
             if(result.data.msg === 'no' ){ return alert('닉네임이 중복됩니다'); }
             // 회원가입
             const phone = `${phone1}-${phone2}-${phone3}`
-            result = await axios.post('/api/member/editKakao', {email, name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg, snsid:loginUser.snsid});
+            result = await axios.post('/api/member/editKakao', {email, pwd:'KAKAO', name, nickname, phone, zipnum, address1, address2, profileimg, profilemsg, snsid:loginUser.snsid});
             if(result.data.msg === 'ok'){
-                let res = await axios.get('/api/member/getSnsUser', {params:{snsid: loginUser.snsid}})
-
-                let LUser = res.data.snsUser
-                if (!LUser) {
-                    console.error("snsUser 조회 실패:", res.data)
-                    alert("로그인 정보 확인 중 오류가 발생했습니다.");
-                    return;
-                }else{
-                    cookies.set('user', JSON.stringify( LUser ) , {path:'/', } )
-                    dispatch( loginAction( LUser ) )
-
-                    alert('회원 가입이 완료되었습니다.');
-                    navigate('/');
-                }
+                dispatch( logoutAction() );
+                cookies.remove('user', {path:'/',} )
+                alert('회원 가입이 완료되었습니다. 다시 로그인하세요');
+                navigate('/');
             }
         }catch(err){
             console.error(err)
@@ -134,11 +124,11 @@ function EditKakao() {
 
     return (
         <div className="join-profile-form">
-            <div className="join-mpfield">
+            <div className="section-title">
                 카카오 추가 로그인
             </div>
             <div className="join-mpfield">
-                <label>E-MAIL</label>
+                <label>이메일</label>
                 <input type='text' value={email} onChange={(e)=>{setEmail(e.currentTarget.value)}}/>
             </div>
             {/* <div className="join-mpfield">
@@ -150,25 +140,25 @@ function EditKakao() {
                 <input type="password"  value={pwdChk} onChange={(e)=>{ setPwdChk(e.currentTarget.value )}}/>
             </div> */}
             <div className="join-mpfield">
-                <label>NAME</label>
+                <label>이름</label>
                 <input type="text"  value={name} onChange={(e)=>{ setName(e.currentTarget.value )}}/>
             </div>
             <div className="join-mpfield">
-                <label>NICKNAME</label>
+                <label>닉네임</label>
                 <input type="text"  value={nickname} onChange={(e)=>{ setNickname(e.currentTarget.value )}}/>
             </div>
-            <div className="join-mpfield">
-                <label>PHONE</label>
+            <div className="join-phone">
+                <label>전화번호</label>
                 <input type="text"  value={phone1} maxLength='3' onChange={(e)=>{ setPhone1(e.currentTarget.value )}}/>
-                -
+                &nbsp;-&nbsp;
                 <input type="text"  value={phone2} maxLength='4' onChange={(e)=>{ setPhone2(e.currentTarget.value )}}/>
-                -
+                &nbsp;-&nbsp;
                 <input type="text"  value={phone3} maxLength='4' onChange={(e)=>{ setPhone3(e.currentTarget.value )}}/>
             </div>
             <div className="join-mpfield">
-                <label>POST CODE</label>
+                <label>우편번호</label>
                 <input type="text" value={zipnum} onChange={(e)=>{ setZipnum(e.currentTarget.value )}} readOnly/>
-                <button className="btn-highlight" onClick={ ()=>{ setIsOpen( !isOpen ) }}>SEARCH</button>
+                <button className="btn-highlight" onClick={ ()=>{ setIsOpen( !isOpen ) }}>검색</button>
             </div>
 
             <div className="join-mpfield">
@@ -178,12 +168,12 @@ function EditKakao() {
                 </Modal>
             </div>
             <div className="join-mpfield">
-                <label>ADDRESS</label>
+                <label>주소</label>
                 <input type="text"  value={address1} onChange={(e)=>{ setAddress1(e.currentTarget.value )}}/>
             </div>
 
             <div className="join-mpfield">
-                <label>DETAIL ADDRESS</label>
+                <label>상세주소</label>
                 <input type="text"  value={address2} onChange={(e)=>{ setAddress2(e.currentTarget.value )}}/>
             </div>
             <div className="join-mpfield">
@@ -191,18 +181,18 @@ function EditKakao() {
                 <input type="text"  value={profilemsg} onChange={(e)=>{setProfilemsg(e.currentTarget.value)}}/>
             </div>
             <div className="join-mpfield">
-                <label>PROFILE IMG</label>
+                <label>프로필 이미지</label>
                 <input type="file" onChange={(e)=>{fileUpload(e)}}/>
             </div>
             <div className="join-mpfield">
-                <label>PROFILE IMG PREVIEW</label>
+                <label></label>
                 {
                     (imgSrc)?(<div><img src={imgSrc} style={imgStyle} /></div>):(<p></p>)
                 }
             </div>
             <div className="join-btn-group">
-                <button className="join-btn join-btn-primary" onClick={()=>{onSubmit()}}>JOIN</button>
-                <button className="join-btn join-btn-secondary" onClick={()=>{ navigate('/')}}>BACK</button>
+                <button className="join-btn join-btn-primary" onClick={()=>{onSubmit()}}>회원가입</button>
+                {/* <button className="join-btn join-btn-secondary" onClick={()=>{ navigate('/')}}>BACK</button> */}
             </div>
         </div>
     )

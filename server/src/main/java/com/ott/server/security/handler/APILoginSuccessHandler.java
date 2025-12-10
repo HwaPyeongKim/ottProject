@@ -16,6 +16,7 @@ import java.util.Map;
 public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        System.out.println("성공핸들러");
         // 로그인이 성공했을때 실행되는 메서드
         // 토큰을 만들고 로그인유저 정보와함꼐 클라이언트로 전송해줍니다
 

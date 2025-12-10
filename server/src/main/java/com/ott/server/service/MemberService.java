@@ -312,7 +312,7 @@ public class MemberService {
         BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
         if(mem != null){
             mem.setEmail(member.getEmail());
-            mem.setPwd(pe.encode("EDITKAKAO"));
+            mem.setPwd(pe.encode("KAKAO"));
             mem.setName(member.getName());
             mem.setNickname(member.getNickname());
             mem.setPhone(member.getPhone());
@@ -344,6 +344,17 @@ public class MemberService {
         Optional<Member> mem = mr.findByMidx(member.getMidx());
         if (mem.isPresent()) {
             Member deleteMem = mem.get();
+            deleteMem.setEmail(null);
+            deleteMem.setPwd(null);
+            deleteMem.setPhone(null);
+            deleteMem.setName(null);
+            deleteMem.setNickname(null);
+            deleteMem.setZipnum(null);
+            deleteMem.setAddress1(null);
+            deleteMem.setAddress2(null);
+            deleteMem.setProfileimg(null);
+            deleteMem.setProfilemsg(null);
+            deleteMem.setSnsid(null);
             deleteMem.setDeleteyn("Y");
             mr.save(deleteMem);
         }
@@ -376,6 +387,30 @@ public class MemberService {
                 b.setStatus(BoardStatus.DELETED);
                 br.save(b);
             }
+        }
+    }
+
+    public void moveList(ListEntity listentity, int loginMidx) {
+        ListEntity originalList = ler.findByMidxAndListidx(listentity.getMidx(), listentity.getListidx());
+//        if( originalLe == null ){
+//            throw new NoSuchElementException("원본 리스트를 찾을 수 없습니다.");
+//        }
+        ListEntity newList = new ListEntity();
+        newList.setTitle(listentity.getTitle());
+        newList.setSecurity(listentity.getSecurity());
+        newList.setMidx(loginMidx);
+        newList.setListidx(0);
+        ListEntity savedList = ler.save(newList);
+
+        List<DbList> originalDbList = dlr.findAllByListidx(originalList.getListidx(), Sort.by(Sort.Direction.DESC, "id"));
+
+        for (DbList db : originalDbList) {
+            DbList newDb = new DbList();
+            newDb.setDbidx(db.getDbidx());
+            newDb.setListidx(savedList.getListidx());
+            newDb.setPosterpath(db.getPosterpath());
+            newDb.setTitle(db.getTitle());
+            dlr.save(newDb);
         }
     }
 }

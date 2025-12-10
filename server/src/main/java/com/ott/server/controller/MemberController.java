@@ -248,7 +248,6 @@ public class MemberController {
     @PostMapping("/resetPwd")
     public HashMap<String, Object> resetPwd(@RequestParam("midx") int midx, @RequestParam("pwd") String pwd) {
         HashMap<String, Object> result = new HashMap<>();
-        System.out.println("222222222222222222222222222222222222222222222222222222");
         ms.resetPwd(midx, pwd);
         result.put("msg", "ok");
         return result;
@@ -406,12 +405,12 @@ public class MemberController {
             if( member == null ){
                 result.put("msg", "no");
             }else{
-                String rawPassword = pwd;              // 비교하고 싶은 원본 문자열
-                String encodedPassword = member.getPwd();    // DB에 저장된 BCrypt 해시
-                boolean isMatch = pe.matches(rawPassword, encodedPassword);
-                if(isMatch){
-                    result.put("edit", "no");
-                }
+//                String rawPassword = pwd;              // 비교하고 싶은 원본 문자열
+//                String encodedPassword = member.getPwd();    // DB에 저장된 BCrypt 해시
+//                boolean isMatch = pe.matches(rawPassword, encodedPassword);
+//                if(isMatch){
+//                    result.put("edit", "no");
+//                }
                 result.put("KakaoUser", member);
                 result.put("msg", "ok");
             }
@@ -435,10 +434,10 @@ public class MemberController {
         if( member == null ){
             result.put("msg", "no");
         }else{
-            String rawPassword = "KAKAO";              // 비교하고 싶은 원본 문자열
-            String encodedPassword = member.getPwd();    // DB에 저장된 BCrypt 해시
-            boolean isMatch = pe.matches(rawPassword, encodedPassword);
-            if(isMatch){
+//            String rawPassword = "KAKAO";              // 비교하고 싶은 원본 문자열
+//            String encodedPassword = member.getPwd();    // DB에 저장된 BCrypt 해시
+//            boolean isMatch = pe.matches(rawPassword, encodedPassword);
+            if(member.getEmail() == null || member.getEmail().equals("")){
                 result.put("edit", "no");
             }
             result.put("msg", "ok");
@@ -446,7 +445,6 @@ public class MemberController {
         }
         return result;
     }
-
 
     @GetMapping("/getReviewList")
     public HashMap<String, Object> getReviewList(
@@ -472,6 +470,21 @@ public class MemberController {
         ms.deleteBcomment(member);
         ms.deleteReview(member);
         ms.deleteBoard(member);
+        result.put("msg", "ok");
+        return result;
+    }
+
+    @PostMapping("/moveList")
+    public HashMap<String, Object> moveList(HttpServletRequest request, @RequestBody ListEntity listentity) {
+        HashMap<String, Object> result = new HashMap<>();
+        System.out.println("리스트 엔티티 타이틀 : " + listentity.getTitle());
+        System.out.println("리스트 엔티티 시큐리티 : " + listentity.getSecurity());
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.replace("Bearer ", "");
+        Map<String, Object> claims = JWTUtil.validateToken(token);
+        int loginMidx = (int) claims.get("midx");
+        System.out.println("로그인 유저 midx = " + loginMidx);
+        ms.moveList(listentity, loginMidx);
         result.put("msg", "ok");
         return result;
     }

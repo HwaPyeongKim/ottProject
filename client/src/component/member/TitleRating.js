@@ -138,8 +138,8 @@ function TitleRating() {
             <div style={{ paddingTop: "40px" }}>
                 {
                     (targetMidx === loginUser.midx)?
-                    (<h2 style={{ color: "white", textAlign: "center" }}>나의 후기 목록</h2>):
-                    (<h2 style={{ color: "white", textAlign: "center" }}>{chkMember.nickname} 님의 후기 목록</h2>)
+                    (<h2 style={{ color: "white", textAlign: "center" }}>나의 평점 목록</h2>):
+                    (<h2 style={{ color: "white", textAlign: "center" }}>{chkMember.nickname} 님의 평점 목록</h2>)
                 }
             </div>
             <div className="tr-tabs">

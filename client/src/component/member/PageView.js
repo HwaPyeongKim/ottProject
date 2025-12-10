@@ -77,7 +77,7 @@ function PageView() {
                 setFollowers( [...result.data.followers] );
                 setFollowersCount( result.data.totalFollowersCount )
             }).catch((err)=>{console.error(err)})
-        },[]
+        },[followings, followers]
     )
 
     const checkFollow = async () => {
