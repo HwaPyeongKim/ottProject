@@ -160,7 +160,7 @@ function Header() {
           {
             (loginUser && loginUser.midx && loginUser.role > 1) ?
             <li>
-              <a href="http://3.34.168.161:3001" target="_blank" rel="noopener noreferrer">관리자 페이지</a>
+              <a href="http://localhost:3001" target="_blank" rel="noopener noreferrer">관리자 페이지</a>
             </li>
             : null
           }
