@@ -1,4 +1,4 @@
-body {background: #060d17;}
+body {background: #060d17;overflow-x: hidden; }
 a {text-decoration: none; color: inherit;}
 button, input[type=submit], input[type=button] {cursor: pointer;}
 h1, h2, h3, h4, h5, h6 {color: #d9e8ed; font-weight: bold; margin-bottom: 20px;}

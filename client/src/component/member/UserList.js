@@ -138,15 +138,22 @@ function UserList() {
                     <div className="modalContent" onClick={(e) => e.stopPropagation()}>
                         <h3>리스트 추가</h3>
                         <div>
-                        <input type="text" value={listTitle} onChange={(e)=>{setListTitle(e.currentTarget.value)}} />
-                        <div className="checkboxWrap">
-                            <input type="checkbox" value={security} onChange={(e)=>setSecurity(e.target.checked ? "Y" : "N")} id="checkbox_security" />
-                            <label htmlFor="checkbox_security" className="flex"><p>리스트 노출 여부</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
-                        </div>
+                            <input type="text" value={listTitle} onChange={(e)=>{setListTitle(e.currentTarget.value)}} />
+                            <div className="checkboxWrap">
+                                <input type="checkbox" checked={security === "Y"} onChange={(e)=>setSecurity(e.target.checked ? "Y" : "N")} id="checkbox_security" />
+                                <label htmlFor="checkbox_security" className="flex" style={{color: security === "Y" ? "#FFC107" : "white"}}>
+                                    <p>리스트 노출 여부 : {" "}
+                                        <b>
+                                            {security === "Y" ? "비공개" : "공개"}
+                                        </b>
+                                    </p>
+                                        <b><FontAwesomeIcon icon={faCheck} /></b>
+                                </label>
+                            </div>
                         </div>
                         <div className="buttonWrap">
-                        <button className="mainButton" onClick={()=>{addList()}}>추가하기</button>
-                        <button className="mainButton" onClick={()=>setIsAddListModal(false)}>닫기</button>
+                            <button className="mainButton" onClick={()=>{addList()}}>추가하기</button>
+                            <button className="mainButton" onClick={()=>setIsAddListModal(false)}>닫기</button>
                         </div>
                     </div>
                 </div>

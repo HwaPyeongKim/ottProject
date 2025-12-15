@@ -58,34 +58,30 @@ function UserListView() {
     const [myAllDbidxs, setMyAllDbidxs] = useState([]);
     const [isGetListOpen, setIsGetListOpen] = useState(false);
 
-
     useEffect(() => {
         fetchTitle(page);
     }, [page]);
 
     const fetchTitle = async (pageNum) => {
-    if (loading || !hasMore) return;
+    if (loading || !hasMore) {return};
     setLoading(true);
 
     try {
         console.log("listidx : " + numericListidx);
 
-        const result = await jaxios.get('/api/member/getMyListDetailView', {
-        params: { page: pageNum, listidx: numericListidx }
-        });
-
+        const result = await jaxios.get('/api/member/getMyListDetailView', {params: { page: pageNum, listidx: numericListidx }});
         console.log('fetchTitle : ', result.data.dbList);
 
         if (result.data.dbList.length === 0) {
-        setHasMore(false);
-        setLoading(false);
-        return;
+            setHasMore(false);
+            setLoading(false);
+            return;
         }
 
         if (pageNum === 1) {
-        setTitleList(result.data.dbList); 
+            setTitleList(result.data.dbList); 
         } else {
-        setTitleList(prev => [...prev, ...result.data.dbList]);
+            setTitleList(prev => [...prev, ...result.data.dbList]);
         }
 
     } catch (err) {
@@ -166,22 +162,25 @@ function UserListView() {
     }
 
     async function getMyLists() {
-    try {
-        const result = await jaxios.get("/api/member/getList", {
-        params: { midx: loginUser.midx }
-        });
-        console.log('마이리스트', result.data.myList)
-        setMyList(result.data.myList);
-    } catch (err) {
-        console.error(err);
-    }
+        try {
+            const result = await jaxios.get("/api/member/getList", {params: { midx: targetMidx }});
+            
+            const filteredList = result.data.myList.filter(
+                item => Number(item.listidx) === Number(numericListidx)
+            );
+
+            console.log('필터링된 리스트', filteredList);
+            setMyList(filteredList);
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     useEffect(() => {
-        if (loginUser?.midx) {
+        if (targetMidx && numericListidx) {
             getMyLists();
         }
-    }, [loginUser]);
+    }, [targetMidx, numericListidx]);
 
 
     function getAddMyList(item) {
@@ -238,12 +237,16 @@ function UserListView() {
     }, [loginUser]);
 
     function moveList(){
-        jaxios.post("/api/main/addList", {title: listTitle, security, midx: loginUser.midx})
+        if (!listTitle.trim()) {
+            alert("리스트 제목을 입력해주세요");
+            return;
+        }
+
+        jaxios.post("/api/member/moveList", {listidx: numericListidx, title: listTitle, security, midx: targetMidx})
         .then((result) => {
             if (result.data.msg === "ok") {
             alert("리스트가 추가되었습니다");
-            setIsAddListModal(false);
-            setIsModalOpen(false);
+            setIsGetListOpen(false);
             setListTitle("");
             setSecurity("N");
             getMyLists();
@@ -259,7 +262,7 @@ function UserListView() {
     return (
         <div className="list-page">
             <div className="list-header">
-                <div><h1>{myList[0]?.title}</h1></div>
+                <div><h1>{myList?.[0]?.title}</h1></div>
 
                 <div className="list-menu">
                     {
@@ -272,7 +275,11 @@ function UserListView() {
                             </>
                         ):
                         (
-                            <button onClick={() => setIsGetListOpen(true)}>리스트 가져가기</button>
+                            <button onClick={() => {
+                                setListTitle(myList?.[0]?.title || "");
+                                setSecurity(myList?.[0]?.security || "N"); 
+                                setIsGetListOpen(true);
+                            }}>리스트 가져가기</button>
                         )
                     }
                 </div>
@@ -286,44 +293,51 @@ function UserListView() {
             }
 
             <div className="content-grid">
-            {titleList.map((t) => (
-                <div className="card" key={t.dbidx}>
-                <Link className="card-link" to={`/movie/detail/${t.dbidx}`}>
-                    <img src={`https://image.tmdb.org/t/p/w342/${t.posterpath}`} alt={t.title} />
-                    <div className="card-poster-hover">
-                        {
-                            (loginUser && loginUser.midx===targetMidx) ?
-                            (<>
-                                <button onClick={async (e)=>{ e.stopPropagation(); e.preventDefault(); setIsTitleDeleteModal(true); setDbidx(t.dbidx);} }><FontAwesomeIcon icon={faClose} size="lg" color="#f5c518" /></button>
-                                {/* <button className={`like${likes.includes(item.id) ? " on" : ""}`} onClick={(e)=>{e.preventDefault(); like(item.id);}}><FontAwesomeIcon icon={faThumbsUp} /></button> */}
-                            </>)
-                            : (null)
-                        }
-                        {(loginUser?.midx !== targetMidx) && (
-                            isAlreadyAdded(t.dbidx) ? (
-                                <button disabled style={{ opacity: 0.6, cursor: "not-allowed" }}>
-                                    <FontAwesomeIcon icon={faCheck} size="lg" color="#00ff99" />
-                                </button>
-                            ) : (
-                                <button onClick={(e) => {e.preventDefault();e.stopPropagation();
-                                    setSelected({
-                                    id: t.dbidx,
-                                    title: t.title,
-                                    poster_path: t.posterpath,
-                                    type: t.type
-                                    });
-                                    setSelectedLists([]);
-                                    setIsModalOpen(true);
-                                }}>
-                                    <FontAwesomeIcon icon={faPlus} size="lg" color="#f5c518" />
-                                </button>
-                            )
-                        )}
-                    </div>
-                </Link>
+                {
+                    (titleList.length === 0 && !loading) ? (
+                        <div className="empty-message">
+                            추가된 콘텐츠가 없습니다
+                        </div>
+                    ) : (titleList.map((t) => (
+                        <div className="card" key={t.dbidx}>
+                            <Link className="card-link" to={`/movie/detail/${t.dbidx}`}>
+                            <img src={`https://image.tmdb.org/t/p/w342/${t.posterpath}`} alt={t.title}/>
+                                <div className="card-poster-hover">
+                                    {(loginUser && loginUser.midx === targetMidx) && (
+                                    <button onClick={(e) => { e.stopPropagation(); e.preventDefault(); setIsTitleDeleteModal(true); setDbidx(t.dbidx);}}>
+                                        <FontAwesomeIcon icon={faClose} size="lg" color="#f5c518" />
+                                    </button>
+                                    )}
+
+                                    {(loginUser?.midx !== targetMidx) && (
+                                    isAlreadyAdded(t.dbidx) ? (
+                                        <button disabled style={{ opacity: 0.6, cursor: "not-allowed" }}>
+                                        <FontAwesomeIcon icon={faCheck} size="lg" color="#00ff99" />
+                                        </button>
+                                    ) : (
+                                        <button onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setSelected({
+                                                id: t.dbidx,
+                                                title: t.title,
+                                                poster_path: t.posterpath,
+                                                type: t.type
+                                            });
+                                            setSelectedLists([]);
+                                            setIsModalOpen(true);
+                                        }}
+                                        >
+                                        <FontAwesomeIcon icon={faPlus} size="lg" color="#f5c518" />
+                                        </button>
+                                    )
+                                    )}
+                                </div>
+                            </Link>
+                        </div>
+                    ))
+                )}
                 </div>
-            ))}
-            </div>
 
             {/* 무한스크롤 트리거 */}
             <div ref={loader} className="scroll-loader">
@@ -356,13 +370,6 @@ function UserListView() {
                 <div className="modalOverlay" onClick={() => setIsTitleDeleteModal(false)}>
                     <div className="modalContent" onClick={(e) => e.stopPropagation()}>
                         <h3>리스트에서 삭제</h3>
-                        {/* <div>
-                        <input type="text" value={listTitle} onChange={(e)=>{setListTitle(e.currentTarget.value)}} />
-                        <div className="checkboxWrap">
-                            <input type="checkbox" value={security} onChange={(e)=>setSecurity(e.target.checked ? "Y" : "N")} id="checkbox_security" />
-                            <label htmlFor="checkbox_security" className="flex"><p>리스트 노출 여부</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
-                        </div>
-                        </div> */}
                         <div className="buttonWrap">
                         <button className="mainButton" onClick={()=>{deleteTitle(dbidx, numericListidx)}}>삭제하기</button>
                         <button className="mainButton" onClick={()=>setIsTitleDeleteModal(false)}>닫기</button>
@@ -382,10 +389,7 @@ function UserListView() {
                     <ul>
                         {myList.length > 0 ? (
                         myList.map((mylist) => (
-                            <li
-                            key={mylist.listidx}
-                            className="checkboxWrap selectList"
-                            >
+                            <li key={mylist.listidx} className="checkboxWrap selectList">
                             <input type="checkbox" value={mylist.listidx} id={`mylist_${mylist.listidx}`}
                                 onChange={
                                     (e) => { const value = Number(e.target.value);
@@ -405,12 +409,12 @@ function UserListView() {
                             </li>
                         ))
                         ) : (
-                        <p>내 리스트가 없습니다.</p>
+                            <p>내 리스트가 없습니다.</p>
                         )}
 
                         <li className="flex">
-                        <p>리스트 새로 만들기</p>
-                        <button onClick={() => setIsAddListModal(true)}>+</button>
+                            <p>리스트 새로 만들기</p>
+                            <button onClick={() => setIsAddListModal(true)}>+</button>
                         </li>
                     </ul>
 
@@ -428,25 +432,31 @@ function UserListView() {
 
             {
                 isGetListOpen && (
-                    <div className="modalOverlay" onClick={() => setIsTitleDeleteModal(false)}>
+                    <div className="modalOverlay" onClick={() => setIsGetListOpen(false)}>
                         <div className="modalContent" onClick={(e) => e.stopPropagation()}>
                             <h3>나의 리스트로 옮기기</h3>
                             <div>
-                            <input type="text" value={listTitle} onChange={(e)=>{setListTitle(e.currentTarget.value)}} />
-                            <div className="checkboxWrap">
-                                <input type="checkbox" value={security} onChange={(e)=>setSecurity(e.target.checked ? "Y" : "N")} id="checkbox_security" />
-                                <label htmlFor="checkbox_security" className="flex"><p>리스트 노출 여부</p> <b><FontAwesomeIcon icon={faCheck} /></b></label>
-                            </div>
+                                <input type="text" value={listTitle} onChange={(e)=>{setListTitle(e.currentTarget.value)}} />
+                                <div className="checkboxWrap">
+                                    <input type="checkbox" checked={security === "Y"} onChange={(e)=>setSecurity(e.target.checked ? "Y" : "N")} id="checkbox_security" />
+                                    <label htmlFor="checkbox_security" className="flex" style={{color: security === "Y" ? "#FFC107" : "white"}}>
+                                        <p>리스트 노출 여부 : {" "}
+                                            <b>
+                                                {security === "Y" ? "비공개" : "공개"}
+                                            </b>
+                                        </p>
+                                            <b><FontAwesomeIcon icon={faCheck} /></b>
+                                    </label>
+                                </div>
                             </div>
                             <div className="buttonWrap">
-                            <button className="mainButton" onClick={()=>{moveList(numericListidx)}}>가져가기</button>
-                            <button className="mainButton" onClick={()=>setIsTitleDeleteModal(false)}>닫기</button>
+                                <button className="mainButton" onClick={()=>{moveList()}}>가져가기</button>
+                                <button className="mainButton" onClick={()=>setIsGetListOpen(false)}>닫기</button>
                             </div>
                         </div>
                     </div>
                 )
             }
-
         </div>
     )
 }
